@@ -382,8 +382,13 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
         print(f"    [SKIPPED] Duplicate detected.")
 
 def main():
+    # Re-check environment inside main to ensure shimmed/bridged variables are captured
+    global SUPABASE_URL, SUPABASE_KEY
+    if not SUPABASE_URL: SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
+    if not SUPABASE_KEY: SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
+
     if not SUPABASE_URL or not SUPABASE_KEY:
-        print("Missing Supabase credentials")
+        print(f"CRITICAL: Missing Supabase credentials. URL: {bool(SUPABASE_URL)}, KEY: {bool(SUPABASE_KEY)}")
         return
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 

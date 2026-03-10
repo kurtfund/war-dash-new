@@ -1,20 +1,21 @@
 {
   "event_types": {
-    "Airstrike": ["airstrike", "air strike", "bombing", "missile", "rocket", "drone strike", "shelling"],
+    "MISSILE": ["missile", "rocket", "ballistic", "projectile", "iron dome", "intercepted", "sam"],
+    "AIRSTRIKE": ["airstrike", "air strike", "bombing", "fighter jet", "raid", "precision strike", "shelling"],
+    "DRONE": ["drone", "uav", "kamikaze drone", "loitering munition", "quadcopter"],
+    "NAVAL": ["warship", "destroyer", "carrier", "fleet", "naval", "patrol boat", "frigate", "vessel"],
+    "PROTEST": ["protest", "demonstration", "riot", "crowd", "rally", "uprising"],
     "Military Activity": ["clashes", "gunfire", "infantry", "tank", "armored", "convoy", "skirmish", "raid"],
-    "Naval Incident": ["warship", "frigate", "destroyer", "naval", "maritime", "hijack", "vessel", "cargo ship"],
-    "Protest": ["protest", "demonstration", "riot", "rally", "uprising", "clash with police"],
     "Disaster": ["earthquake", "flood", "fire", "explosion", "collapse", "emergency"],
-    "Casualty Report": ["killed", "dead", "fatalities", "casualties", "wounded", "injured"],
-    "Aircraft Movement": ["fighter jet", "reconnaissance", "cargo plane", "helicopter", "airspace violation"]
+    "Casualty Report": ["killed", "dead", "fatalities", "casualties", "wounded", "injured"]
   },
   "countries": {
-    "Israel": ["israel", "tel aviv", "haifa", "jerusalem"],
-    "Palestine": ["gaza", "west bank", "ramallah", "rafah", "khan yunis"],
-    "Lebanon": ["lebanon", "beirut", "tyre", "sidon", "hezbollah"],
-    "Syria": ["syria", "damascus", "aleppo", "idlib"],
-    "Yemen": ["yemen", "sanaa", "hodeidah", "aden", "houthis"],
-    "Iran": ["iran", "tehran", "isfahan"],
-    "Iraq": ["iraq", "baghdad", "erbil"]
+    "Israel": ["israel", "tel aviv", "haifa", "jerusalem", "ashdod", "beersheba"],
+    "Palestine": ["gaza", "west bank", "ramallah", "rafah", "khan yunis", "deir al-balah"],
+    "Lebanon": ["lebanon", "beirut", "tyre", "sidon", "hezbollah", "nabatieh"],
+    "Syria": ["syria", "damascus", "aleppo", "idlib", "homs", "hama"],
+    "Yemen": ["yemen", "sanaa", "hodeidah", "aden", "houthis", "taiz"],
+    "Iran": ["iran", "tehran", "isfahan", "shiraz", "tabriz"],
+    "Iraq": ["iraq", "baghdad", "erbil", "basra", "mosul"]
   }
 }

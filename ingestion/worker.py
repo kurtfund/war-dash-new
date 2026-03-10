@@ -3,9 +3,14 @@ import json
 import hashlib
 import feedparser
 import requests
+import re
+import spacy
+from datetime import datetime, timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 
 load_dotenv()
 
@@ -76,7 +81,35 @@ API_SOURCES = {
     ]
 }
 
-# --- KEYWORDS & GEODATA ---
+# Source Reliability Scoring
+SOURCE_RELIABILITY = {
+    "gov": 0.95,
+    "mil": 0.95,
+    "reuters": 0.90,
+    "ap": 0.90,
+    "aljazeera": 0.85,
+    "haaretz": 0.85,
+    "jpost": 0.85,
+    "timesofisrael": 0.85,
+    "middleeasteye": 0.75,
+    "liveuamap": 0.70,
+    "twitter": 0.40,
+    "x.com": 0.40
+}
+
+# --- LOAD RESOURCES ---
+try:
+    nlp = spacy.load("en_core_web_sm")
+except:
+    print("Warning: spaCy model not found. Attempting to download...")
+    try:
+        os.system("python -m spacy download en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm")
+    except:
+        nlp = None
+
+geolocator = Nominatim(user_agent="war_dash_osint_v2")
+
 KEYWORDS_PATH = os.path.join(os.path.dirname(__file__), "keywords.json")
 try:
     with open(KEYWORDS_PATH, "r") as f:
@@ -84,25 +117,45 @@ try:
 except:
     KEYWORDS = {"event_types": {}, "countries": {}}
 
-CITY_COORDS = {
-    "Beirut": [35.5018, 33.8938],
-    "Gaza": [34.4668, 31.5017],
-    "Tel Aviv": [34.7818, 32.0853],
-    "Tehran": [51.3890, 35.6892],
-    "Sanaa": [44.2062, 15.3547],
-    "Baghdad": [44.3661, 33.3152],
-    "Damascus": [36.2765, 33.5138],
-    "Amman": [35.9239, 31.9454],
-    "Cairo": [31.2357, 30.0444],
-    "Riyadh": [46.6753, 24.7136]
-}
-
 # --- UTILITIES ---
 
 def is_within_bounds(lat: float, lon: float) -> bool:
+    if lat is None or lon is None: return False
     lat_min, lat_max = BOUNDS["lat"]
     lon_min, lon_max = BOUNDS["lon"]
     return lat_min <= lat <= lat_max and lon_min <= lon <= lon_max
+
+def get_source_confidence(url: str) -> float:
+    url_lower = url.lower()
+    for key, score in SOURCE_RELIABILITY.items():
+        if key in url_lower:
+            return score
+    return 0.60 
+
+def extract_casualties(text: str) -> int:
+    patterns = [
+        r'(\d+)\s+(?:killed|dead|fatalities|casualties|deadly)',
+        r'(?:killed|dead|fatalities|casualties)\s+(?:of\s+)?(\d+)',
+        r'death\s+toll\s+(?:reaches|of|is)\s+(\d+)'
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return int(match.group(1))
+    return 0
+
+def detect_location(text: str) -> Tuple[Optional[str], Optional[str]]:
+    if not nlp: return None, None
+    doc = nlp(text)
+    entities = [ent.text for ent in doc.ents if ent.label_ in ["GPE", "LOC"]]
+    for loc_name in entities:
+        if loc_name in KEYWORDS.get("countries", {}): continue
+        try:
+            location = geolocator.geocode(loc_name, timeout=5)
+            if location and is_within_bounds(location.latitude, location.longitude):
+                return loc_name, f"POINT({location.longitude} {location.latitude})"
+        except: continue
+    return None, None
 
 def classify_text(text: str):
     text = text.lower()
@@ -111,109 +164,91 @@ def classify_text(text: str):
         if any(k in text for k in keywords):
             event_type = type_name
             break
-    
     country = "Unknown"
     for country_name, keywords in KEYWORDS.get("countries", {}).items():
         if any(k in text for k in keywords):
             country = country_name
             break
-            
     return event_type, country
 
-# --- FETCHERS ---
-
-def fetch_rss(feed_url: str, category: str, supabase: Client):
-    print(f"Polling RSS [{category}]: {feed_url}")
-    feed = feedparser.parse(feed_url)
-    for entry in feed.entries:
-        headline = entry.title
-        url = entry.link
-        
-        event_type, country = classify_text(headline)
-        
-        # Geocode if not provided (RSS usually doesn't have coords)
-        location_name = None
-        coords = None
-        for city, point in CITY_COORDS.items():
-            if city.lower() in headline.lower():
-                location_name = city
-                lng, lat = point
-                if is_within_bounds(lat, lng):
-                    coords = f"POINT({lng} {lat})"
-                    break
-        
-        if not coords and country == "Unknown":
-            continue # Hard filter for relevance in this phase
-
-        upload_alert(supabase, {
-            "headline": headline,
-            "source": feed_url,
-            "url": url,
-            "event_type": event_type,
-            "country": country,
-            "location_name": location_name,
-            "coordinates": coords,
-            "confidence": 0.7,
-            "raw_data": {"category": category, "summary": getattr(entry, 'summary', '')}
-        })
-
-def fetch_geojson(source_info: Dict, supabase: Client):
-    print(f"Polling GeoJSON: {source_info['name']}")
+def is_duplicate(supabase: Client, alert: Dict) -> bool:
+    if not alert.get("location_name") or not alert.get("event_type"):
+        return False
+    thirty_mins_ago = (datetime.now() - timedelta(minutes=30)).isoformat()
     try:
-        r = requests.get(source_info['url'], timeout=10)
-        data = r.json()
-        
-        for feature in data.get('features', []):
-            props = feature.get('properties', {})
-            geom = feature.get('geometry', {})
-            
-            if geom.get('type') == 'Point':
-                lng, lat = geom['coordinates']
-                if not is_within_bounds(lat, lng):
-                    continue
-                
-                headline = props.get('title') or props.get('name') or props.get('eventname') or "Geometric Alert"
-                event_type = "Disaster"
-                if source_info['type'] == 'geojson_fire': event_type = "Fire/Anomaly"
-                if source_info['type'] == 'geojson_earthquake': event_type = "Earthquake"
+        query = supabase.table("security_alerts") \
+            .select("id") \
+            .eq("event_type", alert["event_type"]) \
+            .eq("location_name", alert["location_name"]) \
+            .gte("created_at", thirty_mins_ago) \
+            .execute()
+        return len(query.data) > 0
+    except: return False
 
-                upload_alert(supabase, {
-                    "headline": headline,
-                    "source": source_info['url'],
-                    "event_type": event_type,
-                    "coordinates": f"POINT({lng} {lat})",
-                    "confidence": 0.9,
-                    "raw_data": props
-                })
-    except Exception as e:
-        print(f"Error fetching GeoJSON {source_info['name']}: {e}")
+# --- LOGIC ---
 
-def upload_alert(supabase: Client, alert: Dict):
-    try:
-        # Deduplication based on headline (very basic)
-        existing = supabase.table("security_alerts").select("id").eq("headline", alert["headline"]).limit(1).execute()
-        if not existing.data:
-            supabase.table("security_alerts").insert(alert).execute()
-            print(f" -> Inserted: {alert['headline'][:50]}...")
-    except Exception as e:
-        print(f" -> DB Error: {e}")
+def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
+    print(f" -> Processing: {headline[:60]}...")
+    event_type, country = classify_text(headline)
+    deaths = extract_casualties(headline)
+    confidence = get_source_confidence(source)
+    loc_name, coords = detect_location(headline)
+    
+    alert_payload = {
+        "headline": headline,
+        "source": source,
+        "url": url,
+        "event_type": event_type,
+        "country": country,
+        "location_name": loc_name,
+        "coordinates": coords,
+        "deaths": deaths,
+        "confidence": confidence,
+        "raw_data": raw_data or {}
+    }
+    
+    # Final filter: Must have a location or a country and be within bounds if geocoded
+    if not alert_payload["coordinates"] and alert_payload["country"] == "Unknown":
+        return
+
+    if not is_duplicate(supabase, alert_payload):
+        try:
+            supabase.table("security_alerts").insert(alert_payload).execute()
+            print(f"    [INSERTED] {event_type} | {country} | Deaths: {deaths}")
+        except Exception as e:
+            print(f"    [ERROR] {e}")
+    else:
+        print(f"    [SKIPPED] Duplicate detected.")
 
 def main():
     if not SUPABASE_URL or not SUPABASE_KEY:
         print("Missing Supabase credentials")
         return
-
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    # Poll RSS Sources
+    # Standard RSS
     for category, feeds in RSS_SOURCES.items():
-        for feed in feeds:
-            fetch_rss(feed, category, supabase)
+        for feed_url in feeds:
+            try:
+                feed = feedparser.parse(feed_url)
+                for entry in feed.entries:
+                    process_alert_data(supabase, entry.title, feed_url, entry.link, {"summary": getattr(entry, 'summary', '')})
+            except Exception as e:
+                print(f"Error polling {feed_url}: {e}")
 
-    # Poll API Sources
-    for category, sources in API_SOURCES.items():
-        for source in sources:
-            fetch_geojson(source, supabase)
+    # GeoJSON APIs
+    for source_info in API_SOURCES["Disaster"]:
+        try:
+            r = requests.get(source_info['url'], timeout=10)
+            for feature in r.json().get('features', []):
+                props = feature.get('properties', {})
+                geom = feature.get('geometry', {})
+                if geom.get('type') == 'Point':
+                    lng, lat = geom['coordinates']
+                    if is_within_bounds(lat, lng):
+                        process_alert_data(supabase, props.get('title') or "Geo Event", source_info['url'], source_info['url'], props)
+        except Exception as e:
+            print(f"Error polling {source_info['name']}: {e}")
 
 if __name__ == "__main__":
     main()

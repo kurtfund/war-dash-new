@@ -296,10 +296,14 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     lower_headline = headline.lower()
     is_war_themed = any(keyword in lower_headline for keyword in CONFLICT_KEYWORDS)
     is_banned = any(bk in lower_headline for bk in BANNED_KEYWORDS)
-    
     if is_banned:
         print(f" [FILTERED (Banned Content)] {headline[:60]}...")
         return
+    
+    # 3. Category Trust / Intelligence Logic
+    # High-authority sources (Military/Gov/OSINT) are ALWAYS war-themed/contextual
+    # so we bypass the strict keyword check for them.
+    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
     
     event_type, country = classify_text(headline)
     
@@ -309,9 +313,10 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     is_from_uae_source = any(site in source.lower() for site in ["wam.ae", "gulfnews.com", "thenationalnews.com", "news.google.com"])
     is_flight = "flight track" in lower_headline
     
-    # CRITICAL: Even if it's a regional hub, if it's NOT war-themed and NOT a disaster/flight,
+    # CRITICAL: Even if it's a regional hub, if it's NOT war-themed and NOT a disaster/flight/High-Auth,
     # we block it to prevent Little Caesars/Tourism noise.
-    if not is_war_themed and not is_flight and event_type not in ["MISSILE", "AIRSTRIKE", "NAVAL"]:
+    if (not is_war_themed and not is_flight and not is_high_authority and 
+        event_type not in ["MISSILE", "AIRSTRIKE", "NAVAL"]):
         # Allow disasters/flights from hubs, but block general noise
         if event_type != "Disaster":
              print(f" [FILTERED (Regional Noise)] {headline[:60]}...")
@@ -383,8 +388,10 @@ def main():
         print(f"[*] Gathering intel from {len(all_sources)} sources...")
         for category, url in all_sources:
             try:
-                # Use requests with timeout to prevent hanging on slow feeds
-                resp = requests.get(url, timeout=10)
+                # Use browser-like headers and ignore SSL errors for sensitive gov sites
+                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+                # We disable SSL verify for gov sites as they freqently have cert issues
+                resp = requests.get(url, timeout=15, headers=headers, verify=False)
                 feed = feedparser.parse(resp.content)
                 # Take top 5 from each. We'll interleave them later.
                 raw_feed_data[(category, url)] = feed.entries[:5]

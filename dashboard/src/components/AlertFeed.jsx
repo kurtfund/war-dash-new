@@ -1,4 +1,5 @@
 import React from 'react';
+import { getHostname } from '../lib/utils';
 
 const icons = {
   MISSILE: "🚀",
@@ -77,7 +78,7 @@ const AlertFeed = ({ alerts }) => {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
                 <a href={alert.url} target="_blank" rel="noreferrer" className="text-muted" style={{ fontSize: '0.75rem', textDecoration: 'none', borderBottom: '1px solid var(--color-text-muted)' }}>
-                  SOURCE: {(new URL(alert.url)).hostname.replace('www.', '')}
+                  SOURCE: {getHostname(alert.url)}
                 </a>
                 
                 {alert.deaths > 0 && (

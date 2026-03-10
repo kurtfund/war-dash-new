@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { supabase } from '../lib/supabase';
+import { getHostname } from '../lib/utils';
 
 // Disable default icon loading to use our custom svgs
 delete L.Icon.Default.prototype._getIconUrl;
@@ -112,7 +113,7 @@ const MapView = ({ alerts }) => {
                     {alert.headline} 🔗
                   </a>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
-                    <span>{new URL(alert.url).hostname.replace('www.','')}</span>
+                    <span>{getHostname(alert.url)}</span>
                     {alert.deaths > 0 && <span className="text-red glow-red">💀 {alert.deaths}</span>}
                   </div>
                 </div>

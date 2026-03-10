@@ -1,4 +1,5 @@
 import React from 'react';
+import { getHostname } from '../lib/utils';
 
 const Indicators = ({ alerts }) => {
   // Calculate basic stats
@@ -42,7 +43,7 @@ const Indicators = ({ alerts }) => {
               {(alerts.length > 0 ? (alerts.reduce((a, b) => a + (b.confidence || 0.6), 0) / alerts.length * 100).toFixed(1) : 0)}%
             </div>
             <div style={{ marginTop: '16px', borderTop: '1px dashed rgba(255,255,255,0.2)', paddingTop: '16px', fontSize: '0.75rem', lineHeight: '1.6' }}>
-               INTELLIGENCE SOURCES: {new Set(alerts.map(a => new URL(a.url).hostname)).size}<br/>
+               INTELLIGENCE SOURCES: {new Set(alerts.map(a => getHostname(a.url))).size}<br/>
                VERIFIED LOCATIONS: {alerts.filter(a => a.coordinates).length}
             </div>
          </div>

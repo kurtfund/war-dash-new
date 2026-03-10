@@ -16,6 +16,14 @@
     "Syria": ["syria", "damascus", "aleppo", "idlib", "homs", "hama"],
     "Yemen": ["yemen", "sanaa", "hodeidah", "aden", "houthis", "taiz"],
     "Iran": ["iran", "tehran", "isfahan", "shiraz", "tabriz"],
-    "Iraq": ["iraq", "baghdad", "erbil", "basra", "mosul"]
+    "Iraq": ["iraq", "baghdad", "erbil", "basra", "mosul"],
+    "UAE": ["uae", "dubai", "abu dhabi", "sharjah", "ajman", "rak"],
+    "Saudi Arabia": ["saudi", "riyadh", "jeddah", "dammam", "khobar"],
+    "Jordan": ["jordan", "amman", "aqaba", "zarqa", "irbid"],
+    "Qatar": ["qatar", "doha", "lusail", "al khor"],
+    "Kuwait": ["kuwait city", "salmiya", "jahra"],
+    "Bahrain": ["manama", "muharraq", "riffa"],
+    "Oman": ["muscat", "salalah", "sohar", "sur"],
+    "Egypt": ["cairo", "alexandria", "sinai", "suez", "port said"]
   }
 }

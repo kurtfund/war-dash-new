@@ -5,3 +5,4 @@ requests
 spacy
 geopy
 geocoder
+# Model is downloaded in build command

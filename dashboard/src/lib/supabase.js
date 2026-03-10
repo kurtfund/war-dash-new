@@ -7,7 +7,9 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 const isConfigured = !!supabaseUrl && !!supabaseAnonKey
 
 if (!isConfigured) {
-  console.error("CRITICAL: Supabase credentials missing. The dashboard will not function.")
+  console.error("CRITICAL: Supabase credentials missing.")
+  console.warn("REASON: Vite requires environment variables to start with 'VITE_'.")
+  console.warn("FIX: Rename 'SUPABASE_URL' to 'VITE_SUPABASE_URL' in Render settings.")
 }
 
 export const supabase = createClient(

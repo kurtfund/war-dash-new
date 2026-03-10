@@ -1,0 +1,7 @@
+supabase
+feedparser
+python-dotenv
+requests
+spacy
+geopy
+geocoder

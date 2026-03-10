@@ -5,3 +5,5 @@ requests
 spacy
 geopy
 geocoder
+deep-translator
+# Model is downloaded in build command

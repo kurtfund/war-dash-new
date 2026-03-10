@@ -275,7 +275,9 @@ BANNED_KEYWORDS = [
     "lifestyle", "entertainment", "culture", "sport", "football", "cricket",
     "vacation", "brunch", "dinner", "lunch", "breakfast", "recipe",
     "franchisee", "franchise", "expansion", "best spots", "spots to spot", "fireworks",
-    "concert", "showbiz", "celebrity", "movie", "film", "series"
+    "concert", "showbiz", "celebrity", "movie", "film", "series",
+    "ramadan crescent", "cannon", "ramadan locations", "national day", "celebration",
+    "parking", "traffic", "weather forecast", "temperature", "gold rate"
 ]
 
 def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
@@ -307,9 +309,13 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     is_from_uae_source = any(site in source.lower() for site in ["wam.ae", "gulfnews.com", "thenationalnews.com", "news.google.com"])
     is_flight = "flight track" in lower_headline
     
-    if not is_war_themed and not is_regional_hub and not is_from_uae_source and not is_flight and event_type not in ["MISSILE", "AIRSTRIKE", "NAVAL"]:
-        print(f" [FILTERED (Non-War)] {headline[:60]}...")
-        return
+    # CRITICAL: Even if it's a regional hub, if it's NOT war-themed and NOT a disaster/flight,
+    # we block it to prevent Little Caesars/Tourism noise.
+    if not is_war_themed and not is_flight and event_type not in ["MISSILE", "AIRSTRIKE", "NAVAL"]:
+        # Allow disasters/flights from hubs, but block general noise
+        if event_type != "Disaster":
+             print(f" [FILTERED (Regional Noise)] {headline[:60]}...")
+             return
 
     print(f" -> Processing: {headline[:60]}...")
     deaths = extract_casualties(headline)

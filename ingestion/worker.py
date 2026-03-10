@@ -264,7 +264,6 @@ CONFLICT_KEYWORDS = [
     "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
     "fighter", "drone", "uav", "navy", "warship", "destroyer", "casualty",
     "killed", "death", "fatality", "dead", "injured", "intercepted", "shot down",
-    "dubai", "uae", "emirates", "abu dhabi", "riyadh", "saudi", "doha", "qatar",
     "flight track", "defense", "security", "forces", "conflict", "clash", "operation",
     "economic", "trade", "investment", "financial", "growth"
 ]
@@ -274,7 +273,9 @@ BANNED_KEYWORDS = [
     "visit", "tourist", "resort", "hotel", "spa", "exclusive", "fashion",
     "little caesars", "pizza", "burger", "cuisine", "gourmet", "luxury",
     "lifestyle", "entertainment", "culture", "sport", "football", "cricket",
-    "vacation", "brunch", "dinner", "lunch", "breakfast", "recipe"
+    "vacation", "brunch", "dinner", "lunch", "breakfast", "recipe",
+    "franchisee", "franchise", "expansion", "best spots", "spots to spot", "fireworks",
+    "concert", "showbiz", "celebrity", "movie", "film", "series"
 ]
 
 def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):

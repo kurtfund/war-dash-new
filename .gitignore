@@ -1,0 +1,19 @@
+# Intermediates
+node_modules/
+.env
+.env.local
+.DS_Store
+
+# Supabase
+.supabase/
+supabase/.temp/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+
+# Docker
+docker-compose.override.yml

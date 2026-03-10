@@ -1,0 +1,20 @@
+{
+  "event_types": {
+    "Airstrike": ["airstrike", "air strike", "bombing", "missile", "rocket", "drone strike", "shelling"],
+    "Military Activity": ["clashes", "gunfire", "infantry", "tank", "armored", "convoy", "skirmish", "raid"],
+    "Naval Incident": ["warship", "frigate", "destroyer", "naval", "maritime", "hijack", "vessel", "cargo ship"],
+    "Protest": ["protest", "demonstration", "riot", "rally", "uprising", "clash with police"],
+    "Disaster": ["earthquake", "flood", "fire", "explosion", "collapse", "emergency"],
+    "Casualty Report": ["killed", "dead", "fatalities", "casualties", "wounded", "injured"],
+    "Aircraft Movement": ["fighter jet", "reconnaissance", "cargo plane", "helicopter", "airspace violation"]
+  },
+  "countries": {
+    "Israel": ["israel", "tel aviv", "haifa", "jerusalem"],
+    "Palestine": ["gaza", "west bank", "ramallah", "rafah", "khan yunis"],
+    "Lebanon": ["lebanon", "beirut", "tyre", "sidon", "hezbollah"],
+    "Syria": ["syria", "damascus", "aleppo", "idlib"],
+    "Yemen": ["yemen", "sanaa", "hodeidah", "aden", "houthis"],
+    "Iran": ["iran", "tehran", "isfahan"],
+    "Iraq": ["iraq", "baghdad", "erbil"]
+  }
+}

@@ -1,0 +1,12 @@
+services:
+  - type: worker
+    name: war-dash-ingestion
+    runtime: python
+    buildCommand: pip install -r ingestion/requirements.txt
+    startCommand: python ingestion/worker.py
+    schedule: "*/5 * * * *" # Run every 5 minutes
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false

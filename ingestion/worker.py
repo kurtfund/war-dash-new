@@ -388,7 +388,8 @@ def main():
     if not SUPABASE_KEY: SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
     if not SUPABASE_URL or not SUPABASE_KEY:
-        print(f"CRITICAL: Missing Supabase credentials. URL: {bool(SUPABASE_URL)}, KEY: {bool(SUPABASE_KEY)}")
+        print(f"CRITICAL: Missing Supabase credentials. URL Found: {bool(SUPABASE_URL)}, KEY Found: {bool(SUPABASE_KEY)}")
+        print(f"[*] Available Environment Keys: {', '.join(os.environ.keys())}")
         return
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 

@@ -166,7 +166,8 @@ NATIONALITY_MAP = {
     "israeli": "Israel", "iraqi": "Iraq", "turkish": "Turkey", "yemeni": "Yemen",
     "qatari": "Qatar", "bahraini": "Bahrain", "kuwaiti": "Kuwait", 
     "jordanian": "Jordan", "saudi": "Saudi Arabia", "palestinian": "Palestine",
-    "emirati": "UAE", "houthi": "Yemen", "hezbollah": "Lebanon", "hamas": "Gaza"
+    "emirati": "UAE", "houthi": "Yemen", "hezbollah": "Lebanon", "hamas": "Gaza",
+    "idf": "Israel", "centcom": "Middle East", "mod": "Middle East"
 }
 
 def detect_location(text: str) -> Tuple[Optional[str], Optional[float], Optional[float]]:
@@ -327,6 +328,19 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     confidence = get_source_confidence(source)
     loc_name, lat, lon = detect_location(headline)
     
+    # --- INTELLIGENCE FALLBACK ---
+    # If official military source has no location, default to source country
+    if not loc_name and is_high_authority:
+        source_lower = url.lower()
+        if "idf.il" in source_lower: loc_name, lat, lon = "Israel", 31.0461, 34.8516
+        elif "centcom.mil" in source_lower: loc_name, lat, lon = "Middle East (CENTCOM)", 25.0, 45.0
+        elif "mod.gov.sa" in source_lower: loc_name, lat, lon = "Saudi Arabia", 23.8859, 45.0792
+        elif "ir" in source_lower: loc_name, lat, lon = "Iran", 32.4279, 53.6880
+        elif "yem" in source_lower: loc_name, lat, lon = "Yemen", 15.5527, 48.5164
+        elif "iq" in source_lower: loc_name, lat, lon = "Iraq", 33.2232, 43.6793
+        elif "pal" in source_lower: loc_name, lat, lon = "Palestine", 31.9522, 35.2332
+        elif "liveuamap" in source_lower: loc_name, lat, lon = "Middle East (OSINT)", 30.0, 35.0
+    
     if raw_data is None: raw_data = {}
     if lat is not None and lon is not None:
         raw_data["lat"] = lat
@@ -386,7 +400,12 @@ def main():
                 all_sources.append((category, feed_url))
         
         print(f"[*] Gathering intel from {len(all_sources)} sources...")
+        prev_cat = ""
         for category, url in all_sources:
+            if category != prev_cat:
+                print(f"[*] Polling Category: {category}...")
+                prev_cat = category
+            
             try:
                 # Use browser-like headers and ignore SSL errors for sensitive gov sites
                 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}

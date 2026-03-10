@@ -16,8 +16,8 @@ from geopy.exc import GeocoderTimedOut
 load_dotenv()
 
 # --- CONFIGURATION ---
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
 # Middle East Bounding Box (Strict: Excludes Africa completely)
 BOUNDS = {

@@ -127,10 +127,11 @@ const MapView = ({ alerts }) => {
                   >
                     {alert.headline} 🔗
                   </a>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
                     <span>{getHostname(alert.url)}</span>
-                    {alert.deaths > 0 && <span className="text-red glow-red">💀 {alert.deaths}</span>}
+                    <span>{new Date(alert.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
+                  {alert.deaths > 0 && <div className="text-red glow-red" style={{ fontSize: '0.7rem', fontWeight: 'bold' }}>💀 {alert.deaths} FATALITIES</div>}
                 </div>
               </Popup>
             </Marker>

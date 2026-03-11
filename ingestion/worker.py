@@ -412,7 +412,7 @@ def main():
         return
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    print("--- OSINT WORKER STARTED (POLLING EVERY 2 MINS) ---")
+    print("--- OSINT WORKER STARTED (POLLING EVERY 1 MINS) ---")
     
     # Heartbeat configuration
     last_heartbeat = time.time()
@@ -431,8 +431,8 @@ def main():
             time.sleep(30)
             continue
 
-        print("--- POLL CYCLE COMPLETE. SLEEPING 2 MINS ---")
-        time.sleep(120)
+        print("--- POLL CYCLE COMPLETE. SLEEPING 1 MINS ---")
+        time.sleep(60)
 
 
 @retry(

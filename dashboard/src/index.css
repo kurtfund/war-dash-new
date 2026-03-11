@@ -2,16 +2,17 @@
 
 :root {
   /* Core Palette */
-  --color-obsidian: #000000;
-  --color-bg-panel: rgba(10, 14, 18, 0.85); /* Slightly varied black for depth */
-  --color-cyan: #00F2FF;
-  --color-cyan-dim: rgba(0, 242, 255, 0.2);
+  --color-obsidian: #050709;
+  --color-bg-panel: rgba(5, 7, 9, 0.85);
+  --color-cyan: #00E5FF;
+  --color-cyan-dim: rgba(0, 229, 255, 0.2);
+  --color-green-teal: #00A86B; /* Used for static headers like LIVE FEED */
   --color-red: #FF0033;
   --color-red-dim: rgba(255, 0, 51, 0.2);
-  --color-yellow: #FFD500;
-  --color-yellow-dim: rgba(255, 213, 0, 0.2);
+  --color-yellow: #D4AF37;
+  --color-yellow-dim: rgba(212, 175, 55, 0.2);
   --color-text-main: #E0E0E0;
-  --color-text-muted: #808B96;
+  --color-text-muted: #666666;
   
   /* Topography & Map UI */
   --color-map-overlay: rgba(0, 0, 0, 0.3); /* Dims CARTO tiles further if needed */

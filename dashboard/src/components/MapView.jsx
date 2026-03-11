@@ -22,43 +22,34 @@ const MapResizer = () => {
 };
 
 const getCustomIcon = (type) => {
-  let color = '#00F2FF'; // Cyan default
-  let iconHtml = '🔘'; 
-  
-  if (type === 'MISSILE' || type === 'AIRSTRIKE' || type === 'Casualty Report') {
-    color = '#FF0033';
-    iconHtml = type === 'MISSILE' ? '🚀' : type === 'AIRSTRIKE' ? '💥' : '💀';
-  } else if (type === 'Disaster' || type === 'PROTEST') {
-    color = '#FFD500';
-    iconHtml = type === 'PROTEST' ? '🚩' : '⚠️';
-  } else if (type === 'NAVAL') {
-    iconHtml = '⚓';
-  } else if (type === 'DRONE') {
-    iconHtml = '🛩️';
-    color = '#FF0033';
-  }
+  let color = '#FF0033'; // Default to reference red
 
   return L.divIcon({
     html: `
       <div style="
-        background: rgba(10, 14, 18, 0.9);
-        border: 2px solid ${color};
-        box-shadow: 0 0 10px ${color};
+        background: rgba(255, 0, 51, 0.15);
+        border: 1px solid rgba(255, 0, 51, 0.8);
+        box-shadow: 0 0 15px rgba(255, 0, 51, 0.6);
         border-radius: 50%;
-        width: 32px;
-        height: 32px;
+        width: 100%;
+        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
       ">
-        ${iconHtml}
+        <div style="
+          background: #FF0033;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          box-shadow: 0 0 10px #FF0033;
+        "></div>
       </div>
     `,
     className: 'custom-leaflet-icon',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -16]
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -14]
   });
 };
 

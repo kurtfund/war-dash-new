@@ -118,12 +118,20 @@ def get_source_confidence(url: str) -> float:
             return score
     return 0.60 
 
-def get_clean_source_name(url: str) -> str:
+def get_clean_source_name(url: str, headline: str = "") -> str:
     """
     Maps URLs to human-readable names.
     Specifically solves for Google News RSS wrappers like WAM.
     """
     url_lower = url.lower()
+
+    # 0. Google News Source Extraction
+    # Google News RSS titles usually end with " - Publisher Name"
+    if "news.google.com" in url_lower and headline:
+        if " - " in headline:
+            parts = headline.split(" - ")
+            if len(parts) > 1:
+                return parts[-1].strip()
     
     # 1. Government & Military
     if "idf.il" in url_lower: return "IDF (Israel Defense Forces)"
@@ -170,31 +178,53 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     Returns (should_reject, reason, event_type, country)
     """
     text = headline.lower()
+    # Theater bypass set (allow banned figures/regions if these theater keywords are present)
+    theater_bypass = [
+        "iran", "israel", "hezbollah", "houthi", "hamas", "gaza", "beirut", "tehran", "tel aviv", "jerusalem",
+        "syria", "iraq", "yemen", "lebanon", "damascus", "baghdad", "sanaa"
+    ]
+    has_theater_context = any(tk in text for tk in theater_bypass)
+
+    # 1. Banned Keywords (Hard Reject with Smart Bypass)
+    # Banned keywords that can be bypassed by theater context (e.g. Putin + Iran)
+    geopolitical_banned = ["putin", "trump", "zelensky", "zelenskyy", "kremlin", "nato"]
     
-    # 1. Banned Keywords (Hard Reject)
     for word in BANNED_KEYWORDS:
         word_clean = word.strip().lower()
         if not word_clean: continue
         pattern = r'\b' + re.escape(word_clean) + r'\b'
         if re.search(pattern, text):
+            # Bypass logic for geopolitical names
+            if word_clean in geopolitical_banned and has_theater_context:
+                print(f" [BYPASS] Allowing banned entity '{word_clean}' due to theater context.")
+                continue
             return True, f"Banned Keyword ({word_clean})", "Other", "Unknown"
             
-    # 2. Excluded Regions (Theater Hardening)
+    # 2. Excluded Regions (Theater Hardening with Smart Bypass)
     EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
+    # Regions that can be bypassed by theater context
+    bypassable_regions = ["russia", "belarus", "ukraine", "moscow", "kiev", "kyiv"]
+
     for region in EXCLUDED_REGIONS:
         region_clean = region.strip().lower()
         if not region_clean: continue
         pattern = r'\b' + re.escape(region_clean) + r'\b'
         if re.search(pattern, text):
+            # Bypass logic for specific regions
+            if region_clean in bypassable_regions and has_theater_context:
+                print(f" [BYPASS] Allowing excluded region '{region_clean}' due to theater context.")
+                continue
             return True, f"Excluded Region ({region_clean})", "Other", "Unknown"
 
     # 3. Text Classification
     event_type, country = classify_text(headline)
     
-    # 4. Strict Theatre Check
-    if any(k in text for k in ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "russia", "moscow", "kiev"]):
-         return True, "Non-Theatre Geography", "Other", "Unknown"
-
+    # 4. Strict Theatre Check (Catch-all for explicit theater bypass)
+    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "russia", "moscow", "kiev"]
+    for k in catchall_geo:
+        if k in text:
+            if not has_theater_context:
+                return True, f"Non-Theatre Geography ({k})", "Other", "Unknown"
     # 5. Strict Conflict Keyword Enforcement
     is_official_source = any(k in url.lower() for k in ["idf.il", "centcom.mil", "mofaic.gov.ae", "wam.ae/en/rss"])
     has_conflict_keyword = any(kw.lower() in text for kw in KEYWORDS.get("CONFLICT_KEYWORDS", []))
@@ -409,7 +439,7 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     
     alert_payload = {
         "headline": headline,
-        "source": get_clean_source_name(url),
+        "source": get_clean_source_name(url, headline),
         "url": url,
         "event_type": event_type,
         "country": country,

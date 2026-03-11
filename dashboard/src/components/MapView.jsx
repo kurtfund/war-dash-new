@@ -62,6 +62,9 @@ const MapView = ({ alerts }) => {
   const center = [31.5, 45.0];
   const zoom = 5;
 
+  // Determine if it's a mobile touch device to disable map panning and allow page scroll
+  const isMobile = window.innerWidth <= 1024;
+
   return (
     <div className="map-container">
       <MapContainer 
@@ -69,6 +72,9 @@ const MapView = ({ alerts }) => {
         zoom={zoom} 
         style={{ width: '100%', height: '100%' }}
         zoomControl={false}
+        scrollWheelZoom={!isMobile}
+        dragging={!isMobile}
+        tap={!isMobile}
       >
         <MapResizer />
         <TileLayer

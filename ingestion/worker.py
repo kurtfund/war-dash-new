@@ -221,19 +221,25 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
     if not headline:
         return False
         
-    thirty_mins_ago = (datetime.now() - timedelta(minutes=30)).isoformat()
+    # Synchronization Fix: Use utcnow() to match Supabase storage
+    now = datetime.utcnow()
+    twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
+    thirty_mins_ago = (now - timedelta(minutes=30)).isoformat()
+
     try:
-        # Check 1: Exact Headline Match (Most robust)
+        # Check 1: Exact Headline Match (Window: 24 Hours)
+        # Prevents identical news repeating throughout the day
         query_headline = supabase.table("security_alerts") \
             .select("id") \
             .eq("headline", headline) \
-            .gte("created_at", thirty_mins_ago) \
+            .gte("created_at", twenty_four_hours_ago) \
             .execute()
         
         if len(query_headline.data) > 0:
             return True
 
-        # Check 2: Event + Location Match (Fallback for slight headline variations)
+        # Check 2: Event + Location Match (Window: 30 Mins)
+        # Fallback for slight headline variations of the same event
         if alert.get("location_name") and alert.get("event_type"):
             query_event = supabase.table("security_alerts") \
                 .select("id") \

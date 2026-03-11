@@ -5,9 +5,8 @@
     },
     "CONFLICT_KEYWORDS": [
         "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
-        "fighter", "drone", "uav", "navy", "warship", "destroyer", "casualty",
-        "killed", "death", "fatality", "dead", "injured", "intercepted", "shot down",
-        "flight track", "defense", "security", "forces", "conflict", "clash", "operation"
+        "fighter", "drone", "uav", "navy", "warship", "destroyer", "intercepted", "shot down",
+        "conflict", "clash", "operation", "battle", "ambush", "volleys", "sirens", "shelled"
     ],
     "BANNED_KEYWORDS": [
         "restaurant", "dining", "menu", "shopping", "festival", "holiday", 
@@ -18,7 +17,10 @@
         "franchisee", "franchise", "expansion", "best spots", "spots to spot", "fireworks",
         "concert", "showbiz", "celebrity", "movie", "film", "series",
         "ramadan crescent", "cannon", "ramadan locations", "national day", "celebration",
-        "parking", "traffic", "weather forecast", "temperature", "gold rate"
+        "parking", "traffic", "weather forecast", "temperature", "gold rate",
+        "pope", "vatican", "laments", "condemns", "calls for", "demands", "hegseth", "election",
+        "democrats", "republicans", "biden", "trump", "swiss ", "switzerland", "bus fire", "italy",
+        "european union", "protest in london", "protest in nyc", "domestic policy", "stock market"
     ],
     "event_types": {
         "AIRSTRIKE": ["airstrike", "air strike", "fighter jet", "bombing", "bombed", "iaf strike"],

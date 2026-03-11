@@ -283,20 +283,30 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     is_war_themed = any(keyword in lower_headline for keyword in CONFLICT_KEYWORDS)
     is_banned = any(bk in lower_headline for bk in BANNED_KEYWORDS)
     
+    # AGGRESSIVE: If it contains banned words (Pope, Swiss, Condemns, etc.) -> DROP IT
     if is_banned:
-        log_rejection(headline, "Banned Content")
+        log_rejection(headline, "Banned Content/Distractor")
         return
     
     # 3. Category Trust / Intelligence Logic
     is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
     event_type, country = classify_text(headline)
     
+    # STRICTURE: If it's a "Political" keyword check (Condemns, accountability, laments etc.) 
+    # and has NO kinetic payload (Airstrike, Missile etc.), then DROP it.
+    political_noise = ["demands", "accountability", "laments", "condemns", "blames", "accuses", "calls for"]
+    is_political = any(p in lower_headline for p in political_noise)
+    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
+    
+    if is_political and not is_kinetic:
+        log_rejection(headline, "Political Noise (No Kinetic Event)")
+        return
+
     is_flight = "flight track" in lower_headline
     
-    # CRITICAL: Even if it's a regional hub, if it's NOT war-themed and NOT a disaster/flight/High-Auth,
-    # we block it to prevent Little Caesars/Tourism noise.
+    # CRITICAL: If it's NOT war-themed and NOT a disaster/flight/High-Auth, block it.
     if (not is_war_themed and not is_flight and not is_high_authority and 
-        event_type not in ["MISSILE", "AIRSTRIKE", "NAVAL"]):
+        not is_kinetic):
         if event_type != "Disaster":
              log_rejection(headline, "Irrelevant Noise")
              return

@@ -149,3 +149,36 @@ body {
   color: var(--color-text-main);
   box-shadow: 0 0 15px var(--color-cyan-dim);
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  body {
+    overflow-y: auto; /* allow full page scrolling on mobile */
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .dashboard-panel {
+    border-right: none;
+    border-bottom: 1px solid #1A1A1A;
+    width: 100%;
+    min-height: 400px; /* Base height for feed and pulse */
+  }
+
+  .map-container {
+    min-height: 60vh; /* Give map significant real estate */
+  }
+
+  .header-bar {
+    flex-direction: column;
+    height: auto;
+    padding: 16px;
+    text-align: center;
+    gap: 12px;
+  }
+}

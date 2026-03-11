@@ -118,6 +118,50 @@ def get_source_confidence(url: str) -> float:
             return score
     return 0.60 
 
+def get_clean_source_name(url: str) -> str:
+    """
+    Maps URLs to human-readable names.
+    Specifically solves for Google News RSS wrappers like WAM.
+    """
+    url_lower = url.lower()
+    
+    # 1. Government & Military
+    if "idf.il" in url_lower: return "IDF (Israel Defense Forces)"
+    if "centcom.mil" in url_lower: return "US CENTCOM"
+    if "mod.gov.sa" in url_lower: return "Saudi Ministry of Defense"
+    if "mofaic.gov.ae" in url_lower: return "UAE MOFA"
+    
+    # 2. WAM Specific (Google News Wrapper)
+    if "source:emirates_news_agency" in url_lower or "wam.ae" in url_lower:
+        return "WAM (Emirates News Agency)"
+    
+    # 3. Major Institutional
+    if "aljazeera" in url_lower: return "Al Jazeera"
+    if "timesofisrael" in url_lower: return "Times of Israel"
+    if "haaretz" in url_lower: return "Haaretz"
+    if "jpost" in url_lower: return "Jerusalem Post"
+    if "thecradle" in url_lower: return "The Cradle"
+    if "middleeasteye" in url_lower: return "Middle East Eye"
+    if "aa.com.tr" in url_lower: return "Anadolu Agency"
+    if "saudigazette" in url_lower: return "Saudi Gazette"
+    if "dailysabah" in url_lower: return "Daily Sabah"
+    if "rt.com" in url_lower: return "RT News"
+    if "bbc" in url_lower: return "BBC News"
+    if "nytimes" in url_lower: return "New York Times"
+    
+    # 4. OSINT
+    if "liveuamap" in url_lower: return "LiveUAMap (OSINT)"
+    
+    # 5. APIs
+    if "earthquake.usgs.gov" in url_lower: return "USGS Earthquakes"
+    if "gdacs.org" in url_lower: return "GDACS Disaster Alerts"
+    if "opensky-network" in url_lower: return "OpenSky Network"
+
+    # Fallback to domain
+    from urllib.parse import urlparse
+    domain = urlparse(url).netloc
+    return domain.replace("www.", "")
+
 def extract_casualties(text: str) -> int:
     patterns = [
         r'(\d+)\s+(?:killed|dead|fatalities|casualties|deadly)',
@@ -366,7 +410,7 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     
     alert_payload = {
         "headline": headline,
-        "source": source,
+        "source": get_clean_source_name(url),
         "url": url,
         "event_type": event_type,
         "country": country,

@@ -5,13 +5,11 @@
             "https://thecradle.co/feed",
             "https://www.middleeasteye.net/rss",
             "https://www.timesofisrael.com/feed/",
-            "https://www.haaretz.com/cmlink/1.640383",
-            "https://www.palestinechronicle.com/feed/",
-            "https://www.dailysabah.com/rss",
-            "https://www.al-monitor.com/rss",
-            "https://www.jpost.com/Rss",
+            "https://news.google.com/rss/search?q=source:The_Jerusalem_Post&hl=en-IL&gl=IL&ceid=IL:en",
+            "https://news.google.com/rss/search?q=source:Haaretz&hl=en-IL&gl=IL&ceid=IL:en",
+            "https://www.dailysabah.com/rss/world.xml",
             "https://www.aa.com.tr/en/rss",
-            "https://www.saudigazette.com.sa/rss",
+            "https://news.google.com/rss/search?q=source:Saudi_Gazette&hl=en-SA&gl=SA&ceid=SA:en",
             "https://www.rt.com/rss/news/",
             "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
             "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/middleeast/rss.xml",
@@ -19,11 +17,11 @@
             "https://news.google.com/rss/search?q=UAE+Dubai+location:UAE&hl=en-AE&gl=AE&ceid=AE:en"
         ],
         "Military/Gov": [
-            "https://www.idf.il/en/rss",
-            "https://www.mofaic.gov.ae/rss"
+            "https://news.google.com/rss/search?q=source:Israel_Defense_Forces&hl=en-IL&gl=IL&ceid=IL:en",
+            "https://news.google.com/rss/search?q=UAE+Ministry+of+Foreign+Affairs&hl=en-AE&gl=AE&ceid=AE:en"
         ],
         "OSINT": [
-            "https://liveuamap.com/rss?region=middleeast",
+            "https://news.google.com/rss/search?q=source:Liveuamap&hl=en-US&gl=US&ceid=US:en",
             "https://thecradle.co/feed"
         ]
     },

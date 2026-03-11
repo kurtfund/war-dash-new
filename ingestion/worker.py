@@ -49,7 +49,7 @@ def load_config(filename, default):
         print(f"Error loading {filename}: {e}")
     return default
 
-KEYWORDS_CONFIG = load_config("keywords.json", {"GEOGRAPHIC_BOUNDS": {"lat": [16, 45], "lon": [34, 65]}, "CONFLICT_KEYWORDS": [], "BANNED_KEYWORDS": []})
+KEYWORDS_CONFIG = load_config("keywords.json", {"GEOGRAPHIC_BOUNDS": {"lat": [16, 45], "lon": [34, 65]}, "CONFLICT_KEYWORDS": [], "BANNED_KEYWORDS": [], "event_types": {}, "countries": {}})
 SOURCES_CONFIG = load_config("sources.json", {"RSS_SOURCES": {}, "API_SOURCES": {}})
 
 BOUNDS = KEYWORDS_CONFIG.get("GEOGRAPHIC_BOUNDS", {"lat": [16, 45], "lon": [34, 65]})
@@ -57,6 +57,7 @@ RSS_SOURCES = SOURCES_CONFIG.get("RSS_SOURCES", {})
 API_SOURCES = SOURCES_CONFIG.get("API_SOURCES", {})
 CONFLICT_KEYWORDS = KEYWORDS_CONFIG.get("CONFLICT_KEYWORDS", [])
 BANNED_KEYWORDS = KEYWORDS_CONFIG.get("BANNED_KEYWORDS", [])
+KEYWORDS = KEYWORDS_CONFIG # For backward compatibility in classify_text
 
 # Source Reliability Scoring
 SOURCE_RELIABILITY = {
@@ -483,8 +484,8 @@ def run_poll_cycle(supabase: Client):
         except Exception as e:
             print(f"Error polling OpenSky: {e}")
 
-        print("--- POLL CYCLE COMPLETE. SLEEPING 5 MINS ---")
-        time.sleep(300)
+        print("--- POLL CYCLE COMPLETE. SLEEPING 2 MINS ---")
+        time.sleep(120)
 
 if __name__ == "__main__":
     main()

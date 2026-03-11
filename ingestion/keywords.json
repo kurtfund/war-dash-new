@@ -1,4 +1,8 @@
 {
+    "GEOGRAPHIC_BOUNDS": {
+        "lat": [16, 45],
+        "lon": [34, 65]
+    },
     "CONFLICT_KEYWORDS": [
         "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
         "fighter", "drone", "uav", "navy", "warship", "destroyer", "casualty",
@@ -16,8 +20,28 @@
         "ramadan crescent", "cannon", "ramadan locations", "national day", "celebration",
         "parking", "traffic", "weather forecast", "temperature", "gold rate"
     ],
-    "GEOGRAPHIC_BOUNDS": {
-        "lat": [16, 45],
-        "lon": [34, 65]
+    "event_types": {
+        "AIRSTRIKE": ["airstrike", "air strike", "fighter jet", "bombing", "bombed", "iaf strike"],
+        "MISSILE": ["missile", "rocket", "ballistic", "interceptor", "intercepted", "iron dome", "hetz"],
+        "NAVAL": ["ship", "vessel", "navy", "destroyer", "frigate", "red sea", "maritime", "chokepoint", "houthi"],
+        "DRONE": ["drone", "uav", "kamikaze", "loitering ammunition", "shahed"],
+        "ARTILLERY": ["shelling", "artillery", "mortar", "howitzer"],
+        "GROUND OPS": ["clash", "ground operation", "infantry", "tank", "armored", "idf forces", "hezbollah fighters"],
+        "CASUALTIES": ["casualty", "killed", "death", "death toll", "martyred"],
+        "CYBER": ["cyber", "hacking", "stolen data", "blackout"],
+        "DIPLOMACY": ["summit", "ceasefire", "negotiation", "peace talks", "envoy", "ambassador"]
+    },
+    "countries": {
+        "Israel": ["israel", "idf", "tel aviv", "jerusalem", "haifa", "eilat", "ben gurion"],
+        "Lebanon": ["lebanon", "beirut", "hezbollah", "tyre", "sidon", "baalbek"],
+        "Iran": ["iran", "tehran", "irgc", "isfahan", "shiraz", "khomeini"],
+        "Yemen": ["yemen", "houthi", "sanaa", "hodeidah", "aden"],
+        "Iraq": ["iraq", "baghdad", "erbil", "basra"],
+        "Syria": ["syria", "damascus", "aleppo", "latakia"],
+        "Gaza": ["gaza", "hamas", "rafah", "khan yunis"],
+        "UK": ["uk ", "british", "royal navy", "london"],
+        "USA": ["usa", "us ", "america", "centcom", "pentagon", "white house"],
+        "UAE": ["uae", "dubai", "abu dhabi", "emirates"],
+        "Saudi": ["saudi", "riyadh", "jeddah", "neom"]
     }
 }

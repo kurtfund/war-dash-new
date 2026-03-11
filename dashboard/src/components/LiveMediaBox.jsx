@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Media Sources (Mixed Platforms to bypass blocks)
 const CHANNELS = [
-  { name: 'AL JAZEERA', id: 'x2m8jcv', type: 'dailymotion' },
-  { name: 'SKY NEWS', id: 'McrHwAMtJj4', type: 'youtube' },
-  { name: 'CNN NEWS18', id: 'UC8X6_v8-1GIP9B3T-Lh-45Q', type: 'youtube_channel' },
+  { name: 'AL JAZEERA', id: 'gCNeDWCI0vo', type: 'youtube' },
+  { name: 'SKY NEWS ARABIC', id: 'bNyUyrR0PHo', type: 'youtube' },
+  { name: 'ABC NEWS', id: '_03-Efdda7s', type: 'youtube' },
+  { name: 'BLOOMBERG', id: 'iEpJwprxDdk', type: 'youtube' },
   { name: 'FOX (LNOW)', id: 'sIv6YmBeO3Q', type: 'youtube' },
-  { name: 'DW NEWS', id: 'LuKwFajn37U', type: 'youtube' },
-  { name: 'ASSOCIATED PRESS', id: 'uw_liwLvfVg', type: 'youtube' }
+  { name: 'DW NEWS', id: 'LuKwFajn37U', type: 'youtube' }
 ];
 
 const LiveMediaBox = () => {

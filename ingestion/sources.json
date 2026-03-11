@@ -1,0 +1,66 @@
+{
+    "RSS_SOURCES": {
+        "News": [
+            "https://www.aljazeera.com/xml/rss/all.xml",
+            "https://www.reuters.com/rssFeed/middleEast",
+            "https://www.middleeasteye.net/rss",
+            "https://www.timesofisrael.com/feed",
+            "https://www.arabnews.com/rss",
+            "https://www.haaretz.com/cmlink/1.640383",
+            "https://www.thenationalnews.com/feeds/all-news.xml",
+            "https://www.dailysabah.com/rss",
+            "https://gulfnews.com/rss",
+            "https://jordantimes.com/rss",
+            "https://www.egypttoday.com/rss",
+            "https://www.al-monitor.com/rss",
+            "https://english.aawsat.com/rss.xml",
+            "https://www.jpost.com/Rss",
+            "https://www.aa.com.tr/en/rss",
+            "https://www.kuwaittimes.com/feed/",
+            "https://www.saudigazette.com.sa/rss",
+            "https://www.qatar-tribune.com/feed/",
+            "http://www.bna.bh/rss",
+            "https://www.rt.com/rss/news/",
+            "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
+            "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/middleeast/rss.xml",
+            "https://www.wam.ae/en/rss/all",
+            "https://news.google.com/rss/search?q=UAE+Dubai+location:UAE&hl=en-AE&gl=AE&ceid=AE:en",
+            "https://www.dailystar.com.lb/rss",
+            "https://asharq.com/rss/"
+        ],
+        "Military/Gov": [
+            "https://www.idf.il/en/rss",
+            "https://www.centcom.mil/News/News-RSS/",
+            "https://www.mdn.ir/rss.xml",
+            "https://www.mod.gov.sa/en/rss",
+            "https://www.mofaic.gov.ae/rss",
+            "https://www.tsk.tr/Feed",
+            "http://www.jaf.mil.jo/rss",
+            "http://www.mod.gov.om/rss",
+            "http://www.palestine.ps/rss",
+            "http://www.mod.gov.eg/rss",
+            "https://www.mod.gov.qa/rss",
+            "http://www.mod.gov.kw/rss",
+            "http://www.mod.gov.bh/rss",
+            "http://www.lebmod.gov.lb/rss",
+            "http://www.mod.gov.ye/rss",
+            "http://www.mod.mil.iq/rss"
+        ],
+        "OSINT": [
+            "https://liveuamap.com/rss?region=middleeast",
+            "http://syriahr.com/en/rss",
+            "http://iraqsecuritywatch.com/rss",
+            "http://yemenconflict.net/rss"
+        ]
+    },
+    "API_SOURCES": {
+        "Disaster": [
+            {"name": "USGS Earthquakes", "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson", "type": "geojson_earthquake"},
+            {"name": "NASA FIRMS Fires", "url": "https://firms.modaps.eosdis.nasa.gov/active_fire/geojson/z/1", "type": "geojson_fire"},
+            {"name": "GDACS Disasters", "url": "https://www.gdacs.org/gdacsapi/api/events/geteventlist.geojson", "type": "geojson_generic"}
+        ],
+        "Aircraft": [
+            {"name": "OpenSky Network", "url": "https://opensky-network.org/api/states/all", "type": "opensky"}
+        ]
+    }
+}

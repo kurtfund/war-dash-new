@@ -1,29 +1,23 @@
 {
-  "event_types": {
-    "MISSILE": ["missile", "rocket", "ballistic", "projectile", "iron dome", "intercepted", "sam"],
-    "AIRSTRIKE": ["airstrike", "air strike", "bombing", "fighter jet", "raid", "precision strike", "shelling"],
-    "DRONE": ["drone", "uav", "kamikaze drone", "loitering munition", "quadcopter"],
-    "NAVAL": ["warship", "destroyer", "carrier", "fleet", "naval", "patrol boat", "frigate", "vessel"],
-    "PROTEST": ["protest", "demonstration", "riot", "crowd", "rally", "uprising"],
-    "Military Activity": ["clashes", "gunfire", "infantry", "tank", "armored", "convoy", "skirmish", "raid"],
-    "Disaster": ["earthquake", "flood", "fire", "explosion", "collapse", "emergency"],
-    "Casualty Report": ["killed", "dead", "fatalities", "casualties", "wounded", "injured"]
-  },
-  "countries": {
-    "Israel": ["israel", "tel aviv", "haifa", "jerusalem", "ashdod", "beersheba"],
-    "Palestine": ["gaza", "west bank", "ramallah", "rafah", "khan yunis", "deir al-balah"],
-    "Lebanon": ["lebanon", "beirut", "tyre", "sidon", "hezbollah", "nabatieh"],
-    "Syria": ["syria", "damascus", "aleppo", "idlib", "homs", "hama"],
-    "Yemen": ["yemen", "sanaa", "hodeidah", "aden", "houthis", "taiz"],
-    "Iran": ["iran", "tehran", "isfahan", "shiraz", "tabriz"],
-    "Iraq": ["iraq", "baghdad", "erbil", "basra", "mosul"],
-    "UAE": ["uae", "dubai", "abu dhabi", "sharjah", "ajman", "rak"],
-    "Saudi Arabia": ["saudi", "riyadh", "jeddah", "dammam", "khobar"],
-    "Jordan": ["jordan", "amman", "aqaba", "zarqa", "irbid"],
-    "Qatar": ["qatar", "doha", "lusail", "al khor"],
-    "Kuwait": ["kuwait city", "salmiya", "jahra"],
-    "Bahrain": ["manama", "muharraq", "riffa"],
-    "Oman": ["muscat", "salalah", "sohar", "sur"],
-    "Egypt": ["cairo", "alexandria", "sinai", "suez", "port said"]
-  }
+    "CONFLICT_KEYWORDS": [
+        "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
+        "fighter", "drone", "uav", "navy", "warship", "destroyer", "casualty",
+        "killed", "death", "fatality", "dead", "injured", "intercepted", "shot down",
+        "flight track", "defense", "security", "forces", "conflict", "clash", "operation"
+    ],
+    "BANNED_KEYWORDS": [
+        "restaurant", "dining", "menu", "shopping", "festival", "holiday", 
+        "visit", "tourist", "resort", "hotel", "spa", "exclusive", "fashion",
+        "little caesars", "pizza", "burger", "cuisine", "gourmet", "luxury",
+        "lifestyle", "entertainment", "culture", "sport", "football", "cricket",
+        "vacation", "brunch", "dinner", "lunch", "breakfast", "recipe",
+        "franchisee", "franchise", "expansion", "best spots", "spots to spot", "fireworks",
+        "concert", "showbiz", "celebrity", "movie", "film", "series",
+        "ramadan crescent", "cannon", "ramadan locations", "national day", "celebration",
+        "parking", "traffic", "weather forecast", "temperature", "gold rate"
+    ],
+    "GEOGRAPHIC_BOUNDS": {
+        "lat": [16, 45],
+        "lon": [34, 65]
+    }
 }

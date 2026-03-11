@@ -26,77 +26,43 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
-# Middle East Bounding Box (Strict: Excludes Africa completely)
-BOUNDS = {
-    "lat": (16, 45), # Excludes Sudan (Khartoum is ~15.5)
-    "lon": (34, 65)  # Excludes Libya/Egypt Desert
-}
+# --- LOAD RESOURCES ---
+try:
+    nlp = spacy.load("en_core_web_sm")
+except:
+    print("Warning: spaCy model not found. Attempting to download...")
+    try:
+        os.system("python -m spacy download en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm")
+    except:
+        nlp = None
 
-# --- DATA SOURCES ---
-RSS_SOURCES = {
-    "News": [
-        "https://www.aljazeera.com/xml/rss/all.xml",
-        "https://www.reuters.com/rssFeed/middleEast",
-        "https://www.middleeasteye.net/rss",
-        "https://www.timesofisrael.com/feed",
-        "https://www.arabnews.com/rss",
-        "https://www.haaretz.com/cmlink/1.640383",
-        "https://www.thenationalnews.com/feeds/all-news.xml",
-        "https://www.dailysabah.com/rss",
-        "https://gulfnews.com/rss",
-        "https://jordantimes.com/rss",
-        "https://www.egypttoday.com/rss",
-        "https://www.al-monitor.com/rss",
-        "https://english.aawsat.com/rss.xml",
-        "https://www.jpost.com/Rss",
-        "https://www.aa.com.tr/en/rss",
-        "https://www.kuwaittimes.com/feed/",
-        "https://www.saudigazette.com.sa/rss",
-        "https://www.qatar-tribune.com/feed/",
-        "http://www.bna.bh/rss",
-        "https://www.rt.com/rss/news/",
-        "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
-        "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/middleeast/rss.xml",
-        "https://www.wam.ae/en/rss/all",
-        "https://news.google.com/rss/search?q=UAE+Dubai+location:UAE&hl=en-AE&gl=AE&ceid=AE:en",
-        "https://www.dailystar.com.lb/rss",
-        "https://asharq.com/rss/"
-    ],
-    "Military/Gov": [
-        "https://www.idf.il/en/rss",
-        "https://www.centcom.mil/News/News-RSS/",
-        "https://www.mdn.ir/rss.xml",
-        "https://www.mod.gov.sa/en/rss",
-        "https://www.mofaic.gov.ae/rss",
-        "https://www.tsk.tr/Feed",
-        "http://www.jaf.mil.jo/rss",
-        "http://www.mod.gov.om/rss",
-        "http://www.palestine.ps/rss",
-        "http://www.mod.gov.eg/rss",
-        "https://www.mod.gov.qa/rss",
-        "http://www.mod.gov.kw/rss",
-        "http://www.mod.gov.bh/rss",
-        "http://www.lebmod.gov.lb/rss",
-        "http://www.mod.gov.ye/rss",
-        "http://www.mod.mil.iq/rss"
-    ],
-    "OSINT": [
-        "https://liveuamap.com/rss?region=middleeast",
-        "http://syriahr.com/en/rss",
-        "http://iraqsecuritywatch.com/rss",
-        "http://yemenconflict.net/rss"
-    ]
-}
+# Load Dynamic Configurations
+CONFIG_PATH = os.path.dirname(__file__)
+def load_config(filename, default):
+    path = os.path.join(CONFIG_PATH, filename)
+    try:
+        if os.path.exists(path):
+            with open(path, "r") as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"Error loading {filename}: {e}")
+    return default
 
-API_SOURCES = {
-    "Disaster": [
-        {"name": "USGS Earthquakes", "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson", "type": "geojson_earthquake"},
-        {"name": "NASA FIRMS Fires", "url": "https://firms.modaps.eosdis.nasa.gov/active_fire/geojson/z/1", "type": "geojson_fire"},
-        {"name": "GDACS Disasters", "url": "https://www.gdacs.org/gdacsapi/api/events/geteventlist.geojson", "type": "geojson_generic"}
-    ],
-    "Aircraft": [
-        {"name": "OpenSky Network", "url": "https://opensky-network.org/api/states/all", "type": "opensky"}
-    ]
+KEYWORDS_CONFIG = load_config("keywords.json", {"GEOGRAPHIC_BOUNDS": {"lat": [16, 45], "lon": [34, 65]}, "CONFLICT_KEYWORDS": [], "BANNED_KEYWORDS": []})
+SOURCES_CONFIG = load_config("sources.json", {"RSS_SOURCES": {}, "API_SOURCES": {}})
+
+BOUNDS = KEYWORDS_CONFIG.get("GEOGRAPHIC_BOUNDS", {"lat": [16, 45], "lon": [34, 65]})
+RSS_SOURCES = SOURCES_CONFIG.get("RSS_SOURCES", {})
+API_SOURCES = SOURCES_CONFIG.get("API_SOURCES", {})
+CONFLICT_KEYWORDS = KEYWORDS_CONFIG.get("CONFLICT_KEYWORDS", [])
+BANNED_KEYWORDS = KEYWORDS_CONFIG.get("BANNED_KEYWORDS", [])
+
+# Source Reliability Scoring
+SOURCE_RELIABILITY = {
+    "gov": 0.95, "mil": 0.95, "reuters": 0.90, "ap": 0.90,
+    "aljazeera": 0.85, "haaretz": 0.85, "jpost": 0.85, "timesofisrael": 0.85,
+    "middleeasteye": 0.75, "liveuamap": 0.70, "twitter": 0.40, "x.com": 0.40
 }
 
 # Source Reliability Scoring
@@ -268,25 +234,8 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
 from deep_translator import GoogleTranslator
 
 # Strict conflict keywords for "War-Themed" feed
-CONFLICT_KEYWORDS = [
-    "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
-    "fighter", "drone", "uav", "navy", "warship", "destroyer", "casualty",
-    "killed", "death", "fatality", "dead", "injured", "intercepted", "shot down",
-    "flight track", "defense", "security", "forces", "conflict", "clash", "operation",
-    "economic", "trade", "investment", "financial", "growth"
-]
-
-BANNED_KEYWORDS = [
-    "restaurant", "dining", "menu", "shopping", "festival", "holiday", 
-    "visit", "tourist", "resort", "hotel", "spa", "exclusive", "fashion",
-    "little caesars", "pizza", "burger", "cuisine", "gourmet", "luxury",
-    "lifestyle", "entertainment", "culture", "sport", "football", "cricket",
-    "vacation", "brunch", "dinner", "lunch", "breakfast", "recipe",
-    "franchisee", "franchise", "expansion", "best spots", "spots to spot", "fireworks",
-    "concert", "showbiz", "celebrity", "movie", "film", "series",
-    "ramadan crescent", "cannon", "ramadan locations", "national day", "celebration",
-    "parking", "traffic", "weather forecast", "temperature", "gold rate"
-]
+def log_rejection(headline: str, reason: str):
+    print(f"    [REJECTED] {reason} | {headline[:50]}...")
 
 def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
     # 1. Translation Layer
@@ -304,30 +253,23 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     lower_headline = headline.lower()
     is_war_themed = any(keyword in lower_headline for keyword in CONFLICT_KEYWORDS)
     is_banned = any(bk in lower_headline for bk in BANNED_KEYWORDS)
+    
     if is_banned:
-        print(f" [FILTERED (Banned Content)] {headline[:60]}...")
+        log_rejection(headline, "Banned Content")
         return
     
     # 3. Category Trust / Intelligence Logic
-    # High-authority sources (Military/Gov/OSINT) are ALWAYS war-themed/contextual
-    # so we bypass the strict keyword check for them.
     is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
-    
     event_type, country = classify_text(headline)
     
-    # Priority Bypass: If it mentions key regional hubs (Dubai, Riyadh, etc.) or is a Flight/Disaster
-    # we allow it even if not strictly 'kinetic'
-    is_regional_hub = any(hub in lower_headline for hub in ["dubai", "uae", "emirates", "abu dhabi", "saudi", "riyadh", "qatar", "doha", "manama"])
-    is_from_uae_source = any(site in source.lower() for site in ["wam.ae", "gulfnews.com", "thenationalnews.com", "news.google.com"])
     is_flight = "flight track" in lower_headline
     
     # CRITICAL: Even if it's a regional hub, if it's NOT war-themed and NOT a disaster/flight/High-Auth,
     # we block it to prevent Little Caesars/Tourism noise.
     if (not is_war_themed and not is_flight and not is_high_authority and 
         event_type not in ["MISSILE", "AIRSTRIKE", "NAVAL"]):
-        # Allow disasters/flights from hubs, but block general noise
         if event_type != "Disaster":
-             print(f" [FILTERED (Regional Noise)] {headline[:60]}...")
+             log_rejection(headline, "Irrelevant Noise")
              return
 
     print(f" -> Processing: {headline[:60]}...")

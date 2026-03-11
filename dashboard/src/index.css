@@ -137,6 +137,17 @@ body {
   background: var(--color-obsidian);
   position: relative;
 }
+
+.indicators-wrapper {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.indicators-panel {
+  flex: 1;
+}
+
 /* Leaflet Overrides */
 .leaflet-container {
   background: var(--color-obsidian) !important;
@@ -180,6 +191,17 @@ body {
 
   .map-container {
     height: 60vh; /* Map gets more real estate */
+    min-height: 600px;
+  }
+
+  .indicators-wrapper {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .indicators-panel {
+    width: 100%;
+    flex: none;
   }
 
   .header-bar {

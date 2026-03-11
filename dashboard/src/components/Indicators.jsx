@@ -48,10 +48,10 @@ const Indicators = ({ alerts }) => {
       {/* Top section removed per user request */}
 
       {/* Bottom Interface Split (PREDICTIVE AI & MOFA SUMMARY) */}
-      <div style={{ display: 'flex', width: '100%', gap: '20px', pointerEvents: 'auto' }}>
+      <div className="indicators-wrapper" style={{ pointerEvents: 'auto' }}>
         
         {/* PREDICTIVE AI INTEL Box (Bottom Left - 50%) */}
-        <div className="glass-panel" style={{ 
+        <div className="glass-panel indicators-panel" style={{  
           flex: 1, 
           padding: '16px 24px',
           background: 'rgba(5, 7, 9, 0.85)',
@@ -99,8 +99,7 @@ const Indicators = ({ alerts }) => {
         </div>
 
         {/* OFFICIAL MOFA SUMMARY Box (Bottom Right - 50%) */}
-        <div className="glass-panel" style={{ 
-          flex: 1, 
+        <div className="glass-panel indicators-panel" style={{ 
           padding: '16px 24px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 168, 107, 0.4)',

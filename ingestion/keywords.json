@@ -31,7 +31,8 @@
         "stork", "patient", "disease", "medical", "charity", "orphan", "hospitality",
         "quarterly", "dividend", "lawsuit", "merger", "voter", "parliament",
         "fiber-to-home", "rank", "globally in", "whatsapp calls", "best vpns", "dropped charges", "halkbank",
-        "belarus", "ukraine", "russia ", "moscow", "kiev", "kyiv"
+        "belarus", "ukraine", "russia ", "moscow", "kiev", "kyiv",
+        "alien", "ufo", "extraterrestrial", "spaceship", "uap", "saucer"
     ],
     "event_types": {
         "AIRSTRIKE": ["airstrike", "air strike", "fighter jet", "bombing", "bombed", "iaf strike"],

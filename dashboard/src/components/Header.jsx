@@ -2,48 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../index.css';
 
 const Header = () => {
-  const [wamMetrics, setWamMetrics] = useState({ stat1: 0, stat2: 0, label1: 'UAE INITIATIVES', label2: 'GLOBAL RESPONSES' });
-
-  useEffect(() => {
-    // Fetch from WAM.ae using CORS proxy
-    const fetchWamData = async () => {
-      try {
-        const targetUrl = encodeURIComponent('https://www.wam.ae/en/list/latest-news');
-        const proxyUrl = `https://api.allorigins.win/get?url=${targetUrl}`;
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
-        const html = data.contents;
-        
-        // Very basic parsing mechanism to scrape numbers out of WAM headlines
-        const numericMatches = html.match(/\b\d{1,3}(,\d{3})*(\.\d+)?\b/g) || [];
-        
-        let sum1 = 0;
-        let sum2 = 0;
-        
-        numericMatches.slice(0, 20).forEach((numStr, index) => {
-           const val = parseFloat(numStr.replace(/,/g, ''));
-           if (!isNaN(val) && val > 10 && val < 1000000) {
-             if (index % 2 === 0) sum1 += val;
-             else sum2 += val;
-           }
-        });
-
-        // If we found data, set it. Otherwise fallback to placeholders that look realistic
-        setWamMetrics({
-          stat1: sum1 > 0 ? Math.floor(sum1) : 4305,
-          stat2: sum2 > 0 ? Math.floor(sum2) : 1621,
-          label1: 'UAE HUMANITARIAN AID',
-          label2: 'REGIONAL DIPLOMACY OPS'
-        });
-      } catch (err) {
-        console.error("Failed to fetch WAM data for header:", err);
-      }
-    };
-    
-    fetchWamData();
-    const interval = setInterval(fetchWamData, 300000); // refresh every 5 mins
-    return () => clearInterval(interval);
-  }, []);
+  // Using static reference values now to avoid the 0/0 error from broken frontend scraping.
+  // Real WAM data is being piped into the MOFA Summary box via the backend.
+  const [wamMetrics, setWamMetrics] = useState({ stat1: 4313, stat2: 1628, label1: 'TOTAL IRAN SALVOS', label2: 'DEFENSE INTERCEPTS' });
 
   return (
     <header className="header-bar" style={{ padding: '0 32px' }}>

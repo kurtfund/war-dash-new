@@ -18,7 +18,8 @@ const MarketPulse = () => {
     const fetchMarketData = async () => {
       try {
         const results = await Promise.all(Tickers.map(async (ticker) => {
-          const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker.symbol}?interval=1d&range=1d`);
+          // Append timestamp to bypass exact-URL caching by allorigins proxy
+          const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker.symbol}?interval=1d&range=1d&ts=${Date.now()}`);
           const proxyUrl = `https://api.allorigins.win/raw?url=${targetUrl}`;
           
           const controller = new AbortController();

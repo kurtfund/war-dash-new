@@ -89,20 +89,28 @@ const MarketPulse = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {marketData.map((asset, index) => (
-            <div key={index} className="glass-panel" style={{ padding: '12px 16px', background: 'rgba(10, 14, 18, 0.6)', border: '1px solid #1A1A1A' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <span className="font-mono text-main" style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{asset.name} ↗</span>
-                  <span className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>{asset.type}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                  <span className="font-mono text-main" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{asset.price}</span>
-                  <span className={`font-mono ${asset.isPositive ? 'text-cyan' : 'text-red'}`} style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
-                    {asset.isPositive ? '+' : ''}{asset.change}%
-                  </span>
+            <a 
+              key={index} 
+              href={`https://finance.yahoo.com/quote/${asset.symbol}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <div className="glass-panel" style={{ padding: '12px 16px', background: 'rgba(10, 14, 18, 0.6)', border: '1px solid #1A1A1A', cursor: 'pointer', transition: 'background 0.2s', ':hover': { background: 'rgba(20, 24, 28, 0.8)' } }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span className="font-mono text-main" style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{asset.name} ↗</span>
+                    <span className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>{asset.type}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                    <span className="font-mono text-main" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{asset.price}</span>
+                    <span className={`font-mono ${asset.isPositive ? 'text-cyan' : 'text-red'}`} style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                      {asset.isPositive ? '+' : ''}{asset.change}%
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       )}

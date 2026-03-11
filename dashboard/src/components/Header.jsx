@@ -64,10 +64,7 @@ const Header = () => {
             position: 'relative',
             overflow: 'hidden'
           }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-cyan)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              <circle cx="12" cy="11" r="3"></circle>
-            </svg>
+            <img src="/logo.png" alt="War Dash Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '1px', background: 'var(--color-cyan)', opacity: 0.5, boxShadow: '0 0 8px var(--color-cyan)' }}></div>
           </div>
           <div>

@@ -4,7 +4,6 @@ import AlertFeed from './components/AlertFeed'
 import Indicators from './components/Indicators'
 import MarketPulse from './components/MarketPulse'
 import MapView from './components/MapView'
-import LiveMediaBox from './components/LiveMediaBox'
 import { supabase } from './lib/supabase'
 
 function App() {
@@ -104,7 +103,6 @@ function App() {
         </div>
 
       </div>
-      <LiveMediaBox />
     </>
   )
 }

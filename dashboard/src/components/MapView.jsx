@@ -22,7 +22,16 @@ const MapResizer = () => {
 };
 
 const getCustomIcon = (type) => {
-  let color = '#FF0033'; // Default to reference red
+  let emoji = '🔴';
+  if (type === 'MISSILE') emoji = '🚀';
+  else if (type === 'AIRSTRIKE') emoji = '✈️';
+  else if (type === 'DRONE') emoji = '🛸';
+  else if (type === 'NAVAL') emoji = '⚓';
+  else if (type === 'GROUND OPS') emoji = '🪖';
+  else if (type === 'ARTILLERY') emoji = '💥';
+  else if (type === 'CYBER') emoji = '💻';
+  else if (type === 'TERRORISM') emoji = '🧨';
+  else if (type === 'OFFICIAL_SUMMARY') emoji = '📜';
 
   return L.divIcon({
     html: `
@@ -36,20 +45,15 @@ const getCustomIcon = (type) => {
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 14px;
       ">
-        <div style="
-          background: #FF0033;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          box-shadow: 0 0 10px #FF0033;
-        "></div>
+        ${emoji}
       </div>
     `,
     className: 'custom-leaflet-icon',
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    popupAnchor: [0, -14]
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16]
   });
 };
 

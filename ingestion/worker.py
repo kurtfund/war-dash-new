@@ -8,7 +8,10 @@ import requests
 import re
 import spacy
 from datetime import datetime, timedelta
+from typing import List, Dict, Optional, Tuple
 from supabase import create_client, Client
+from dotenv import load_dotenv
+from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from tenacity import retry, wait_fixed, stop_after_attempt, retry_if_exception_type, before_sleep_log
 import logging

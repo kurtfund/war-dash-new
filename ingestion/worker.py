@@ -262,6 +262,10 @@ def log_rejection(headline: str, reason: str):
     print(f"    [REJECTED] {reason} | {headline[:50]}...")
 
 def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
+    # Defensive: Clean headline
+    headline = headline.strip() if headline else ""
+    if not headline: return
+
     # 1. Translation Layer
     original_headline = headline
     try:

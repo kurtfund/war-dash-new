@@ -631,44 +631,6 @@ def run_poll_cycle(supabase: Client):
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")
 
-        # --- MARKET PULSE AUTO-UPDATE ---
-        try:
-            print("[*] Fetching Live Market Data from Yahoo Finance...")
-            tickers = ['AED=X', 'NG=F', 'CL=F', 'GC=F', '^TASI.SR', '^VIX']
-            market_payload = {}
-            for t in tickers:
-                url = f"https://query2.finance.yahoo.com/v8/finance/chart/{t}"
-                try:
-                    r = requests.get(url, headers=COMMON_HEADERS, timeout=10)
-                    data = r.json()['chart']['result'][0]['meta']
-                    price = data['regularMarketPrice']
-                    prev_close = data['chartPreviousClose']
-                    pct_change = ((price - prev_close) / prev_close) * 100
-                    market_payload[t] = {"price": price, "change": pct_change}
-                except Exception as e:
-                    print(f"Failed to fetch {t}: {e}")
-            
-            if market_payload:
-                now = datetime.utcnow()
-                query_market = supabase.table("security_alerts").select("id").eq("event_type", "MARKET_DATA").gte("created_at", (now - timedelta(minutes=5)).isoformat()).execute()
-                if len(query_market.data) == 0:
-                    payload = {
-                        "headline": "Live Market Pulse Update",
-                        "source": "Yahoo Finance (Backend Auth)",
-                        "url": "https://finance.yahoo.com",
-                        "event_type": "MARKET_DATA",
-                        "country": "Global",
-                        "location_name": "Global Markets",
-                        "deaths": 0,
-                        "confidence": 1.0,
-                        "raw_data": market_payload,
-                        "created_at": now.isoformat()
-                    }
-                    supabase.table("security_alerts").insert(payload).execute()
-                    print("    [MARKET DATA INSERTED]")
-        except Exception as e:
-            print(f"Error fetching Market Data: {e}")
-
         # Live Flight Data (OpenSky)
         try:
             lamin, lamax = BOUNDS["lat"]

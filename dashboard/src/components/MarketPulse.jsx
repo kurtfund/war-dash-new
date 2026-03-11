@@ -18,23 +18,31 @@ const MarketPulse = () => {
   useEffect(() => {
     const fetchMarketData = async () => {
       try {
-        const { data, error } = await supabase
-          .from('security_alerts')
-          .select('raw_data')
-          .eq('event_type', 'MARKET_DATA')
-          .order('created_at', { ascending: false })
-          .limit(1);
+        const fetchTicker = async (symbol) => {
+           try {
+              const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/' + symbol)}`);
+              const data = await res.json();
+              if (data && data.contents) {
+                 const parsed = JSON.parse(data.contents);
+                 const meta = parsed.chart.result[0].meta;
+                 const price = meta.regularMarketPrice;
+                 const prev_close = meta.chartPreviousClose;
+                 const pct_change = ((price - prev_close) / prev_close) * 100;
+                 return { price, change: pct_change };
+              }
+           } catch(e) { console.warn(`Failed to fetch ${symbol}:`, e) }
+           return null;
+        };
 
-        let liveData = null;
-        if (data && data.length > 0) {
-           liveData = data[0].raw_data;
-        }
+        const promises = Tickers.map(t => fetchTicker(t.symbol));
+        const liveResults = await Promise.all(promises);
 
-        const results = Tickers.map((ticker) => {
+        const results = Tickers.map((ticker, index) => {
           let fallbackPrice = '---';
           let fallbackChange = '---';
           let isPositive = true;
 
+          // Default fallback data if live fetch fails
           if (ticker.name === '$AED') { fallbackPrice = '3.67'; fallbackChange = '-0.03%'; isPositive = false; }
           else if (ticker.name === '$GAS') { fallbackPrice = '3.09'; fallbackChange = '+2.22%'; isPositive = true; }
           else if (ticker.name === '$OIL') { fallbackPrice = '86.65'; fallbackChange = '+3.83%'; isPositive = true; }
@@ -42,15 +50,15 @@ const MarketPulse = () => {
           else if (ticker.name === 'Tadawul All-Share') { fallbackPrice = '10,945'; fallbackChange = '+0.14%'; isPositive = true; }
           else if (ticker.name === 'VIX') { fallbackPrice = '25.23'; fallbackChange = '-1.06%'; isPositive = false; }
 
-          if (liveData && liveData[ticker.symbol]) {
-             const val = liveData[ticker.symbol];
+          const liveData = liveResults[index];
+          if (liveData) {
              if (ticker.prefix === '$') {
-                 fallbackPrice = `$${val.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                 fallbackPrice = `$${liveData.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
              } else {
-                 fallbackPrice = val.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                 fallbackPrice = liveData.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
              }
-             fallbackChange = `${val.change > 0 ? '+' : ''}${val.change.toFixed(2)}%`;
-             isPositive = val.change >= 0;
+             fallbackChange = `${liveData.change > 0 ? '+' : ''}${liveData.change.toFixed(2)}%`;
+             isPositive = liveData.change >= 0;
           }
 
           return { ...ticker, price: fallbackPrice, change: fallbackChange, isPositive: isPositive };

@@ -31,19 +31,7 @@ const Indicators = ({ alerts }) => {
   }, []);
 
   return (
-    <div style={{ 
-      position: 'absolute', 
-      bottom: '10px', 
-      left: '0', 
-      width: '100%', 
-      height: '100%',
-      zIndex: 1000, 
-      pointerEvents: 'none',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'flex-end',
-      padding: '0 20px 20px 20px'
-    }}>
+    <div className="indicators-overlay">
       
       {/* Top section removed per user request */}
 

@@ -37,35 +37,32 @@ def test_geofencing():
         status = "✅ PASS" if result == s["expected"] else "❌ FAIL"
         print(f"  {status} | {s['name']}: Result={result}, Expected={s['expected']}")
 
+from worker import should_filter_alert, KEYWORDS
+
 def test_keywords():
-    print("\n--- TESTING KEYWORD FILTERING ---")
-    keywords_path = os.path.join(os.path.dirname(__file__), "keywords.json")
-    with open(keywords_path, "r") as f:
-        config = json.load(f)
+    print("\n--- TESTING KEYWORD FILTERING (PRODUCTION LOGIC) ---")
     
-    conflict = [k.lower() for k in config["CONFLICT_KEYWORDS"]]
-    banned = [k.lower() for k in config["BANNED_KEYWORDS"]]
-
-    def filter_check(text):
-        text_lower = text.lower()
-        has_conflict = any(k in text_lower for k in conflict)
-        has_banned = any(k in text_lower for k in banned)
-        return has_conflict and not has_banned
-
     scenarios = [
-        {"text": "Missile strike in Gaza", "expected": True},
-        {"text": "New pizza restaurant opens in Dubai", "expected": False},
-        {"text": "IDF intercepts rocket over Tel Aviv", "expected": True},
-        {"text": "Fashion week starts in Riyadh", "expected": False},
-        {"text": "Severe explosion reported in Beirut", "expected": True},
-        {"text": "Ramadan crescent moon sighted in Mecca", "expected": False},
-        {"text": "Explosion in Kuwait due to gas leak", "expected": True}, # Still conflict/event of interest
+        {"text": "Missile strike in Gaza", "source": "OSINT", "expected": True}, # Should NOT be filtered
+        {"text": "New pizza restaurant opens in Dubai", "source": "News", "expected": False}, # Should be filtered
+        {"text": "IDF intercepts rocket over Tel Aviv", "source": "Military/Gov", "expected": True},
+        {"text": "Fashion week starts in Riyadh", "source": "News", "expected": False},
+        {"text": "Severe explosion reported in Beirut", "source": "News", "expected": True},
+        {"text": "Ramadan crescent moon sighted in Mecca", "source": "News", "expected": False},
+        {"text": "Explosion in Kuwait due to gas leak", "source": "News", "expected": True},
+        {"text": "Heavy rain and weather forecast for Khartoum, Sudan", "source": "News", "expected": False},
+        {"text": "Video support from storks to the campaign of DMD patient", "source": "News", "expected": False},
+        {"text": "Partly cloudy and sunny weather will prevail", "source": "News", "expected": False},
+        {"text": "Houthi missile strike on vessel in Red Sea", "source": "OSINT", "expected": True}
     ]
 
     for s in scenarios:
-        result = filter_check(s["text"])
+        # should_filter_alert returns (should_reject, reason, type, country)
+        should_reject, reason, event_type, country = should_filter_alert(s["text"], s["source"], "")
+        # Result is True if it passes (not filtered), False if it is filtered
+        result = not should_reject
         status = "✅ PASS" if result == s["expected"] else "❌ FAIL"
-        print(f"  {status} | Text: {s['text'][:40]}... Result={result}")
+        print(f"  {status} | Text: {s['text'][:40]}... Result={'KEEP' if result else 'REJECT'} (Reason: {reason})")
 
 if __name__ == "__main__":
     test_geofencing()

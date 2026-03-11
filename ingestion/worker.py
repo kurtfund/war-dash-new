@@ -278,43 +278,73 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     except Exception as e:
         print(f" [TRANS_ERROR] {e}")
 
-    # 2. Theme & Content Filter
+def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str, str, str]:
+    """
+    Returns (should_reject, reason, event_type, country)
+    """
     lower_headline = headline.lower()
-    is_war_themed = any(keyword in lower_headline for keyword in CONFLICT_KEYWORDS)
+    
+    # 1. Banned Keywords check
     is_banned = any(bk in lower_headline for bk in BANNED_KEYWORDS)
-    
-    # AGGRESSIVE: If it contains banned words (Pope, Swiss, Condemns, etc.) -> DROP IT
     if is_banned:
-        log_rejection(headline, "Banned Content/Distractor")
-        return
-    
-    # 3. Category Trust / Intelligence Logic
-    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
+        return True, "Banned Content/Distractor", "Other", "Unknown"
+        
+    # 2. Theater Exclusion check
+    EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
+    if any(region.lower() in lower_headline for region in EXCLUDED_REGIONS):
+        return True, f"Theater Exclusion", "Other", "Unknown"
+
+    # 3. Intelligence Classification
     event_type, country = classify_text(headline)
-    
-    # STRICTURE: If it's a "Political" keyword check (Condemns, accountability, laments etc.) 
-    # and has NO kinetic payload (Airstrike, Missile etc.), then DROP it.
+    is_war_themed = any(keyword in lower_headline for keyword in CONFLICT_KEYWORDS)
+    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
+    is_flight = "flight track" in lower_headline
+    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
+
+    # 4. Political Noise check
     political_noise = ["demands", "accountability", "laments", "condemns", "blames", "accuses", "calls for"]
     is_political = any(p in lower_headline for p in political_noise)
-    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
-    
     if is_political and not is_kinetic:
-        log_rejection(headline, "Political Noise (No Kinetic Event)")
-        return
+        return True, "Political Noise (No Kinetic Event)", event_type, country
 
-    is_flight = "flight track" in lower_headline
-    
-    # CRITICAL: If it's NOT war-themed and NOT a disaster/flight/High-Auth, block it.
-    if (not is_war_themed and not is_flight and not is_high_authority and 
-        not is_kinetic):
+    # 5. Irrelevant Noise check
+    if (not is_war_themed and not is_flight and not is_high_authority and not is_kinetic):
         if event_type != "Disaster":
-             log_rejection(headline, "Irrelevant Noise")
-             return
+             return True, "Irrelevant Noise", event_type, country
+
+    return False, "", event_type, country
+
+def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
+    # Synchronize time to UTC for Supabase
+    from datetime import datetime
+    
+    # 1. Strip defensive whitespace
+    headline = headline.strip()
+    
+    # 2. Hardened Filtering
+    should_reject, reason, event_type, country = should_filter_alert(headline, source, url)
+    if should_reject:
+        log_rejection(headline, reason)
+        return
 
     print(f" -> Processing: {headline[:60]}...")
     deaths = extract_casualties(headline)
     confidence = get_source_confidence(source)
     loc_name, lat, lon = detect_location(headline)
+
+    # --- THEATER ENFORCEMENT ---
+    EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
+    # REJECT if geocoded to an excluded region
+    if loc_name and any(region.lower() in loc_name.lower() for region in EXCLUDED_REGIONS):
+        log_rejection(headline, f"Geocoded to Excluded Region ({loc_name})")
+        return
+
+    # REJECT Unknown/Low-Auth if not high kinetic score
+    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
+    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
+    if not loc_name and not is_high_authority and not is_kinetic:
+        log_rejection(headline, "Unknown Location / Low Context")
+        return
     
     # --- INTELLIGENCE FALLBACK ---
     # If official military source has no location, default to source country

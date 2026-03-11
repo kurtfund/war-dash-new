@@ -1,8 +1,12 @@
 {
     "GEOGRAPHIC_BOUNDS": {
         "lat": [16, 45],
-        "lon": [34, 65]
+        "lon": [33.5, 65]
     },
+    "EXCLUDED_REGIONS": [
+        "Sudan", "Eritrea", "Ethiopia", "Somalia", "South Sudan", 
+        "Djibouti", "Kenya", "Uganda", "Central African Republic", "Chad"
+    ],
     "CONFLICT_KEYWORDS": [
         "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
         "fighter", "drone", "uav", "navy", "warship", "destroyer", "intercepted", "shot down",
@@ -20,7 +24,10 @@
         "parking", "traffic", "weather forecast", "temperature", "gold rate",
         "pope", "vatican", "laments", "condemns", "calls for", "demands", "hegseth", "election",
         "democrats", "republicans", "biden", "trump", "swiss ", "switzerland", "bus fire", "italy",
-        "european union", "protest in london", "protest in nyc", "domestic policy", "stock market"
+        "european union", "protest in london", "protest in nyc", "domestic policy", "stock market",
+        "weather", "forecast", "cloudy", "sunny", "humidity", "rain", "climate",
+        "stork", "patient", "disease", "medical", "charity", "orphan", "hospitality",
+        "quarterly", "dividend", "lawsuit", "merger", "voter", "parliament"
     ],
     "event_types": {
         "AIRSTRIKE": ["airstrike", "air strike", "fighter jet", "bombing", "bombed", "iaf strike"],

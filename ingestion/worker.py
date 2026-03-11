@@ -173,14 +173,20 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     
     # 1. Banned Keywords (Hard Reject)
     for word in BANNED_KEYWORDS:
-        if word.lower() in text:
-            return True, f"Banned Keyword ({word})", "Other", "Unknown"
+        word_clean = word.strip().lower()
+        if not word_clean: continue
+        pattern = r'\b' + re.escape(word_clean) + r'\b'
+        if re.search(pattern, text):
+            return True, f"Banned Keyword ({word_clean})", "Other", "Unknown"
             
     # 2. Excluded Regions (Theater Hardening)
     EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
     for region in EXCLUDED_REGIONS:
-        if region.lower() in text:
-            return True, f"Excluded Region ({region})", "Other", "Unknown"
+        region_clean = region.strip().lower()
+        if not region_clean: continue
+        pattern = r'\b' + re.escape(region_clean) + r'\b'
+        if re.search(pattern, text):
+            return True, f"Excluded Region ({region_clean})", "Other", "Unknown"
 
     # 3. Text Classification
     event_type, country = classify_text(headline)

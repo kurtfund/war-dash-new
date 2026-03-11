@@ -29,7 +29,9 @@
         "european union", "protest in london", "protest in nyc", "domestic policy", "stock market",
         "weather", "forecast", "cloudy", "sunny", "humidity", "rain", "climate",
         "stork", "patient", "disease", "medical", "charity", "orphan", "hospitality",
-        "quarterly", "dividend", "lawsuit", "merger", "voter", "parliament"
+        "quarterly", "dividend", "lawsuit", "merger", "voter", "parliament",
+        "fiber-to-home", "rank", "globally in", "whatsapp calls", "best vpns", "dropped charges", "halkbank",
+        "belarus", "ukraine", "russia ", "moscow", "kiev", "kyiv"
     ],
     "event_types": {
         "AIRSTRIKE": ["airstrike", "air strike", "fighter jet", "bombing", "bombed", "iaf strike"],

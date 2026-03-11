@@ -186,9 +186,15 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     event_type, country = classify_text(headline)
     
     # 4. Strict Theatre Check
-    # If the user specifically excluded Africa, we block it here too
-    if "africa" in text or "sudan" in text or "mali" in text or "chad" in text:
-         return True, "Non-Theatre Geography (Africa Search)", "Other", "Unknown"
+    if any(k in text for k in ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "russia", "moscow", "kiev"]):
+         return True, "Non-Theatre Geography", "Other", "Unknown"
+
+    # 5. Strict Conflict Keyword Enforcement
+    is_official_source = any(k in url.lower() for k in ["idf.il", "centcom.mil", "mofaic.gov.ae", "wam.ae/en/rss"])
+    has_conflict_keyword = any(kw.lower() in text for kw in KEYWORDS.get("CONFLICT_KEYWORDS", []))
+    
+    if not has_conflict_keyword and not is_official_source:
+        return True, "No Conflict Keyword (Generic News Blocked)", "Other", "Unknown"
 
     return False, None, event_type, country
 

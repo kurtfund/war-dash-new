@@ -184,14 +184,15 @@ body {
     border-right: none;
     border-bottom: 1px solid #1A1A1A;
     width: 100%;
-    /* Instead of full height, limit the feed height so users can easily scroll past it on mobile */
-    min-height: 400px;
-    height: 400px; 
+    /* Compact heights for mobile */
+    min-height: 250px;
+    height: auto; 
+    max-height: 400px;
   }
 
   .map-container {
-    height: 40vh; /* Map gets less real estate on mobile to allow feed scrolling */
-    min-height: 350px;
+    height: 30vh; 
+    min-height: 250px;
   }
 
   .indicators-wrapper {

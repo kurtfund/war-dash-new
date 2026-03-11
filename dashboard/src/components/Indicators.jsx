@@ -53,12 +53,12 @@ const Indicators = ({ alerts }) => {
         {/* PREDICTIVE AI INTEL Box (Bottom Left - 50%) */}
         <div className="glass-panel indicators-panel" style={{  
           flex: 1, 
-          padding: '16px 24px',
+          padding: '12px 16px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 229, 255, 0.2)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px'
+          gap: '12px'
         }}>
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -71,9 +71,9 @@ const Indicators = ({ alerts }) => {
            
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <div>
-                <div className="font-mono text-muted" style={{ fontSize: '0.65rem', letterSpacing: '1px', marginBottom: '4px' }}>AVG MISSILES / 24H</div>
-                <div className="font-mono text-main" style={{ fontSize: '1.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  452.5 <span className="text-red glow-red" style={{ fontSize: '0.7rem' }}>↑ 12.4%</span>
+                <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>AVG MISSILES / 24H</div>
+                <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                  452.5 <span className="text-red glow-red" style={{ fontSize: '0.6rem' }}>↑ 12.4%</span>
                 </div>
               </div>
               
@@ -90,9 +90,9 @@ const Indicators = ({ alerts }) => {
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.65rem', letterSpacing: '1px', marginBottom: '4px' }}>PREDICTIVE CONFLICT ARCH</div>
-                <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
-                  14.2 Days <span className="text-muted" style={{ fontSize: '0.7rem' }}>REM.</span>
+                <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>PREDICTIVE CONFLICT ARCH</div>
+                <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
+                  14.2 Days <span className="text-muted" style={{ fontSize: '0.6rem' }}>REM.</span>
                 </div>
               </div>
            </div>
@@ -100,12 +100,12 @@ const Indicators = ({ alerts }) => {
 
         {/* OFFICIAL MOFA SUMMARY Box (Bottom Right - 50%) */}
         <div className="glass-panel indicators-panel" style={{ 
-          padding: '16px 24px',
+          padding: '12px 16px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 168, 107, 0.4)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '12px',
+          gap: '8px',
           overflow: 'hidden'
         }}>
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { supabase } from '../lib/supabase';
+
 const Tickers = [
   { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number' },
   { symbol: 'NG=F', name: '$GAS', type: 'ENERGY', format: 'number' },
@@ -16,9 +18,18 @@ const MarketPulse = () => {
   useEffect(() => {
     const fetchMarketData = async () => {
       try {
-        // Due to recent Yahoo Finance security updates blocking public CORS proxies,
-        // and the lack of a backend API wrapper, we establish realistic baseline
-        // fallback values that match the requested UI reference perfectly.
+        const { data, error } = await supabase
+          .from('security_alerts')
+          .select('raw_data')
+          .eq('event_type', 'MARKET_DATA')
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        let liveData = null;
+        if (data && data.length > 0) {
+           liveData = data[0].raw_data;
+        }
+
         const results = Tickers.map((ticker) => {
           let fallbackPrice = '---';
           let fallbackChange = '---';
@@ -30,6 +41,17 @@ const MarketPulse = () => {
           else if (ticker.name === 'Gold') { fallbackPrice = '$2,504.60'; fallbackChange = '-0.88%'; isPositive = false; }
           else if (ticker.name === 'Tadawul All-Share') { fallbackPrice = '10,945'; fallbackChange = '+0.14%'; isPositive = true; }
           else if (ticker.name === 'VIX') { fallbackPrice = '25.23'; fallbackChange = '-1.06%'; isPositive = false; }
+
+          if (liveData && liveData[ticker.symbol]) {
+             const val = liveData[ticker.symbol];
+             if (ticker.prefix === '$') {
+                 fallbackPrice = `$${val.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+             } else {
+                 fallbackPrice = val.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+             }
+             fallbackChange = `${val.change > 0 ? '+' : ''}${val.change.toFixed(2)}%`;
+             isPositive = val.change >= 0;
+          }
 
           return { ...ticker, price: fallbackPrice, change: fallbackChange, isPositive: isPositive };
         });

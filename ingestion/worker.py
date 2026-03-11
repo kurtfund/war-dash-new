@@ -506,11 +506,29 @@ def run_poll_cycle(supabase: Client):
                 prev_cat = category
             
             try:
-                # Use browser-like headers and ignore SSL errors for sensitive gov sites
-                resp = requests.get(url, timeout=15, headers=COMMON_HEADERS, verify=False)
-                feed = feedparser.parse(resp.content)
-                # Take top 5 from each. We'll interleave them later.
-                raw_feed_data[(category, url)] = feed.entries[:5]
+                # Custom HTML Scraper for RT Trends
+                if "rt.com/trends/" in url:
+                    resp = requests.get(url, timeout=15, headers=COMMON_HEADERS, verify=False)
+                    links = []
+                    for chunk in resp.text.split('href="'):
+                        if chunk.startswith('/news/'):
+                            link = chunk.split('"')[0]
+                            full_url = "https://www.rt.com" + link
+                            if not any(x.link == full_url for x in links):
+                                class DummyEntry:
+                                    def __init__(self, title, link):
+                                        self.title = title
+                                        self.link = link
+                                        self.summary = "Extracted from RT Trends"
+                                title_slug = link.split('/')[-2].replace('-', ' ').title()
+                                links.append(DummyEntry(title_slug, full_url))
+                                if len(links) >= 5: break
+                    raw_feed_data[(category, url)] = links
+                else:
+                    # Use browser-like headers and ignore SSL errors for sensitive gov sites
+                    resp = requests.get(url, timeout=15, headers=COMMON_HEADERS, verify=False)
+                    feed = feedparser.parse(resp.content)
+                    raw_feed_data[(category, url)] = feed.entries[:5]
             except Exception as e:
                 print(f"    [POLL_ERROR] {url}: {e}")
 
@@ -606,6 +624,44 @@ def run_poll_cycle(supabase: Client):
                     
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")
+
+        # --- MARKET PULSE AUTO-UPDATE ---
+        try:
+            print("[*] Fetching Live Market Data from Yahoo Finance...")
+            tickers = ['AED=X', 'NG=F', 'CL=F', 'GC=F', '^TASI.SR', '^VIX']
+            market_payload = {}
+            for t in tickers:
+                url = f"https://query2.finance.yahoo.com/v8/finance/chart/{t}"
+                try:
+                    r = requests.get(url, headers=COMMON_HEADERS, timeout=10)
+                    data = r.json()['chart']['result'][0]['meta']
+                    price = data['regularMarketPrice']
+                    prev_close = data['chartPreviousClose']
+                    pct_change = ((price - prev_close) / prev_close) * 100
+                    market_payload[t] = {"price": price, "change": pct_change}
+                except Exception as e:
+                    print(f"Failed to fetch {t}: {e}")
+            
+            if market_payload:
+                now = datetime.utcnow()
+                query_market = supabase.table("security_alerts").select("id").eq("event_type", "MARKET_DATA").gte("created_at", (now - timedelta(minutes=5)).isoformat()).execute()
+                if len(query_market.data) == 0:
+                    payload = {
+                        "headline": "Live Market Pulse Update",
+                        "source": "Yahoo Finance (Backend Auth)",
+                        "url": "https://finance.yahoo.com",
+                        "event_type": "MARKET_DATA",
+                        "country": "Global",
+                        "location_name": "Global Markets",
+                        "deaths": 0,
+                        "confidence": 1.0,
+                        "raw_data": market_payload,
+                        "created_at": now.isoformat()
+                    }
+                    supabase.table("security_alerts").insert(payload).execute()
+                    print("    [MARKET DATA INSERTED]")
+        except Exception as e:
+            print(f"Error fetching Market Data: {e}")
 
         # Live Flight Data (OpenSky)
         try:

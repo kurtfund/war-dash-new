@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import hashlib
@@ -8,10 +9,13 @@ import re
 import spacy
 from datetime import datetime, timedelta
 from supabase import create_client, Client
-from dotenv import load_dotenv
-from typing import List, Dict, Optional, Tuple
-from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+from tenacity import retry, wait_fixed, stop_after_attempt, retry_if_exception_type, before_sleep_log
+import logging
+
+# Configure basic logging for tenacity
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -395,8 +399,32 @@ def main():
 
     print("--- OSINT WORKER STARTED (POLLING EVERY 10 MINS) ---")
     
+    # Heartbeat configuration
+    last_heartbeat = time.time()
+    
     while True:
-        # Dictionary to store entries per feed: { (category, url): [entries] }
+        # Heartbeat logic: Log every 10 mins (600s) to keep Render happy
+        if time.time() - last_heartbeat >= 600:
+            print(f"[*] [HEARTBEAT] Worker is alive and healthy. Timestamp: {datetime.now().isoformat()}")
+            last_heartbeat = time.time()
+
+        try:
+            run_poll_cycle(supabase)
+        except Exception as e:
+            print(f"CRITICAL ERROR in poll cycle: {e}")
+            print("[*] Retrying in 30 seconds due to network/db blip...")
+            time.sleep(30)
+            continue
+
+        print("--- POLL CYCLE COMPLETE. SLEEPING 10 MINS ---")
+        time.sleep(600)
+
+@retry(
+    wait=wait_fixed(30), 
+    retry=retry_if_exception_type((requests.exceptions.RequestException, Exception)),
+    before_sleep=before_sleep_log(logger, logging.INFO)
+)
+def run_poll_cycle(supabase: Client):
         raw_feed_data = {}
         
         # 1. Gather all data first

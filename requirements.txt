@@ -6,4 +6,5 @@ spacy
 geopy
 geocoder
 deep-translator
+tenacity
 # Model is downloaded in build command

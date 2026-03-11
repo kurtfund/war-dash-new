@@ -522,20 +522,20 @@ def run_poll_cycle(supabase: Client):
                                         self.summary = "Extracted from RT Trends"
                                 title_slug = link.split('/')[-2].replace('-', ' ').title()
                                 links.append(DummyEntry(title_slug, full_url))
-                                if len(links) >= 5: break
+                                if len(links) >= 20: break
                     raw_feed_data[(category, url)] = links
                 else:
                     # Use browser-like headers and ignore SSL errors for sensitive gov sites
                     resp = requests.get(url, timeout=15, headers=COMMON_HEADERS, verify=False)
                     feed = feedparser.parse(resp.content)
-                    raw_feed_data[(category, url)] = feed.entries[:5]
+                    raw_feed_data[(category, url)] = feed.entries[:20]
             except Exception as e:
                 print(f"    [POLL_ERROR] {url}: {e}")
 
         # 2. Interleave and Flatten All Gathered Intel
         # We take entry[0] from every sources, then entry[1], etc.
         interleaved_entries = []
-        max_entries = 5
+        max_entries = 20
         for i in range(max_entries):
             # For each pass, shuffle the sources to avoid bias
             source_keys = list(raw_feed_data.keys())

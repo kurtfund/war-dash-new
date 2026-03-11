@@ -12,7 +12,11 @@
     "CONFLICT_KEYWORDS": [
         "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
         "fighter", "drone", "uav", "navy", "warship", "destroyer", "intercepted", "shot down",
-        "conflict", "clash", "operation", "battle", "ambush", "volleys", "sirens", "shelled"
+        "conflict", "clash", "operation", "battle", "ambush", "volleys", "sirens", "shelled",
+        "war", "attack", "troops", "forces", "army", "military", "commanders", "retaliation",
+        "threatens", "intelligence", "assassination", "killed", "casualty", "ceasefire", "sanctions",
+        "defense", "defensive", "offensive", "invasion", "invaded", "deploy", "deployment", 
+        "escalation", "marine", "air force", "combat", "weapon", "terror", "terrorist", "hostage"
     ],
     "BANNED_KEYWORDS": [
         "restaurant", "dining", "menu", "shopping", "festival", "holiday", 

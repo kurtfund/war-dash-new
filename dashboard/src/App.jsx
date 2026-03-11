@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Header from './components/Header'
 import AlertFeed from './components/AlertFeed'
 import Indicators from './components/Indicators'
+import MarketPulse from './components/MarketPulse'
 import MapView from './components/MapView'
 import { supabase } from './lib/supabase'
 
@@ -85,14 +86,21 @@ function App() {
       <Header />
       <div className="dashboard-container">
         
-        {/* Layer 1: The Map */}
-        <MapView alerts={alerts} />
+        {/* Column 1: Left Panel (Feed) 25% */}
+        <div className="dashboard-panel">
+          <AlertFeed alerts={alerts} />
+        </div>
+
+        {/* Column 2: The Map 50% */}
+        <div className="dashboard-panel map-container">
+          <MapView alerts={alerts} />
+          <Indicators alerts={alerts} />
+        </div>
         
-        {/* Layer 2: Left Panel (Feed) */}
-        <AlertFeed alerts={alerts} />
-        
-        {/* Layer 3: Right Panel (Indicators) */}
-        <Indicators alerts={alerts} />
+        {/* Column 3: Right Panel (Market Pulse) 25% */}
+        <div className="dashboard-panel">
+          <MarketPulse />
+        </div>
 
       </div>
     </>

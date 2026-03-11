@@ -12,43 +12,29 @@ const Indicators = ({ alerts }) => {
   }, { kinetic: 0, casualties: 0, unrest: 0, naval: 0 });
 
   return (
-    <div className="side-panel" style={{ width: '320px', position: 'absolute', right: 0, top: 0 }}>
-      
-      {/* Overview Block */}
-      <div className="glass-panel" style={{ padding: '0' }}>
-         <div style={{ padding: '12px 16px', background: 'rgba(255,0,51,0.1)', borderBottom: '1px solid var(--color-red-dim)' }}>
-           <div className="text-red font-mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>
+    <div style={{ 
+      position: 'absolute', 
+      bottom: '20px', 
+      left: '50%', 
+      transform: 'translateX(-50%)', 
+      width: '280px', 
+      zIndex: 1000, 
+      pointerEvents: 'none' 
+    }}>
+      <div className="glass-panel" style={{ padding: '0', pointerEvents: 'auto' }}>
+         <div style={{ padding: '8px 12px', background: 'rgba(255,0,51,0.1)', borderBottom: '1px solid var(--color-red-dim)' }}>
+           <div className="text-red font-mono" style={{ fontSize: '0.7rem', letterSpacing: '1px', textAlign: 'center' }}>
              ● THREAT LEVEL METRICS (24H)
            </div>
          </div>
          
-         <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+         <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <IndicatorRow label="KINETIC STRIKES" value={stats.kinetic} color="red" />
             <IndicatorRow label="CONFIRMED CASUALTIES" value={stats.casualties} color="red" />
             <IndicatorRow label="CIVIL UNREST" value={stats.unrest} color="yellow" />
             <IndicatorRow label="NAVAL INCIDENTS" value={stats.naval} color="cyan" />
          </div>
       </div>
-      
-      {/* Source Reliability Block */}
-      <div className="glass-panel" style={{ flex: 1, padding: '0' }}>
-         <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-cyan-dim)' }}>
-           <div className="text-cyan font-mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>
-             ● SOURCE INTEGRITY
-           </div>
-         </div>
-         <div style={{ padding: '16px' }} className="text-muted font-mono">
-            <div style={{ fontSize: '0.75rem', marginBottom: '8px' }}>AVG CONFIDENCE SCORE</div>
-            <div className="text-cyan glow-cyan" style={{ fontSize: '2rem' }}>
-              {(alerts.length > 0 ? (alerts.reduce((a, b) => a + (b.confidence || 0.6), 0) / alerts.length * 100).toFixed(1) : 0)}%
-            </div>
-            <div style={{ marginTop: '16px', borderTop: '1px dashed rgba(255,255,255,0.2)', paddingTop: '16px', fontSize: '0.75rem', lineHeight: '1.6' }}>
-               INTELLIGENCE SOURCES: {new Set(alerts.map(a => getHostname(a.url))).size}<br/>
-               VERIFIED LOCATIONS: {alerts.filter(a => a.coordinates).length}
-            </div>
-         </div>
-      </div>
-
     </div>
   );
 };

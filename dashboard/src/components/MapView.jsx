@@ -1,11 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { supabase } from '../lib/supabase';
 import { getHostname } from '../lib/utils';
 
 // Disable default icon loading to use our custom svgs
 delete L.Icon.Default.prototype._getIconUrl;
+
+const MapResizer = () => {
+  const map = useMap();
+  useEffect(() => {
+    const handleResize = () => map.invalidateSize();
+    window.addEventListener('resize', handleResize);
+    const timeout = setTimeout(handleResize, 100);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeout);
+    };
+  }, [map]);
+  return null;
+};
 
 const getCustomIcon = (type) => {
   let color = '#00F2FF'; // Cyan default
@@ -61,6 +75,7 @@ const MapView = ({ alerts }) => {
         style={{ width: '100%', height: '100%' }}
         zoomControl={false}
       >
+        <MapResizer />
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'

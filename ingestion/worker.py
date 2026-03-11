@@ -417,6 +417,19 @@ def run_poll_cycle(supabase: Client):
             for feed_url in feeds:
                 all_sources.append((category, feed_url))
         
+        # Common browser-like headers for all requests
+        COMMON_HEADERS = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1'
+        }
+
         print(f"[*] Gathering intel from {len(all_sources)} sources...")
         prev_cat = ""
         for category, url in all_sources:
@@ -426,9 +439,7 @@ def run_poll_cycle(supabase: Client):
             
             try:
                 # Use browser-like headers and ignore SSL errors for sensitive gov sites
-                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
-                # We disable SSL verify for gov sites as they freqently have cert issues
-                resp = requests.get(url, timeout=15, headers=headers, verify=False)
+                resp = requests.get(url, timeout=15, headers=COMMON_HEADERS, verify=False)
                 feed = feedparser.parse(resp.content)
                 # Take top 5 from each. We'll interleave them later.
                 raw_feed_data[(category, url)] = feed.entries[:5]
@@ -450,8 +461,9 @@ def run_poll_cycle(supabase: Client):
                     interleaved_entries.append((sk, raw_feed_data[sk][i]))
 
         print(f"[*] Processing {len(interleaved_entries)} interleaved events from {len(source_keys)} unique sources...")
-        sources_used = [s[0][1] for s in interleaved_entries[:10]]
-        print(f"    [FEED_SAMPLE] Top sources: {', '.join(sources_used)}")
+        if interleaved_entries:
+            sources_used = [s[0][1] for s in interleaved_entries[:10]]
+            print(f"    [FEED_SAMPLE] Top sources: {', '.join(sources_used)}")
         
         for source_key, entry in interleaved_entries:
             # We process them one by one with a slight delay
@@ -463,7 +475,7 @@ def run_poll_cycle(supabase: Client):
         for cat, sources in API_SOURCES.items():
             for source_info in sources:
                 try:
-                    r = requests.get(source_info['url'], timeout=10)
+                    r = requests.get(source_info['url'], timeout=10, headers=COMMON_HEADERS)
                     for feature in r.json().get('features', []):
                         props = feature.get('properties', {})
                         geom = feature.get('geometry', {})
@@ -480,7 +492,7 @@ def run_poll_cycle(supabase: Client):
             lamin, lamax = BOUNDS["lat"]
             lomin, lomax = BOUNDS["lon"]
             opensky_url = f"https://opensky-network.org/api/states/all?lamin={lamin}&lomin={lomin}&lamax={lamax}&lomax={lomax}"
-            r = requests.get(opensky_url, timeout=15)
+            r = requests.get(opensky_url, timeout=15, headers=COMMON_HEADERS)
             states = r.json().get('states', [])
             if states:
                 # Pick up to 5 interesting flights to avoid spamming

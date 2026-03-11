@@ -15,7 +15,7 @@
             "https://www.rt.com/rss/news/",
             "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
             "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/middleeast/rss.xml",
-            "https://www.wam.ae/en/rss/all",
+            "https://news.google.com/rss/search?q=source:Emirates_News_Agency&hl=en-AE&gl=AE&ceid=AE:en",
             "https://news.google.com/rss/search?q=UAE+Dubai+location:UAE&hl=en-AE&gl=AE&ceid=AE:en"
         ],
         "Military/Gov": [

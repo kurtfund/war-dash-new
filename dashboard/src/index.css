@@ -153,25 +153,33 @@ body {
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
   body {
-    overflow-y: auto; /* allow full page scrolling on mobile */
+    overflow-y: auto !important;
+    height: auto !important;
+    touch-action: pan-y;
   }
   
+  #root {
+    height: auto !important;
+  }
+
   .dashboard-container {
     display: flex;
     flex-direction: column;
-    height: auto;
-    overflow: visible;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .dashboard-panel {
     border-right: none;
     border-bottom: 1px solid #1A1A1A;
     width: 100%;
-    min-height: 400px; /* Base height for feed and pulse */
+    /* Instead of full height, limit the feed height so users can easily scroll past it on mobile */
+    min-height: 400px;
+    height: 400px; 
   }
 
   .map-container {
-    min-height: 60vh; /* Give map significant real estate */
+    height: 60vh; /* Map gets more real estate */
   }
 
   .header-bar {

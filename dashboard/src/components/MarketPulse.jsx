@@ -17,35 +17,50 @@ const MarketPulse = () => {
       try {
         const results = await Promise.all(Tickers.map(async (ticker) => {
           const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker.symbol}?interval=1d&range=1d`);
-          // Using allorigins as a reliable public CORS proxy for frontend fetching
-          const proxyUrl = `https://api.allorigins.win/get?url=${targetUrl}`;
+          // Use /raw to avoid JSON-in-JSON parsing issues & enforce an Abort signal
+          const proxyUrl = `https://api.allorigins.win/raw?url=${targetUrl}`;
           
-          const response = await fetch(proxyUrl);
-          if (!response.ok) throw new Error("Proxy fetch failed");
-          
-          const proxyData = await response.json();
-          const data = JSON.parse(proxyData.contents);
-          
-          if (data.chart.result && data.chart.result.length > 0) {
-            const meta = data.chart.result[0].meta;
-            const currentPrice = meta.regularMarketPrice;
-            const prevClose = meta.previousClose;
-            const changeRaw = currentPrice - prevClose;
-            const changePercent = (changeRaw / prevClose) * 100;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+          try {
+            const response = await fetch(proxyUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
             
-            return {
-              ...ticker,
-              price: currentPrice.toFixed(2),
-              change: changePercent.toFixed(2),
-              isPositive: changePercent >= 0
-            };
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            
+            if (data.chart && data.chart.result && data.chart.result.length > 0) {
+              const meta = data.chart.result[0].meta;
+              const currentPrice = meta.regularMarketPrice;
+              const prevClose = meta.previousClose;
+              const changeRaw = currentPrice - prevClose;
+              let changePercent = (changeRaw / prevClose) * 100;
+              
+              // Handle edge cases where previousClose is 0
+              if (isNaN(changePercent)) changePercent = 0.0;
+
+              return {
+                ...ticker,
+                price: currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                change: changePercent.toFixed(2),
+                isPositive: changePercent >= 0
+              };
+            }
+          } catch (e) {
+            console.error(`Fetch failed for ${ticker.symbol}:`, e.message);
           }
+          
+          // Return a structured fallback if the fetch fails or times out
           return { ...ticker, price: '---', change: '---', isPositive: true };
         }));
         
         setMarketData(results);
       } catch (err) {
-        console.error("Failed to fetch market data:", err);
+        console.error("Critical failure resolving market data:", err);
+        // Ensure even a total failure populates fallback visual data
+        setMarketData(Tickers.map(t => ({ ...t, price: '---', change: '---', isPositive: true })));
       } finally {
         setLoading(false);
       }

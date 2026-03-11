@@ -108,32 +108,45 @@ const MarketPulse = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {marketData.map((asset, index) => (
-            <div key={index} style={{ 
-              padding: '12px 16px', 
-              background: 'rgba(5, 7, 9, 0.8)', 
-              border: '1px solid #1A1A1A',
-              borderRadius: '4px',
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <span className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#E0E0E0' }}>
-                  {asset.name} <span style={{ color: '#666', fontSize: '0.7rem' }}>↗</span>
-                </span>
-                <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '1px', color: '#666' }}>
-                  {asset.type}
-                </span>
+            <a 
+              key={index} 
+              href={`https://finance.yahoo.com/quote/${asset.symbol}`} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <div style={{ 
+                padding: '12px 16px', 
+                background: 'rgba(5, 7, 9, 0.8)', 
+                border: '1px solid #1A1A1A',
+                borderRadius: '4px',
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                transition: 'border 0.2s',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-cyan-dim)'}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1A1A1A'}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#E0E0E0' }}>
+                    {asset.name} <span style={{ color: '#666', fontSize: '0.7rem' }}>↗</span>
+                  </span>
+                  <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '1px', color: '#666' }}>
+                    {asset.type}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                  <span className="font-mono" style={{ fontSize: '1.0rem', fontWeight: 'bold', color: '#FFF' }}>
+                    {asset.price}
+                  </span>
+                  <span className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
+                    {asset.change}
+                  </span>
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                <span className="font-mono" style={{ fontSize: '1.0rem', fontWeight: 'bold', color: '#FFF' }}>
-                  {asset.price}
-                </span>
-                <span className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
-                  {asset.change}
-                </span>
-              </div>
-            </div>
+            </a>
           ))}
           
           {/* Add Watchlist Ticker Button */}

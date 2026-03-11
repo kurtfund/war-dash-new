@@ -52,20 +52,15 @@ const Header = () => {
         {/* Left: Branding */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ 
-            width: '46px', 
-            height: '46px', 
-            background: 'rgba(0,0,0,0.8)',
-            border: '2px solid var(--color-cyan)',
-            borderRadius: '4px',
+            width: '56px', 
+            height: '56px', 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 15px var(--color-cyan-dim)',
             position: 'relative',
             overflow: 'hidden'
           }}>
-            <img src="/logo.png" alt="War Dash Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '1px', background: 'var(--color-cyan)', opacity: 0.5, boxShadow: '0 0 8px var(--color-cyan)' }}></div>
+            <img src="/logo.png" alt="War Dash Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <div>
             <h1 className="font-mono" style={{ fontSize: '1.4rem', letterSpacing: '3px', margin: 0, fontWeight: 'bold', color: '#FFF' }}>WAR DASH</h1>

@@ -6,7 +6,6 @@ const Tickers = [
   { symbol: 'CL=F', name: '$OIL', type: 'ENERGY', format: 'number' },
   { symbol: 'GC=F', name: 'Gold', type: 'SAFE HAVEN', prefix: '$' },
   { symbol: '^TASI.SR', name: 'Tadawul All-Share', type: 'MIDDLE EAST', format: 'number' },
-  { symbol: 'BTC-USD', name: 'BITCOIN', type: 'CRYPTO', prefix: '$' },
   { symbol: '^VIX', name: 'VIX', type: 'VOLATILITY', format: 'number' }
 ];
 
@@ -18,12 +17,12 @@ const MarketPulse = () => {
     const fetchMarketData = async () => {
       try {
         const results = await Promise.all(Tickers.map(async (ticker) => {
-          // Append timestamp to bypass exact-URL caching by allorigins proxy
-          const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker.symbol}?interval=1d&range=1d&ts=${Date.now()}`);
-          const proxyUrl = `https://api.allorigins.win/raw?url=${targetUrl}`;
+          // Use the more reliable /get endpoint which wraps content in a JSON 'contents' string
+          const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker.symbol}?interval=1d&range=1d&ts=${Date.now()}`;
+          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
           
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // Higher timeout for proxy
 
           try {
             const response = await fetch(proxyUrl, { signal: controller.signal });
@@ -31,7 +30,11 @@ const MarketPulse = () => {
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
-            const data = await response.json();
+            const wrapper = await response.json();
+            if (!wrapper.contents) throw new Error("Empty proxy response");
+            
+            const data = JSON.parse(wrapper.contents);
+            console.log(`[MARKET DATA] ${ticker.symbol} Success:`, data);
             
             if (data.chart && data.chart.result && data.chart.result.length > 0) {
               const meta = data.chart.result[0].meta;

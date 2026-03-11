@@ -162,6 +162,36 @@ def get_clean_source_name(url: str) -> str:
     domain = urlparse(url).netloc
     return domain.replace("www.", "")
 
+def log_rejection(headline: str, reason: str):
+    print(f"    [REJECTED] {reason} | {headline[:60]}...")
+
+def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str, str, str]:
+    """
+    Returns (should_reject, reason, event_type, country)
+    """
+    text = headline.lower()
+    
+    # 1. Banned Keywords (Hard Reject)
+    for word in BANNED_KEYWORDS:
+        if word.lower() in text:
+            return True, f"Banned Keyword ({word})", "Other", "Unknown"
+            
+    # 2. Excluded Regions (Theater Hardening)
+    EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
+    for region in EXCLUDED_REGIONS:
+        if region.lower() in text:
+            return True, f"Excluded Region ({region})", "Other", "Unknown"
+
+    # 3. Text Classification
+    event_type, country = classify_text(headline)
+    
+    # 4. Strict Theatre Check
+    # If the user specifically excluded Africa, we block it here too
+    if "africa" in text or "sudan" in text or "mali" in text or "chad" in text:
+         return True, "Non-Theatre Geography (Africa Search)", "Other", "Unknown"
+
+    return False, None, event_type, country
+
 def extract_casualties(text: str) -> int:
     patterns = [
         r'(\d+)\s+(?:killed|dead|fatalities|casualties|deadly)',

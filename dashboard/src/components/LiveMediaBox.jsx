@@ -3,12 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 // YouTube Live Stream Channel IDs for the requested networks
 // Using permanent Channel IDs instead of volatile Video IDs ensures the stream never breaks.
 const CHANNELS = [
-  { name: 'CNN (NEWS18)', id: 'UC4-G0C6b-XbLhB9z_K5wTqQ' },
-  { name: 'AL JAZEERA', id: 'UCfiwzLy-8yKzIbsmZTzxDgw' },
-  { name: 'SKY NEWS', id: 'UCoMdktPbSTixAyNGr-U4STATg' },
-  { name: 'FOX NEWS', id: 'UCXIJgqnII2ZOINSWNOGFThA' },
-  { name: 'DW NEWS', id: 'UCKn7-kr6_aB3VfU10Q7dG6w' },
-  { name: 'ASSOCIATED PRESS', id: 'UC52X5wxO_kFR1h1y8eWbExw' }
+  { name: 'AL JAZEERA', id: 'UCfiwzLy-8yKzIbsmZTzxDWA' },
+  { name: 'SKY NEWS', id: 'UCoMdktPbSTqxWQVHs7BpYTg' },
+  { name: 'CNN NEWS18', id: 'UC8X6_v8-1GIP9B3T-Lh-45Q' },
+  { name: 'FOX (LNOW)', id: 'sIv6YmBeO3Q' },
+  { name: 'DW NEWS', id: 'LuKwFajn37U' },
+  { name: 'ASSOCIATED PRESS', id: 'uw_liwLvfVg' }
 ];
 
 const LiveMediaBox = () => {
@@ -134,7 +134,9 @@ const LiveMediaBox = () => {
               key={currentChannel.id}
               width="100%"
               height="100%"
-              src={`https://www.youtube.com/embed/live_stream?channel=${currentChannel.id}&autoplay=1&mute=1&controls=1`}
+              src={currentChannel.id.length > 15 
+                ? `https://www.youtube.com/embed/live_stream?channel=${currentChannel.id}&autoplay=1&mute=1&controls=1`
+                : `https://www.youtube.com/embed/${currentChannel.id}?autoplay=1&mute=1&controls=1`}
               title={`${currentChannel.name} Live`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

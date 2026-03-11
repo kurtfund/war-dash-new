@@ -1,11 +1,13 @@
 {
     "GEOGRAPHIC_BOUNDS": {
-        "lat": [16, 45],
-        "lon": [33.5, 65]
+        "lat": [12, 42],
+        "lon": [33, 62]
     },
     "EXCLUDED_REGIONS": [
         "Sudan", "Eritrea", "Ethiopia", "Somalia", "South Sudan", 
-        "Djibouti", "Kenya", "Uganda", "Central African Republic", "Chad"
+        "Djibouti", "Kenya", "Uganda", "Central African Republic", "Chad",
+        "Libya", "Egypt", "Mali", "Nigeria", "Niger", "Burkina Faso",
+        "Algeria", "Morocco", "Tunisia", "Africa", "Sahel"
     ],
     "CONFLICT_KEYWORDS": [
         "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",

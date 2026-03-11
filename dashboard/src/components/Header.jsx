@@ -29,38 +29,8 @@ const Header = () => {
           </div>
         </div>
         
-        {/* Middle: Data Dashboard */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ 
-            display: 'flex', 
-            border: '1px solid rgba(255, 0, 51, 0.3)', 
-            background: 'rgba(255,0,51,0.02)',
-            padding: '8px 32px',
-            borderRadius: '4px',
-            gap: '40px'
-          }}>
-             <div style={{ textAlign: 'center' }}>
-               <div className="font-mono text-muted" style={{ fontSize: '0.65rem', letterSpacing: '2px', marginBottom: '6px' }}>TOTAL IRAN SALVOS *</div>
-               <div className="font-mono text-main glow-red" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                  <span style={{ color: '#FF0033', fontSize: '1rem', marginRight: '6px' }}>🚀</span> 
-                  {wamMetrics.stat1.toLocaleString()}
-               </div>
-             </div>
-             
-             <div style={{ width: '1px', background: 'rgba(255, 0, 51, 0.2)' }}></div>
-             
-             <div style={{ textAlign: 'center' }}>
-               <div className="font-mono text-muted" style={{ fontSize: '0.65rem', letterSpacing: '2px', marginBottom: '6px' }}>DEFENSE INTERCEPTS</div>
-               <div className="font-mono text-main glow-green" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                  <span style={{ color: '#00FF41', fontSize: '1rem', marginRight: '6px' }}>⭕</span> 
-                  {wamMetrics.stat2.toLocaleString()}
-               </div>
-             </div>
-          </div>
-          <div className="font-mono text-muted" style={{ fontSize: '0.5rem', marginTop: '6px', letterSpacing: '2px' }}>
-            * INCLUDES BALLISTIC, CRUISE, AND DRONES
-          </div>
-        </div>
+        {/* Middle: Removed per user request */}
+        <div style={{ flex: 1 }}></div>
          
          {/* Right: Chronology */}
          <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '0.85rem', textAlign: 'right', fontWeight: 'bold' }}>

@@ -190,8 +190,8 @@ body {
   }
 
   .map-container {
-    height: 60vh; /* Map gets more real estate */
-    min-height: 600px;
+    height: 40vh; /* Map gets less real estate on mobile to allow feed scrolling */
+    min-height: 350px;
   }
 
   .indicators-wrapper {

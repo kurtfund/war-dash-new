@@ -300,70 +300,22 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
 
 # --- LOGIC ---
 
-from deep_translator import GoogleTranslator
-
-# Strict conflict keywords for "War-Themed" feed
-def log_rejection(headline: str, reason: str):
-    print(f"    [REJECTED] {reason} | {headline[:50]}...")
-
-def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
-    # Defensive: Clean headline
-    headline = headline.strip() if headline else ""
-    if not headline: return
-
-    # 1. Translation Layer
-    original_headline = headline
-    try:
-        # Simple heuristic: if it contains non-latin chars or user wants all translated
-        # Actually GoogleTranslator detects automatically
-        headline = GoogleTranslator(source='auto', target='en').translate(headline)
-        if headline != original_headline:
-            print(f" [TRANSLATED] {original_headline[:30]}... -> {headline[:30]}...")
-    except Exception as e:
-        print(f" [TRANS_ERROR] {e}")
-
-def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str, str, str]:
-    """
-    Returns (should_reject, reason, event_type, country)
-    """
-    lower_headline = headline.lower()
-    
-    # 1. Banned Keywords check
-    is_banned = any(bk in lower_headline for bk in BANNED_KEYWORDS)
-    if is_banned:
-        return True, "Banned Content/Distractor", "Other", "Unknown"
-        
-    # 2. Theater Exclusion check
-    EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
-    if any(region.lower() in lower_headline for region in EXCLUDED_REGIONS):
-        return True, f"Theater Exclusion", "Other", "Unknown"
-
-    # 3. Intelligence Classification
-    event_type, country = classify_text(headline)
-    is_war_themed = any(keyword in lower_headline for keyword in CONFLICT_KEYWORDS)
-    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
-    is_flight = "flight track" in lower_headline
-    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
-
-    # 4. Political Noise check
-    political_noise = ["demands", "accountability", "laments", "condemns", "blames", "accuses", "calls for"]
-    is_political = any(p in lower_headline for p in political_noise)
-    if is_political and not is_kinetic:
-        return True, "Political Noise (No Kinetic Event)", event_type, country
-
-    # 5. Irrelevant Noise check
-    if (not is_war_themed and not is_flight and not is_high_authority and not is_kinetic):
-        if event_type != "Disaster":
-             return True, "Irrelevant Noise", event_type, country
-
-    return False, "", event_type, country
-
 def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
     # Synchronize time to UTC for Supabase
     from datetime import datetime
     
     # 1. Strip defensive whitespace
-    headline = headline.strip()
+    headline = headline.strip() if headline else ""
+    if not headline: return
+    
+    original_headline = headline
+    try:
+        from deep_translator import GoogleTranslator
+        headline = GoogleTranslator(source='auto', target='en').translate(headline)
+        if headline != original_headline:
+            print(f" [TRANSLATED] {original_headline[:30]}... -> {headline[:30]}...")
+    except Exception as e:
+        pass # Silently fail translation and use original if API limits hit
     
     # 2. Hardened Filtering
     should_reject, reason, event_type, country = should_filter_alert(headline, source, url)
@@ -391,18 +343,23 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
         return
     
     # --- INTELLIGENCE FALLBACK ---
-    # If official military source has no location, default to source country
-    if not loc_name and is_high_authority:
+    # --- INTELLIGENCE FALLBACK ---
+    # Guarantee Coordinates: If any news passes the filters above, it MUST be mapped!
+    # If spaCy couldn't find a location, we default the marker to the source's region or the map center.
+    if not loc_name or lat is None or lon is None:
         source_lower = url.lower()
-        if "idf.il" in source_lower: loc_name, lat, lon = "Israel", 31.0461, 34.8516
+        if "idf.il" in source_lower or "jpost" in source_lower or "timesofisrael" in source_lower: loc_name, lat, lon = "Israel", 31.0461, 34.8516
+        elif "mod.gov.sa" in source_lower or "saudigazette" in source_lower: loc_name, lat, lon = "Saudi Arabia", 23.8859, 45.0792
+        elif "ir" in source_lower or "tasnim" in source_lower: loc_name, lat, lon = "Iran", 32.4279, 53.6880
+        elif "aljazeera" in source_lower: loc_name, lat, lon = "Qatar (Al Jazeera)", 25.276987, 51.520008
+        elif "wam.ae" in source_lower or "mofaic" in source_lower: loc_name, lat, lon = "UAE", 23.4241, 53.8478
+        elif "thecradle" in source_lower: loc_name, lat, lon = "Lebanon (The Cradle)", 33.8938, 35.5018
         elif "centcom.mil" in source_lower: loc_name, lat, lon = "Middle East (CENTCOM)", 25.0, 45.0
-        elif "mod.gov.sa" in source_lower: loc_name, lat, lon = "Saudi Arabia", 23.8859, 45.0792
-        elif "ir" in source_lower: loc_name, lat, lon = "Iran", 32.4279, 53.6880
         elif "yem" in source_lower: loc_name, lat, lon = "Yemen", 15.5527, 48.5164
         elif "iq" in source_lower: loc_name, lat, lon = "Iraq", 33.2232, 43.6793
-        elif "pal" in source_lower: loc_name, lat, lon = "Palestine", 31.9522, 35.2332
-        elif "liveuamap" in source_lower: loc_name, lat, lon = "Middle East (OSINT)", 30.0, 35.0
-    
+        elif "rt.com" in source_lower: loc_name, lat, lon = "Syria (RT)", 33.5138, 36.2765
+        else: loc_name, lat, lon = "Middle East Regional", 28.0, 45.0
+
     if raw_data is None: raw_data = {}
     if lat is not None and lon is not None:
         raw_data["lat"] = lat
@@ -455,7 +412,7 @@ def main():
         return
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    print("--- OSINT WORKER STARTED (POLLING EVERY 10 MINS) ---")
+    print("--- OSINT WORKER STARTED (POLLING EVERY 2 MINS) ---")
     
     # Heartbeat configuration
     last_heartbeat = time.time()
@@ -474,8 +431,9 @@ def main():
             time.sleep(30)
             continue
 
-        print("--- POLL CYCLE COMPLETE. SLEEPING 10 MINS ---")
-        time.sleep(600)
+        print("--- POLL CYCLE COMPLETE. SLEEPING 2 MINS ---")
+        time.sleep(120)
+
 
 @retry(
     wait=wait_fixed(30), 
@@ -580,8 +538,7 @@ def run_poll_cycle(supabase: Client):
         except Exception as e:
             print(f"Error polling OpenSky: {e}")
 
-        print("--- POLL CYCLE COMPLETE. SLEEPING 2 MINS ---")
-        time.sleep(120)
+        print("--- Sourcing pass finished. Handing back to main loop. ---")
 
 if __name__ == "__main__":
     main()

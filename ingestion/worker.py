@@ -216,17 +216,35 @@ def classify_text(text: str):
     return event_type, country
 
 def is_duplicate(supabase: Client, alert: Dict) -> bool:
-    if not alert.get("location_name") or not alert.get("event_type"):
+    # Use headline for strict deduplication
+    headline = alert.get("headline", "")
+    if not headline:
         return False
+        
     thirty_mins_ago = (datetime.now() - timedelta(minutes=30)).isoformat()
     try:
-        query = supabase.table("security_alerts") \
+        # Check 1: Exact Headline Match (Most robust)
+        query_headline = supabase.table("security_alerts") \
             .select("id") \
-            .eq("event_type", alert["event_type"]) \
-            .eq("location_name", alert["location_name"]) \
+            .eq("headline", headline) \
             .gte("created_at", thirty_mins_ago) \
             .execute()
-        return len(query.data) > 0
+        
+        if len(query_headline.data) > 0:
+            return True
+
+        # Check 2: Event + Location Match (Fallback for slight headline variations)
+        if alert.get("location_name") and alert.get("event_type"):
+            query_event = supabase.table("security_alerts") \
+                .select("id") \
+                .eq("event_type", alert["event_type"]) \
+                .eq("location_name", alert["location_name"]) \
+                .gte("created_at", thirty_mins_ago) \
+                .execute()
+            if len(query_event.data) > 0:
+                return True
+        
+        return False
     except: return False
 
 # --- LOGIC ---
@@ -455,8 +473,8 @@ def run_poll_cycle(supabase: Client):
         except Exception as e:
             print(f"Error polling OpenSky: {e}")
 
-        print("--- POLL CYCLE COMPLETE. SLEEPING 10 MINS ---")
-        time.sleep(600)
+        print("--- POLL CYCLE COMPLETE. SLEEPING 5 MINS ---")
+        time.sleep(300)
 
 if __name__ == "__main__":
     main()

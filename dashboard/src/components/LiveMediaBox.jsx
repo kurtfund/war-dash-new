@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// YouTube Live Stream Channel IDs for the requested networks
-// Using permanent Channel IDs instead of volatile Video IDs ensures the stream never breaks.
+// Media Sources (Mixed Platforms to bypass blocks)
 const CHANNELS = [
-  { name: 'AL JAZEERA', id: 'UCfiwzLy-8yKzIbsmZTzxDWA' },
-  { name: 'SKY NEWS', id: 'UCoMdktPbSTqxWQVHs7BpYTg' },
-  { name: 'CNN NEWS18', id: 'UC8X6_v8-1GIP9B3T-Lh-45Q' },
-  { name: 'FOX (LNOW)', id: 'sIv6YmBeO3Q' },
-  { name: 'DW NEWS', id: 'LuKwFajn37U' },
-  { name: 'ASSOCIATED PRESS', id: 'uw_liwLvfVg' }
+  { name: 'AL JAZEERA', id: 'x2m8jcv', type: 'dailymotion' },
+  { name: 'SKY NEWS', id: 'McrHwAMtJj4', type: 'youtube' },
+  { name: 'CNN NEWS18', id: 'UC8X6_v8-1GIP9B3T-Lh-45Q', type: 'youtube_channel' },
+  { name: 'FOX (LNOW)', id: 'sIv6YmBeO3Q', type: 'youtube' },
+  { name: 'DW NEWS', id: 'LuKwFajn37U', type: 'youtube' },
+  { name: 'ASSOCIATED PRESS', id: 'uw_liwLvfVg', type: 'youtube' }
 ];
 
 const LiveMediaBox = () => {
@@ -41,6 +40,17 @@ const LiveMediaBox = () => {
   };
 
   const currentChannel = CHANNELS[currentIndex];
+  
+  // Resolve source URL based on platform type. Mute is set to 0 to enable sound per user request.
+  const getEmbedUrl = (channel) => {
+    if (channel.type === 'dailymotion') {
+      return `https://geo.dailymotion.com/player.html?video=${channel.id}&autoplay=1&mute=0`;
+    }
+    if (channel.type === 'youtube_channel') {
+      return `https://www.youtube.com/embed/live_stream?channel=${channel.id}&autoplay=1&mute=0&controls=1`;
+    }
+    return `https://www.youtube.com/embed/${channel.id}?autoplay=1&mute=0&controls=1`;
+  };
 
   return (
     <>
@@ -134,9 +144,7 @@ const LiveMediaBox = () => {
               key={currentChannel.id}
               width="100%"
               height="100%"
-              src={currentChannel.id.length > 15 
-                ? `https://www.youtube.com/embed/live_stream?channel=${currentChannel.id}&autoplay=1&mute=1&controls=1`
-                : `https://www.youtube.com/embed/${currentChannel.id}?autoplay=1&mute=1&controls=1`}
+              src={getEmbedUrl(currentChannel)}
               title={`${currentChannel.name} Live`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

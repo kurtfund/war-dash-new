@@ -7,7 +7,8 @@
         "Sudan", "Eritrea", "Ethiopia", "Somalia", "South Sudan", 
         "Djibouti", "Kenya", "Uganda", "Central African Republic", "Chad",
         "Libya", "Egypt", "Mali", "Nigeria", "Niger", "Burkina Faso",
-        "Algeria", "Morocco", "Tunisia", "Africa", "Sahel"
+        "Algeria", "Morocco", "Tunisia", "Africa", "Sahel",
+        "Azerbaijan", "Armenia", "Taiwan", "China"
     ],
     "CONFLICT_KEYWORDS": [
         "missile", "rocket", "strike", "airstrike", "explosion", "bomb", "blast",
@@ -35,9 +36,10 @@
         "stork", "patient", "disease", "medical", "charity", "orphan", "hospitality",
         "quarterly", "dividend", "lawsuit", "merger", "voter", "parliament",
         "fiber-to-home", "rank", "globally in", "whatsapp calls", "best vpns", "dropped charges", "halkbank",
-        "belarus", "ukraine", "moscow", "kiev", "kyiv", "zelensky", "zelenskyy", "putin", "kremlin", 
+        "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev", "kyiv", "zelensky", "zelenskyy", "putin", "kremlin", 
         "donbas", "kherson", "bakhmut", "bahkmut", "crimea", "nato", "nord stream",
-        "alien", "ufo", "extraterrestrial", "spaceship", "uap", "saucer"
+        "alien", "ufo", "extraterrestrial", "spaceship", "uap", "saucer",
+        "football", "soccer", "asian cup", "coach", "players", "sports", "match", "tournament", "stadium"
     ],
     "event_types": {
         "AIRSTRIKE": ["airstrike", "air strike", "fighter jet", "bombing", "bombed", "iaf strike"],

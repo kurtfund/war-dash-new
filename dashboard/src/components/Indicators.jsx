@@ -155,9 +155,9 @@ const Indicators = ({ alerts }) => {
                       <img 
                          src="/logo.png" 
                          alt="War Dash Logo" 
-                         style={{ width: '70%', height: '70%', objectFit: 'contain', zIndex: 1, marginTop: '-15px' }} 
+                         style={{ maxWidth: '65%', maxHeight: '65%', objectFit: 'contain', zIndex: 1, marginBottom: '15px' }} 
                       />
-                      <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', textAlign: 'center', position: 'absolute', bottom: '15px', zIndex: 2 }}>
+                      <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', textAlign: 'center', position: 'absolute', bottom: '25px', zIndex: 2 }}>
                         CLICK TO REVEAL<br/>DAILY SCORE
                       </div>
                     </div>

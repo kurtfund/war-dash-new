@@ -691,31 +691,49 @@ def run_poll_cycle(supabase: Client):
                 r_art = requests.get(target_article['url'], timeout=15, headers=COMMON_HEADERS, verify=False)
                 art_soup = BeautifulSoup(r_art.content, 'html.parser')
                 
-                # Fetch all paragraphs for full article body
-                paragraphs = art_soup.find_all('p')
-                full_text = " ".join([p.get_text(strip=True) for p in paragraphs])
+                # Fetch all text from the full article body (ignoring precise tags as WAM layouts change)
+                full_text = art_soup.get_text(separator=' ', strip=True)
                 
                 # --- QUANTITATIVE EXTRACTION ---
                 import re
                 
+                # Helper to convert common digit-words to ints
+                word_to_num = {
+                    'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
+                    'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 
+                    'nineteen': 19, 'twenty': 20
+                }
+                
+                def parse_num_match(m):
+                    m = m.lower().replace(',', '').strip()
+                    if m in word_to_num: return word_to_num[m]
+                    try: return int(m)
+                    except: return 0
+
                 ballistic = 0
                 cruise = 0
                 uavs = 0
                 
-                b_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
+                # We look for digits OR specific words
+                num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
+                
+                b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
                 if b_matches:
-                    nums = [int(m.replace(',', '')) for m in b_matches]
-                    ballistic = max(nums)
+                    ballistic = max([parse_num_match(m) for m in b_matches])
                     
-                c_matches = re.findall(r'(\d+(?:,\d+)?)\s+cruise\s*missiles?', full_text, re.IGNORECASE)
+                c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
                 if c_matches:
-                    nums = [int(m.replace(',', '')) for m in c_matches]
-                    cruise = max(nums)
+                    cruise = max([parse_num_match(m) for m in c_matches])
                     
-                u_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
                 if u_matches:
-                    nums = [int(m.replace(',', '')) for m in u_matches]
-                    uavs = max(nums)
+                    uavs = max([parse_num_match(m) for m in u_matches])
+                
+                if ballistic == 0 and cruise == 0 and uavs == 0:
+                    print("    [MOFA SUMMARY SKIPPED] Could not confidently extract quantitative totals from the article body. F5 blocking or missing text.")
+                    return
                 
                 # --- DATE EXTRACTION ---
                 now = datetime.utcnow()

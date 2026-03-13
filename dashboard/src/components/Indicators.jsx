@@ -80,7 +80,7 @@ const Indicators = ({ alerts }) => {
                   </div>
                 </div>
                 <div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>TOTAL UAVS 🛸</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>TOTAL UAVS 🚁</div>
                   <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
                     {mofaSummary?.raw_data?.drones || mofaSummary?.raw_data?.drones_intercepted || 0}
                   </div>

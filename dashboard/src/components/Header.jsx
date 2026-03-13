@@ -78,7 +78,13 @@ const Header = () => {
           }}>
             <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
-              OFFICIAL UAE STATEMENT
+              {mofaSummary?.url ? (
+                <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer', transition: 'text-shadow 0.2s' }} onMouseOver={(e) => e.target.style.textShadow = '0 0 8px rgba(0, 168, 107, 0.8)'} onMouseOut={(e) => e.target.style.textShadow = 'none'}>
+                  OFFICIAL UAE STATEMENT
+                </a>
+              ) : (
+                <span>OFFICIAL UAE STATEMENT</span>
+              )}
               <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
             </div>
             

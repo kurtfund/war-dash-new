@@ -2,14 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 const Indicators = ({ alerts }) => {
-  
-  // Dynamic Calculation for the "HEARTBEAT" score based on active alerts
-  const baseHeartbeat = 90.0;
-  const recentKinetic = alerts.filter(a => ['MISSILE', 'AIRSTRIKE', 'DRONE'].includes(a.event_type)).length;
-  // Cap at 99.9
-  const heartbeatScore = Math.min(99.9, baseHeartbeat + (recentKinetic * 0.5)).toFixed(1);
-
+  const [isRevealed, setIsRevealed] = useState(false);
   const [mofaSummary, setMofaSummary] = useState(null);
+
+  // Default Base Score
+  let heartbeatScore = 65.0;
+
+  // Enhance the score using Real UAE WAM Interception Integer Data
+  if (mofaSummary && mofaSummary.raw_data) {
+    const missiles = mofaSummary.raw_data.missiles || 0;
+    const drones = mofaSummary.raw_data.drones || 0;
+    heartbeatScore += (missiles * 3.0) + (drones * 1.5);
+  } else {
+    // Fallback: Use standard alerts count if WAM data isn't loaded yet
+    const recentKinetic = alerts.filter(a => ['MISSILE', 'AIRSTRIKE', 'DRONE'].includes(a.event_type)).length;
+    heartbeatScore += (recentKinetic * 0.5);
+  }
+
+  // Strictly cap the maximum conflict score at 99.9 (DEFCON 1 approaching)
+  heartbeatScore = Math.min(99.9, heartbeatScore).toFixed(1);
 
   useEffect(() => {
     const fetchMofa = async () => {
@@ -33,18 +44,23 @@ const Indicators = ({ alerts }) => {
   return (
     <div className="indicators-overlay">
       {/* Bottom Interface Split */}
-      <div className="indicators-wrapper" style={{ pointerEvents: 'auto', justifyContent: 'center' }}>
+      <div className="indicators-wrapper" style={{ 
+        pointerEvents: 'auto', 
+        justifyContent: 'center', 
+        alignItems: 'flex-end', 
+        gap: '40px', 
+        paddingBottom: '20px' 
+      }}>
         
-        {/* PREDICTIVE AI INTEL Box */}
+        {/* PREDICTIVE AI INTEL Box (Left Aligned Now) */}
         <div className="glass-panel indicators-panel" style={{  
-          flex: 0.8, 
+          flex: '0 1 450px', 
           padding: '12px 16px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 229, 255, 0.2)',
           display: 'flex',
           flexDirection: 'column',
           gap: '12px',
-          maxWidth: '450px'
         }}>
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -83,6 +99,72 @@ const Indicators = ({ alerts }) => {
               </div>
            </div>
         </div>
+
+        {/* Center Iron Man Reactor / Heat Index */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setIsRevealed(!isRevealed)}>
+            <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '10px' }}>
+              GEOPOLITICAL HEAT INDEX 🚀
+            </div>
+            
+            <div style={{ position: 'relative', width: '220px', height: '220px' }}>
+                {/* Visual Dial Rings */}
+                <div style={{
+                  position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                  borderRadius: '50%',
+                  border: '4px solid rgba(0, 229, 255, 0.1)',
+                  boxShadow: '0 0 30px rgba(0, 229, 255, 0.2), inset 0 0 30px rgba(0, 229, 255, 0.1)',
+                  animation: 'pulse 4s infinite alternate'
+                }}></div>
+                <div style={{
+                  position: 'absolute', top: '10px', left: '10px', right: '10px', bottom: '10px',
+                  borderRadius: '50%',
+                  border: '2px solid rgba(255, 0, 51, 0.3)',
+                  borderTopColor: 'rgba(255, 0, 51, 0.8)',
+                  animation: 'spin 12s linear infinite'
+                }}></div>
+                <div style={{
+                  position: 'absolute', top: '20px', left: '20px', right: '20px', bottom: '20px',
+                  borderRadius: '50%',
+                  border: '2px dashed rgba(0, 229, 255, 0.4)',
+                  animation: 'spin 25s linear infinite reverse'
+                }}></div>
+                
+                {/* Inside Score / Reactor State */}
+                <div style={{
+                  position: 'absolute', top: '30px', left: '30px', right: '30px', bottom: '30px',
+                  backgroundColor: 'rgba(5, 7, 9, 0.9)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(0,229,255,0.4)',
+                  overflow: 'hidden',
+                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                }}>
+                  {!isRevealed ? (
+                     <img 
+                        src="/reactor_alt.png" 
+                        alt="Reactor Logo" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute' }} 
+                     />
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '2px', marginTop: '-10px' }}>HEARTBEAT</div>
+                      <div className="font-mono text-main" style={{ fontSize: '3.5rem', fontWeight: 'bold', textShadow: '0 0 20px rgba(255,255,255,0.8)' }}>
+                        {heartbeatScore}
+                      </div>
+                      <div className="font-mono text-cyan" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CONFLICT SCORE</div>
+                    </div>
+                  )}
+                </div>
+            </div>
+            
+            <div className="font-mono text-red glow-red" style={{ fontSize: '0.6rem', letterSpacing: '2px', marginTop: '10px' }}>
+              -- CRITICAL IMMINENT THREAT --
+            </div>
+        </div>
+        
       </div>
     </div>
   );

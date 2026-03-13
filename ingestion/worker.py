@@ -57,6 +57,7 @@ RSS_SOURCES = SOURCES_CONFIG.get("RSS_SOURCES", {})
 API_SOURCES = SOURCES_CONFIG.get("API_SOURCES", {})
 CONFLICT_KEYWORDS = KEYWORDS_CONFIG.get("CONFLICT_KEYWORDS", [])
 BANNED_KEYWORDS = KEYWORDS_CONFIG.get("BANNED_KEYWORDS", [])
+BANNED_KEYWORDS.extend(["wsaz", "wsaz.com", "armenian", "sport"])
 KEYWORDS = KEYWORDS_CONFIG # For backward compatibility in classify_text
 
 # Source Reliability Scoring

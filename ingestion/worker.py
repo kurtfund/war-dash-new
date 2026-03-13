@@ -688,10 +688,22 @@ def run_poll_cycle(supabase: Client):
                 # We strictly want the tactical intercept summaries, not diplomatic calls
                 if all(kw in title_lower for kw in required_kws) and any(kw in title_lower for kw in kinetic_kws):
                     clean_summary = getattr(entry, 'summary', '')
+                    import re
                     clean_summary = re.sub(r'<[^>]+>', '', clean_summary) # Strip HTML
                     clean_summary = clean_summary.strip()
                     if not clean_summary: clean_summary = cleaned_title
 
+                    # --- QUANTITATIVE EXTRACTION ---
+                    missiles_intercepted = 0
+                    drones_intercepted = 0
+                    
+                    # Look for digits before missile keywords
+                    m_match = re.search(r'(\d+)\s*(?:ballistic\s*)?missiles?', title_lower)
+                    if m_match: missiles_intercepted = int(m_match.group(1))
+                    
+                    # Look for digits before drone/uav keywords
+                    d_match = re.search(r'(\d+)\s*(?:uavs?|drones?)', title_lower)
+                    if d_match: drones_intercepted = int(d_match.group(1))
                     
                     # Deduplication specifically for OFFICIAL_SUMMARY
                     now = datetime.utcnow()
@@ -715,11 +727,15 @@ def run_poll_cycle(supabase: Client):
                             "coordinates": "POINT(54.3773 24.4539)",
                             "deaths": 0,
                             "confidence": 1.0,
-                            "raw_data": {"summary": clean_summary[:500]},
+                            "raw_data": {
+                                "summary": clean_summary[:500],
+                                "missiles_intercepted": missiles_intercepted,
+                                "drones_intercepted": drones_intercepted
+                            },
                             "created_at": now.isoformat()
                         }
                         supabase.table("security_alerts").insert(payload).execute()
-                        print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}...")
+                        print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (M: {missiles_intercepted}, D: {drones_intercepted})")
                     break # Stop after finding the latest valid defense article
 
                     

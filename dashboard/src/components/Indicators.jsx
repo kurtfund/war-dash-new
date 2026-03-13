@@ -32,19 +32,19 @@ const Indicators = ({ alerts }) => {
 
   return (
     <div className="indicators-overlay">
-      
-      {/* Bottom Interface Split (PREDICTIVE AI & MOFA SUMMARY) */}
-      <div className="indicators-wrapper" style={{ pointerEvents: 'auto' }}>
+      {/* Bottom Interface Split */}
+      <div className="indicators-wrapper" style={{ pointerEvents: 'auto', justifyContent: 'center' }}>
         
-        {/* PREDICTIVE AI INTEL Box (Bottom Left - 50%) */}
+        {/* PREDICTIVE AI INTEL Box */}
         <div className="glass-panel indicators-panel" style={{  
-          flex: 1, 
+          flex: 0.8, 
           padding: '12px 16px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 229, 255, 0.2)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '12px'
+          gap: '12px',
+          maxWidth: '450px'
         }}>
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -83,46 +83,6 @@ const Indicators = ({ alerts }) => {
               </div>
            </div>
         </div>
-
-        {/* OFFICIAL MOFA SUMMARY Box (Bottom Right - 50%) */}
-        <div id="mofa-summary-panel" className="glass-panel indicators-panel" style={{ 
-          padding: '12px 16px',
-          background: 'rgba(5, 7, 9, 0.85)',
-          border: '1px solid rgba(0, 168, 107, 0.4)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          overflow: 'hidden'
-        }}>
-           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div className="font-mono" style={{ color: 'var(--color-green-teal)', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                 <span style={{ fontSize: '1rem' }}>✦</span> OFFICIAL MOFA SUMMARY 🚀
-              </div>
-              <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', padding: '2px 6px', borderRadius: '4px' }}>
-                 FED GOV // WAM.AE 🚀
-              </div>
-           </div>
-           
-           {mofaSummary ? (
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                <a href={mofaSummary.url} target="_blank" rel="noreferrer" className="font-mono transition-colors" style={{ fontSize: '0.8rem', color: '#E0E0E0', fontWeight: 'bold', textDecoration: 'none', lineHeight: '1.4' }}>
-                  🚀 {mofaSummary.headline}
-                </a>
-                <div className="font-mono text-muted" style={{ fontSize: '0.65rem', lineHeight: '1.5', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                  🚀 {mofaSummary.summary || 'Official report summary available inline.'}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto' }}>
-                   <div className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--color-green-teal)' }}>{new Date(mofaSummary.created_at).toLocaleString()}</div>
-                   <div className="font-mono" style={{ fontSize: '0.6rem', color: '#FF0033' }}>SOURCE: AUTH 🚀</div>
-                </div>
-             </div>
-           ) : (
-             <div className="font-mono text-muted" style={{ fontSize: '0.7rem', padding: '10px 0', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-               [ 🚀 Awaiting secure data transmission from WAM... ]
-             </div>
-           )}
-        </div>
-
       </div>
     </div>
   );

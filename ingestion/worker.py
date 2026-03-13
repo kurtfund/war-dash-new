@@ -695,30 +695,56 @@ def run_poll_cycle(supabase: Client):
                 paragraphs = art_soup.find_all('p')
                 full_text = " ".join([p.get_text(strip=True) for p in paragraphs])
                 
-                missiles_intercepted = 0
-                drones_intercepted = 0
-                
-                # The precise quantitative extraction over the entire body
+                # --- QUANTITATIVE EXTRACTION ---
                 import re
                 
-                # Find all missile numbers and take max
-                m_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:.*?)\s*missiles?', full_text, re.IGNORECASE)
-                if m_matches:
-                    nums = [int(m.replace(',', '')) for m in m_matches]
-                    missiles_intercepted = max(nums)
+                ballistic = 0
+                cruise = 0
+                uavs = 0
+                
+                b_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
+                if b_matches:
+                    nums = [int(m.replace(',', '')) for m in b_matches]
+                    ballistic = max(nums)
                     
-                # Find all drone numbers and take max
-                d_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:.*?)\s*(?:uavs?|drones?)', full_text, re.IGNORECASE)
-                if d_matches:
-                    nums = [int(m.replace(',', '')) for m in d_matches]
-                    drones_intercepted = max(nums)
+                c_matches = re.findall(r'(\d+(?:,\d+)?)\s+cruise\s*missiles?', full_text, re.IGNORECASE)
+                if c_matches:
+                    nums = [int(m.replace(',', '')) for m in c_matches]
+                    cruise = max(nums)
+                    
+                u_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                if u_matches:
+                    nums = [int(m.replace(',', '')) for m in u_matches]
+                    uavs = max(nums)
+                
+                # --- DATE EXTRACTION ---
+                now = datetime.utcnow()
+                pub_date_iso = now.isoformat()
+                
+                # Try to parse exact date from WAM article
+                time_tag = art_soup.find('time')
+                if time_tag and time_tag.has_attr('datetime'):
+                    try:
+                        # naive attempt to parse ISO-like format
+                        clean_time = time_tag['datetime'].split('+')[0]
+                        pub_dt = datetime.fromisoformat(clean_time)
+                        pub_date_iso = pub_dt.isoformat()
+                    except:
+                        pass
+                else:
+                    meta_date = art_soup.find('meta', property='article:published_time')
+                    if meta_date and meta_date.has_attr('content'):
+                        try:
+                            clean_time = meta_date['content'].split('+')[0]
+                            pub_dt = datetime.fromisoformat(clean_time)
+                            pub_date_iso = pub_dt.isoformat()
+                        except:
+                            pass
                 
                 cleaned_title = target_article['title']
-                
-                # Deduplication specifically for OFFICIAL_SUMMARY
-                now = datetime.utcnow()
                 twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
                 
+                # We specifically check for deduplication of the exact headline
                 query_summary = supabase.table("security_alerts") \
                     .select("id") \
                     .eq("event_type", "OFFICIAL_SUMMARY") \
@@ -739,13 +765,16 @@ def run_poll_cycle(supabase: Client):
                         "confidence": 1.0,
                         "raw_data": {
                             "summary": full_text[:500] if full_text else cleaned_title,
-                            "missiles": missiles_intercepted,
-                            "drones": drones_intercepted
+                            "ballistic": ballistic,
+                            "cruise": cruise,
+                            "uavs": uavs,
+                            "missiles": ballistic + cruise, # Legacy fallback
+                            "drones": uavs # Legacy fallback
                         },
-                        "created_at": now.isoformat()
+                        "created_at": pub_date_iso
                     }
                     supabase.table("security_alerts").insert(payload).execute()
-                    print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (M: {missiles_intercepted}, D: {drones_intercepted})")
+                    print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (B: {ballistic}, C: {cruise}, D: {uavs}, Date: {pub_date_iso})")
                 else:
                     print("    [MOFA SUMMARY SKIPPED] Already extracted recently.")
             else:

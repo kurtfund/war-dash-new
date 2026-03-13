@@ -74,15 +74,21 @@ const Indicators = ({ alerts }) => {
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <div style={{ display: 'flex', gap: '20px' }}>
                 <div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>TOTAL MISSILES 🚀</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>BALLISTIC 🚀</div>
                   <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                    {mofaSummary?.raw_data?.missiles || mofaSummary?.raw_data?.missiles_intercepted || 0}
+                    {mofaSummary?.raw_data?.ballistic || mofaSummary?.raw_data?.missiles || 0}
                   </div>
                 </div>
                 <div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>TOTAL UAVS 🚁</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>CRUISE 🚀</div>
                   <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                    {mofaSummary?.raw_data?.drones || mofaSummary?.raw_data?.drones_intercepted || 0}
+                    {mofaSummary?.raw_data?.cruise || 0}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>UAVS 🚁</div>
+                  <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                    {mofaSummary?.raw_data?.uavs || mofaSummary?.raw_data?.drones || 0}
                   </div>
                 </div>
               </div>

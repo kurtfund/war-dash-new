@@ -90,18 +90,27 @@ const Header = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.missiles || mofaSummary.raw_data?.missiles_intercepted || 0}
+                    {mofaSummary.raw_data?.ballistic || mofaSummary.raw_data?.missiles || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>MISSILES INTERCEPTED</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>BALLISTIC MISSILES</div>
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.drones || mofaSummary.raw_data?.drones_intercepted || 0}
+                  <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
+                    {mofaSummary.raw_data?.cruise || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>UAVS / DRONES DOWNED</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CRUISE MISSILES</div>
+                </div>
+
+                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
+                    {mofaSummary.raw_data?.uavs || mofaSummary.raw_data?.drones || 0}
+                  </div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>UAVS DOWNED</div>
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>

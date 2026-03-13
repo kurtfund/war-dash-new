@@ -612,7 +612,7 @@ def run_poll_cycle(supabase: Client):
         # --- MARKET DATA UPDATE ---
         try:
             print("[*] Fetching Live Market Data from Yahoo Finance...")
-            tickers = ['AED=X', 'NG=F', 'CL=F', 'GC=F', '^TASI.SR', '^VIX']
+            tickers = ['AED=X', 'CL=F', 'GC=F', '^TASI.SR', '^GSPC', 'AAPL', '2222.SR']
             market_payload = {}
 
             for t in tickers:

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // Media Sources (Mixed Platforms to bypass blocks)
 const CHANNELS = [
   { name: 'AL JAZEERA', id: 'gCNeDWCI0vo', type: 'youtube' },
-  { name: 'RT LIVE', id: 'wk0uvX60fxg', type: 'youtube' },
+  { name: 'IRAN INTERNATIONAL', id: 'wk0uvX60fxg', type: 'youtube' },
   { name: 'AL JAZEERA ARABIC', id: 'bNyUyrR0PHo', type: 'youtube' },
   { name: 'ABC NEWS', id: '_03-Efdda7s', type: 'youtube' },
   { name: 'BLOOMBERG', id: 'iEpJwprxDdk', type: 'youtube' },

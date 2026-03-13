@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 const Tickers = [
-  { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number' },
-  { symbol: 'NG=F', name: '$GAS', type: 'ENERGY', format: 'number' },
-  { symbol: 'CL=F', name: '$OIL', type: 'ENERGY', format: 'number' },
+  { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number', prefix: '$' },
+  { symbol: 'NG=F', name: '$GAS', type: 'ENERGY', format: 'number', prefix: '$' },
+  { symbol: 'CL=F', name: '$OIL', type: 'ENERGY', format: 'number', prefix: '$' },
   { symbol: 'GC=F', name: 'Gold', type: 'SAFE HAVEN', prefix: '$' },
   { symbol: '^TASI.SR', name: 'Tadawul All-Share', type: 'MIDDLE EAST', format: 'number' },
   { symbol: '^VIX', name: 'VIX', type: 'VOLATILITY', format: 'number' }
@@ -29,7 +29,14 @@ const MarketPulse = () => {
         
         let liveResults = {};
         if (data && data.length > 0) {
-          liveResults = data[0].raw_data || {};
+          try {
+            liveResults = typeof data[0].raw_data === 'string' 
+                          ? JSON.parse(data[0].raw_data) 
+                          : data[0].raw_data || {};
+          } catch (e) {
+            console.error("Failed to parse market data JSON", e);
+            liveResults = {};
+          }
         }
 
         const results = Tickers.map((ticker) => {

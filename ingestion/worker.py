@@ -650,8 +650,9 @@ def run_poll_cycle(supabase: Client):
 
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
         try:
-            print("[*] Fetching WAM Official MOFA Summary...")
-            wam_rss_url = "https://www.wam.ae/en/rss"
+            print("[*] Fetching WAM Official MOFA Summary via Google News...")
+            # wam.ae has aggressive F5 bot protection, so we use Google News index as a proxy
+            wam_rss_url = "https://news.google.com/rss/search?q=site:wam.ae+intercept+OR+missile+OR+drone+OR+defense+OR+military&hl=en-US&gl=US&ceid=US:en"
             r_wam = requests.get(wam_rss_url, timeout=15, headers=COMMON_HEADERS, verify=False)
             wam_feed = feedparser.parse(r_wam.content)
             
@@ -659,14 +660,18 @@ def run_poll_cycle(supabase: Client):
             summary_keywords = ["intercept", "defence", "defense", "missile", "drone", "target", "airspace", "hostile", "salvo", "operation", "military"]
             
             for entry in wam_feed.entries:
-                title = entry.title.lower()
+                raw_title = entry.title
+                # Clean Google News suffix
+                cleaned_title = raw_title.replace("- وكالة وام", "").replace("- WAM", "").strip()
+                title_lower = cleaned_title.lower()
                 desc = getattr(entry, 'summary', '').lower()
                 
-                if any(kw in title for kw in summary_keywords) or any(kw in desc for kw in summary_keywords):
+                if any(kw in title_lower for kw in summary_keywords) or any(kw in desc for kw in summary_keywords):
                     clean_summary = getattr(entry, 'summary', '')
                     clean_summary = re.sub(r'<[^>]+>', '', clean_summary) # Strip HTML
                     clean_summary = clean_summary.strip()
-                    if not clean_summary: clean_summary = entry.title
+                    if not clean_summary: clean_summary = cleaned_title
+
                     
                     # Deduplication specifically for OFFICIAL_SUMMARY
                     now = datetime.utcnow()
@@ -675,13 +680,13 @@ def run_poll_cycle(supabase: Client):
                     query_summary = supabase.table("security_alerts") \
                         .select("id") \
                         .eq("event_type", "OFFICIAL_SUMMARY") \
-                        .eq("headline", entry.title.strip()) \
+                        .eq("headline", cleaned_title) \
                         .gte("created_at", twenty_four_hours_ago) \
                         .execute()
                         
                     if len(query_summary.data) == 0:
                         payload = {
-                            "headline": entry.title.strip(),
+                            "headline": cleaned_title,
                             "source": "UAE MOFA (WAM)",
                             "url": entry.link,
                             "event_type": "OFFICIAL_SUMMARY",
@@ -694,8 +699,9 @@ def run_poll_cycle(supabase: Client):
                             "created_at": now.isoformat()
                         }
                         supabase.table("security_alerts").insert(payload).execute()
-                        print(f"    [MOFA SUMMARY INSERTED] {entry.title[:40]}...")
+                        print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}...")
                     break # Stop after finding the latest valid defense article
+
                     
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")

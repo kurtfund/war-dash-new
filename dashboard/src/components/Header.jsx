@@ -92,7 +92,7 @@ const Header = () => {
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.raw_data?.ballistic || mofaSummary.raw_data?.missiles || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>BALLISTIC MISSILES</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>BALLISTIC MISSILES STOPPED</div>
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
@@ -101,7 +101,7 @@ const Header = () => {
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.raw_data?.cruise || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CRUISE MISSILES</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CRUISE MISSILES STOPPED</div>
                 </div>
 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>

@@ -65,34 +65,32 @@ const Header = () => {
         
         {/* Middle: OFFICIAL MOFA SUMMARY (Top Center) */}
         <div style={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
-          <div className="glass-panel" style={{
-            background: 'rgba(5, 7, 9, 0.85)',
-            border: '1px solid rgba(0, 168, 107, 0.5)',
-            borderRadius: '6px',
-            padding: '8px 24px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            minWidth: '450px',
-            boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)'
-          }}>
-            <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
-              {mofaSummary?.url ? (
-                <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer', transition: 'text-shadow 0.2s' }} onMouseOver={(e) => e.target.style.textShadow = '0 0 8px rgba(0, 168, 107, 0.8)'} onMouseOut={(e) => e.target.style.textShadow = 'none'}>
+          {mofaSummary?.url ? (
+            <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <div className="glass-panel hover-glow" style={{
+                background: 'rgba(5, 7, 9, 0.85)',
+                border: '1px solid rgba(0, 168, 107, 0.5)',
+                borderRadius: '6px',
+                padding: '8px 24px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                minWidth: '450px',
+                boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease-in-out'
+              }}>
+                <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
                   OFFICIAL UAE STATEMENT
-                </a>
-              ) : (
-                <span>OFFICIAL UAE STATEMENT</span>
-              )}
-              <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
-            </div>
+                  <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
+                </div>
             
             {mofaSummary ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.missiles_intercepted || 0}
+                    {mofaSummary.raw_data?.missiles || mofaSummary.raw_data?.missiles_intercepted || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>MISSILES INTERCEPTED</div>
                 </div>
@@ -101,7 +99,7 @@ const Header = () => {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.drones_intercepted || 0}
+                    {mofaSummary.raw_data?.drones || mofaSummary.raw_data?.drones_intercepted || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>UAVS / DRONES DOWNED</div>
                 </div>
@@ -115,14 +113,37 @@ const Header = () => {
                   <div className="font-mono text-cyan" style={{ fontSize: '0.5rem', marginTop: '2px' }}>
                      {new Date(mofaSummary.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })} UTC
                   </div>
-                </div>
+                 </div>
               </div>
             ) : (
                 <div className="font-mono text-muted" style={{ fontSize: '0.8rem', padding: '6px 0', fontStyle: 'italic' }}>
                   [ 🚀 Awaiting secure data transmission... ]
                 </div>
             )}
-          </div>
+            </div>
+          </a>
+          ) : (
+            <div className="glass-panel hover-glow" style={{
+              background: 'rgba(5, 7, 9, 0.85)',
+              border: '1px solid rgba(0, 168, 107, 0.5)',
+              borderRadius: '6px',
+              padding: '8px 24px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              minWidth: '450px',
+              boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
+            }}>
+              <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
+                OFFICIAL UAE STATEMENT
+                <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
+              </div>
+              <div className="font-mono text-muted" style={{ fontSize: '0.8rem', padding: '6px 0', fontStyle: 'italic' }}>
+                [ 🚀 Awaiting secure data transmission... ]
+              </div>
+            </div>
+          )}
         </div>
          
          {/* Right: Chronology */}

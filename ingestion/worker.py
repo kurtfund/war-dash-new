@@ -601,9 +601,9 @@ def run_poll_cycle(supabase: Client):
             # Try to extract the actual article publication date to maintain chronological integrity
             pub_date = None
             if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                from datetime import datetime
+                from datetime import datetime, timezone
                 try:
-                    pub_date = datetime(*entry.published_parsed[:6]).isoformat()
+                    pub_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc).isoformat()
                 except: pass
                 
             process_alert_data(supabase, entry.title, source_key[0], entry.link, {"summary": getattr(entry, 'summary', '')}, published_at=pub_date)
@@ -716,7 +716,7 @@ def run_poll_cycle(supabase: Client):
                     pub_date_iso = now.isoformat()
                     if hasattr(entry, 'published_parsed') and entry.published_parsed:
                         try:
-                            pub_date_iso = datetime(*entry.published_parsed[:6]).isoformat()
+                            pub_date_iso = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc).isoformat()
                         except Exception:
                             pass
                     

@@ -652,21 +652,26 @@ def run_poll_cycle(supabase: Client):
         try:
             print("[*] Fetching WAM Official MOFA Summary via Google News...")
             # wam.ae has aggressive F5 bot protection, so we use Google News index as a proxy
-            wam_rss_url = "https://news.google.com/rss/search?q=site:wam.ae+intercept+OR+missile+OR+drone+OR+defense+OR+military&hl=en-US&gl=US&ceid=US:en"
+            wam_rss_url = "https://news.google.com/rss/search?q=site:wam.ae+intercept+OR+missile+OR+drone+OR+defense+OR+military+when:1d&hl=en-US&gl=US&ceid=US:en"
             r_wam = requests.get(wam_rss_url, timeout=15, headers=COMMON_HEADERS, verify=False)
             wam_feed = feedparser.parse(r_wam.content)
             
-            # Keywords indicating an official defense or kinetic operations summary
-            summary_keywords = ["intercept", "defence", "defense", "missile", "drone", "target", "airspace", "hostile", "salvo", "operation", "military"]
+            # Sort entries chronologically to prevent older relevant articles from superseding recent ones
+            entries = sorted(wam_feed.entries, key=lambda x: getattr(x, 'published_parsed', ()), reverse=True)
             
-            for entry in wam_feed.entries:
+            # Keywords indicating an official kinetic operations summary
+            required_kws = ["intercept"]
+            kinetic_kws = ["missile", "drone", "uav", "target", "munition", "salvo"]
+            
+            for entry in entries:
                 raw_title = entry.title
                 # Clean Google News suffix
                 cleaned_title = raw_title.replace("- وكالة وام", "").replace("- WAM", "").strip()
                 title_lower = cleaned_title.lower()
                 desc = getattr(entry, 'summary', '').lower()
                 
-                if any(kw in title_lower for kw in summary_keywords) or any(kw in desc for kw in summary_keywords):
+                # We strictly want the tactical intercept summaries, not diplomatic calls
+                if all(kw in title_lower for kw in required_kws) and any(kw in title_lower for kw in kinetic_kws):
                     clean_summary = getattr(entry, 'summary', '')
                     clean_summary = re.sub(r'<[^>]+>', '', clean_summary) # Strip HTML
                     clean_summary = clean_summary.strip()

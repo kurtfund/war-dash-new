@@ -57,7 +57,7 @@ RSS_SOURCES = SOURCES_CONFIG.get("RSS_SOURCES", {})
 API_SOURCES = SOURCES_CONFIG.get("API_SOURCES", {})
 CONFLICT_KEYWORDS = KEYWORDS_CONFIG.get("CONFLICT_KEYWORDS", [])
 BANNED_KEYWORDS = KEYWORDS_CONFIG.get("BANNED_KEYWORDS", [])
-BANNED_KEYWORDS.extend(["wsaz", "wsaz.com", "armenian", "armenia", "yerevan", "sport"])
+BANNED_KEYWORDS.extend(["wsaz", "wsaz.com", "armenian", "armenia", "yerevan", "sport", "cyprus", "nicosia"])
 KEYWORDS = KEYWORDS_CONFIG # For backward compatibility in classify_text
 
 # Source Reliability Scoring
@@ -203,6 +203,7 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
             
     # 2. Excluded Regions (Theater Hardening with Smart Bypass)
     EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
+    EXCLUDED_REGIONS.extend(["cyprus", "nicosia"])
     # Regions that can be bypassed by theater context
     bypassable_regions = ["russia", "belarus", "ukraine", "moscow", "kiev", "kyiv"]
 
@@ -221,7 +222,7 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     event_type, country = classify_text(headline)
     
     # 4. Strict Theatre Check (Catch-all for explicit theater bypass)
-    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev", "armenia", "armenian", "yerevan"]
+    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev", "armenia", "armenian", "yerevan", "cyprus", "nicosia"]
     for k in catchall_geo:
         if k in text:
             if not has_theater_context:

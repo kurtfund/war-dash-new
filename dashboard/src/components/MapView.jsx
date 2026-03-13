@@ -25,7 +25,7 @@ const getCustomIcon = (type) => {
   let emoji = '🔴';
   if (type === 'MISSILE') emoji = '🚀';
   else if (type === 'AIRSTRIKE') emoji = '🚀💥';
-  else if (type === 'DRONE') emoji = '🛩️🚀';
+  else if (type === 'DRONE') emoji = '🚁';
   else if (type === 'NAVAL') emoji = '⚓';
   else if (type === 'GROUND OPS') emoji = '🪖';
   else if (type === 'ARTILLERY') emoji = '💥🚀';

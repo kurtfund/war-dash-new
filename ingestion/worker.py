@@ -666,90 +666,89 @@ def run_poll_cycle(supabase: Client):
 
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
         try:
-            print("[*] Fetching WAM Official MOFA Summary via Google News...")
-            # wam.ae has aggressive F5 bot protection, so we use Google News index as a proxy
-            wam_rss_url = "https://news.google.com/rss/search?q=site:wam.ae+intercept+OR+missile+OR+drone+OR+defense+OR+military+when:1d&hl=en-US&gl=US&ceid=US:en"
-            r_wam = requests.get(wam_rss_url, timeout=15, headers=COMMON_HEADERS, verify=False)
-            wam_feed = feedparser.parse(r_wam.content)
+            print("[*] Fetching WAM Official MOFA Summary directly from wam.ae...")
+            from bs4 import BeautifulSoup
             
-            # Sort entries chronologically to prevent older relevant articles from superseding recent ones
-            entries = sorted(wam_feed.entries, key=lambda x: getattr(x, 'published_parsed', ()), reverse=True)
+            wam_list_url = "https://www.wam.ae/en/list/latest-news"
+            r_list = requests.get(wam_list_url, timeout=15, headers=COMMON_HEADERS, verify=False)
+            soup = BeautifulSoup(r_list.content, 'html.parser')
             
-            # Keywords indicating an official kinetic operations summary
-            required_kws = ["intercept"]
-            kinetic_kws = ["missile", "drone", "uav", "target", "munition", "salvo"]
+            target_article = None
+            for a_tag in soup.find_all('a', href=True):
+                href = a_tag['href']
+                if '/en/article/' in href:
+                    title_elem = a_tag.find(['h1', 'h2', 'h3', 'h4', 'span'])
+                    title_text = title_elem.get_text(strip=True) if title_elem else a_tag.get_text(strip=True)
+                    
+                    if title_text and 'intercept' in title_text.lower():
+                        full_url = "https://www.wam.ae" + href if href.startswith('/') else href
+                        target_article = {'title': title_text, 'url': full_url}
+                        break # Get the very first matching one (most recent)
             
-            for entry in entries:
-                raw_title = entry.title
-                # Clean Google News suffix
-                cleaned_title = raw_title.replace("- وكالة وام", "").replace("- WAM", "").strip()
-                title_lower = cleaned_title.lower()
-                desc = getattr(entry, 'summary', '').lower()
+            if target_article:
+                print(f"[*] Found Target WAM Article: {target_article['title']}")
+                r_art = requests.get(target_article['url'], timeout=15, headers=COMMON_HEADERS, verify=False)
+                art_soup = BeautifulSoup(r_art.content, 'html.parser')
                 
-                # We strictly want the tactical intercept summaries, not diplomatic calls
-                if all(kw in title_lower for kw in required_kws) and any(kw in title_lower for kw in kinetic_kws):
-                    clean_summary = getattr(entry, 'summary', '')
-                    import re
-                    clean_summary = re.sub(r'<[^>]+>', '', clean_summary) # Strip HTML
-                    clean_summary = clean_summary.strip()
-                    if not clean_summary: clean_summary = cleaned_title
-
-                    # --- QUANTITATIVE EXTRACTION ---
-                    missiles_intercepted = 0
-                    drones_intercepted = 0
+                # Fetch all paragraphs for full article body
+                paragraphs = art_soup.find_all('p')
+                full_text = " ".join([p.get_text(strip=True) for p in paragraphs])
+                
+                missiles_intercepted = 0
+                drones_intercepted = 0
+                
+                # The precise quantitative extraction over the entire body
+                import re
+                
+                # Find all missile numbers and take max
+                m_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:.*?)\s*missiles?', full_text, re.IGNORECASE)
+                if m_matches:
+                    nums = [int(m.replace(',', '')) for m in m_matches]
+                    missiles_intercepted = max(nums)
                     
-                    search_text = (title_lower + " " + clean_summary.lower())
+                # Find all drone numbers and take max
+                d_matches = re.findall(r'(\d+(?:,\d+)?)\s+(?:.*?)\s*(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                if d_matches:
+                    nums = [int(m.replace(',', '')) for m in d_matches]
+                    drones_intercepted = max(nums)
+                
+                cleaned_title = target_article['title']
+                
+                # Deduplication specifically for OFFICIAL_SUMMARY
+                now = datetime.utcnow()
+                twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
+                
+                query_summary = supabase.table("security_alerts") \
+                    .select("id") \
+                    .eq("event_type", "OFFICIAL_SUMMARY") \
+                    .eq("headline", cleaned_title) \
+                    .gte("created_at", twenty_four_hours_ago) \
+                    .execute()
                     
-                    # Look for digits before missile keywords, take max for totals
-                    m_matches = re.findall(r'(\d+)\s*(?:ballistic\s*)?missiles?', search_text)
-                    if m_matches: missiles_intercepted = max(int(m) for m in m_matches)
-                    
-                    # Look for digits before drone/uav keywords, take max for totals
-                    d_matches = re.findall(r'(\d+)\s*(?:uavs?|drones?)', search_text)
-                    if d_matches: drones_intercepted = max(int(d) for d in d_matches)
-                    
-                    # Deduplication specifically for OFFICIAL_SUMMARY
-                    now = datetime.utcnow()
-                    twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
-                    
-                    # Use actual publication date if available
-                    pub_date_iso = now.isoformat()
-                    if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                        try:
-                            pub_date_iso = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc).isoformat()
-                        except Exception:
-                            pass
-                    
-                    query_summary = supabase.table("security_alerts") \
-                        .select("id") \
-                        .eq("event_type", "OFFICIAL_SUMMARY") \
-                        .eq("headline", cleaned_title) \
-                        .gte("created_at", twenty_four_hours_ago) \
-                        .execute()
-                        
-                    if len(query_summary.data) == 0:
-                        payload = {
-                            "headline": cleaned_title,
-                            "source": "UAE MOFA (WAM)",
-                            "url": entry.link,
-                            "event_type": "OFFICIAL_SUMMARY",
-                            "country": "UAE",
-                            "location_name": "Abu Dhabi (Federal)",
-                            "coordinates": "POINT(54.3773 24.4539)",
-                            "deaths": 0,
-                            "confidence": 1.0,
-                            "raw_data": {
-                                "summary": clean_summary[:500],
-                                "missiles": missiles_intercepted,
-                                "drones": drones_intercepted
-                            },
-                            "created_at": pub_date_iso
-                        }
-                        supabase.table("security_alerts").insert(payload).execute()
-                        print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (M: {missiles_intercepted}, D: {drones_intercepted})")
-                    break # Stop after finding the latest valid defense article
-
-                    
+                if len(query_summary.data) == 0:
+                    payload = {
+                        "headline": cleaned_title,
+                        "source": "UAE MOFA (WAM)",
+                        "url": target_article['url'],
+                        "event_type": "OFFICIAL_SUMMARY",
+                        "country": "UAE",
+                        "location_name": "Abu Dhabi (Federal)",
+                        "coordinates": "POINT(54.3773 24.4539)",
+                        "deaths": 0,
+                        "confidence": 1.0,
+                        "raw_data": {
+                            "summary": full_text[:500] if full_text else cleaned_title,
+                            "missiles": missiles_intercepted,
+                            "drones": drones_intercepted
+                        },
+                        "created_at": now.isoformat()
+                    }
+                    supabase.table("security_alerts").insert(payload).execute()
+                    print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (M: {missiles_intercepted}, D: {drones_intercepted})")
+                else:
+                    print("    [MOFA SUMMARY SKIPPED] Already extracted recently.")
+            else:
+                 print("    [MOFA SUMMARY] No recent intercept articles found on WAM landing page.")
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")
 

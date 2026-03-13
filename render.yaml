@@ -2,7 +2,7 @@ services:
   - type: worker
     name: war-dash-ingestion
     runtime: python
-    buildCommand: pip install -r ingestion/requirements.txt && playwright install chromium
+    buildCommand: pip install -r ingestion/requirements.txt && playwright install --with-deps chromium
     startCommand: python ingestion/worker.py
     schedule: "*/5 * * * *" # Run every 5 minutes
     envVars:

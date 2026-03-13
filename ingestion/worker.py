@@ -609,6 +609,45 @@ def run_poll_cycle(supabase: Client):
                 except Exception as e:
                     print(f"Error polling {source_info['name']}: {e}")
 
+        # --- MARKET DATA UPDATE ---
+        try:
+            print("[*] Fetching Live Market Data from Yahoo Finance...")
+            tickers = ['AED=X', 'NG=F', 'CL=F', 'GC=F', '^TASI.SR', '^VIX']
+            market_payload = {}
+
+            for t in tickers:
+                url = f"https://query2.finance.yahoo.com/v8/finance/chart/{t}"
+                try:
+                    # Reuse COMMON_HEADERS and session from outer scope if possible, but requests is fine
+                    r = requests.get(url, headers=COMMON_HEADERS, timeout=10)
+                    data = r.json()['chart']['result'][0]['meta']
+                    price = data['regularMarketPrice']
+                    prev_close = data['chartPreviousClose']
+                    pct_change = ((price - prev_close) / prev_close) * 100
+                    market_payload[t] = {"price": price, "change": pct_change}
+                except Exception as e:
+                    print(f"    [MARKET_ERROR] Failed to fetch {t}: {e}")
+
+            if market_payload:
+                now = datetime.utcnow()
+                payload = {
+                    "headline": "Live Market Pulse Update",
+                    "source": "Yahoo Finance (Backend)",
+                    "url": "https://finance.yahoo.com",
+                    "event_type": "MARKET_DATA",
+                    "country": "Global",
+                    "location_name": "Global Markets",
+                    "deaths": 0,
+                    "confidence": 1.0,
+                    "raw_data": market_payload,
+                    "created_at": now.isoformat()
+                }
+                
+                supabase.table("security_alerts").insert(payload).execute()
+                print("    [MARKET DATA INSERTED]")
+        except Exception as e:
+            print(f"Error in Market Pulse fetch: {e}")
+
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
         try:
             print("[*] Fetching WAM Official MOFA Summary...")

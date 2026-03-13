@@ -187,7 +187,7 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
 
     # 1. Banned Keywords (Hard Reject with Smart Bypass)
     # Banned keywords that can be bypassed by theater context (e.g. Putin + Iran)
-    geopolitical_banned = ["putin", "trump", "zelensky", "zelenskyy", "kremlin", "nato"]
+    geopolitical_banned = ["putin", "trump", "zelensky", "zelenskyy", "kremlin", "nato", "russia", "russian", "ukraine", "ukrainian"]
     
     for word in BANNED_KEYWORDS:
         word_clean = word.strip().lower()
@@ -220,7 +220,7 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     event_type, country = classify_text(headline)
     
     # 4. Strict Theatre Check (Catch-all for explicit theater bypass)
-    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "russia", "moscow", "kiev"]
+    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev"]
     for k in catchall_geo:
         if k in text:
             if not has_theater_context:
@@ -338,31 +338,35 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
     if not headline:
         return False
         
-    # Synchronization Fix: Use utcnow() to match Supabase storage
-    now = datetime.utcnow()
-    twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
-    thirty_mins_ago = (now - timedelta(minutes=30)).isoformat()
-
     try:
-        # Check 1: Exact Headline Match (Window: 24 Hours)
-        # Prevents identical news repeating throughout the day
+        alert_time_str = alert.get("created_at") or datetime.utcnow().isoformat()
+        try:
+            alert_time = datetime.fromisoformat(alert_time_str)
+        except:
+            alert_time = datetime.utcnow()
+        
+        # Check 1: Exact Headline Match (Any time - if we've seen this exact headline, skip it)
         query_headline = supabase.table("security_alerts") \
             .select("id") \
             .eq("headline", headline) \
-            .gte("created_at", twenty_four_hours_ago) \
+            .limit(1) \
             .execute()
         
         if len(query_headline.data) > 0:
             return True
 
-        # Check 2: Event + Location Match (Window: 30 Mins)
+        # Check 2: Event + Location Match (Window: 12 Hours around the article's time)
         # Fallback for slight headline variations of the same event
-        if alert.get("location_name") and alert.get("event_type"):
+        twelve_hours_before = (alert_time - timedelta(hours=12)).isoformat()
+        twelve_hours_after = (alert_time + timedelta(hours=12)).isoformat()
+        
+        if alert.get("location_name") and alert.get("event_type") and alert["location_name"] != "Unknown":
             query_event = supabase.table("security_alerts") \
                 .select("id") \
                 .eq("event_type", alert["event_type"]) \
                 .eq("location_name", alert["location_name"]) \
-                .gte("created_at", thirty_mins_ago) \
+                .gte("created_at", twelve_hours_before) \
+                .lte("created_at", twelve_hours_after) \
                 .execute()
             if len(query_event.data) > 0:
                 return True
@@ -372,13 +376,16 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
 
 # --- LOGIC ---
 
-def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None):
+def process_alert_data(supabase: Client, headline: str, source: str, url: str, raw_data: Dict = None, published_at: str = None):
     # Synchronize time to UTC for Supabase
     from datetime import datetime
     
-    # 1. Strip defensive whitespace
+    # 1. Strip defensive whitespace and Google News suffixes
     headline = headline.strip() if headline else ""
     if not headline: return
+    
+    # Strip common Google News RSS suffixes (e.g., " - Al Jazeera", " - WVLT")
+    headline = re.sub(r'\s+-\s+[^-]+$', '', headline).strip()
     
     original_headline = headline
     try:
@@ -455,16 +462,18 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
         if not alert_payload["coordinates"]:
             return
 
+    # Assign correct timestamp before duplicate checking
+    if published_at:
+        alert_payload["created_at"] = published_at
+    else:
+        from datetime import datetime
+        import random
+        now = datetime.utcnow()
+        micro_offset = random.randint(0, 999999)
+        alert_payload["created_at"] = now.replace(microsecond=micro_offset).isoformat()
+
     if not is_duplicate(supabase, alert_payload):
         try:
-            # Add a small random millisecond offset to the current time to guarantee ordering
-            from datetime import datetime
-            import random
-            now = datetime.utcnow()
-            # Random offset between 0 and 999 milliseconds
-            micro_offset = random.randint(0, 999999)
-            alert_payload["created_at"] = now.replace(microsecond=micro_offset).isoformat()
-            
             supabase.table("security_alerts").insert(alert_payload).execute()
             print(f"    [INSERTED] {event_type} | {country} | {source[:20]}... | {alert_payload['created_at']}")
         except Exception as e:
@@ -588,10 +597,16 @@ def run_poll_cycle(supabase: Client):
             print(f"    [FEED_SAMPLE] Top sources: {', '.join(sources_used)}")
         
         for source_key, entry in interleaved_entries:
-            # We process them one by one with a slight delay
-            # This ensures distinct created_at timestamps for the dashboard ordering
-            process_alert_data(supabase, entry.title, source_key[0], entry.link, {"summary": getattr(entry, 'summary', '')})
-            time.sleep(1.0) 
+            # Try to extract the actual article publication date to maintain chronological integrity
+            pub_date = None
+            if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                from datetime import datetime
+                try:
+                    pub_date = datetime(*entry.published_parsed[:6]).isoformat()
+                except: pass
+                
+            process_alert_data(supabase, entry.title, source_key[0], entry.link, {"summary": getattr(entry, 'summary', '')}, published_at=pub_date)
+            time.sleep(0.5) 
 
         # GeoJSON APIs (Keep these at the end)
         for cat, sources in API_SOURCES.items():

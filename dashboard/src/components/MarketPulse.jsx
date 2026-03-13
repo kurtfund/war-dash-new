@@ -4,11 +4,12 @@ import { supabase } from '../lib/supabase';
 
 const Tickers = [
   { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number', prefix: '$' },
-  { symbol: 'NG=F', name: '$GAS', type: 'ENERGY', format: 'number', prefix: '$' },
-  { symbol: 'CL=F', name: '$OIL', type: 'ENERGY', format: 'number', prefix: '$' },
+  { symbol: 'CL=F', name: 'Crude Oil', type: 'ENERGY', format: 'number', prefix: '$' },
   { symbol: 'GC=F', name: 'Gold', type: 'SAFE HAVEN', prefix: '$' },
-  { symbol: '^TASI.SR', name: 'Tadawul All-Share', type: 'MIDDLE EAST', format: 'number' },
-  { symbol: '^VIX', name: 'VIX', type: 'VOLATILITY', format: 'number' }
+  { symbol: '^TASI.SR', name: 'Tadawul', type: 'MIDDLE EAST', format: 'number' },
+  { symbol: '^GSPC', name: 'S&P 500', type: 'US MARKETS', format: 'number' },
+  { symbol: 'AAPL', name: 'Apple', type: 'TECH', prefix: '$' },
+  { symbol: '2222.SR', name: 'Saudi Aramco', type: 'ENERGY', format: 'number' }
 ];
 
 const MarketPulse = () => {
@@ -46,11 +47,12 @@ const MarketPulse = () => {
 
           // Default fallback data if live fetch fails
           if (ticker.name === '$AED') { fallbackPrice = '3.67'; fallbackChange = '0.00%'; isPositive = true; }
-          else if (ticker.name === '$GAS') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === '$OIL') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
+          else if (ticker.name === 'Crude Oil') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
           else if (ticker.name === 'Gold') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'Tadawul All-Share') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'VIX') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = false; }
+          else if (ticker.name === 'Tadawul') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
+          else if (ticker.name === 'S&P 500') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
+          else if (ticker.name === 'Apple') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
+          else if (ticker.name === 'Saudi Aramco') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
 
           const liveData = liveResults[ticker.symbol];
           if (liveData) {

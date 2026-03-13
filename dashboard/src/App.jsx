@@ -28,6 +28,7 @@ function App() {
         const { data, error } = await supabase
           .from('security_alerts')
           .select('*')
+          .neq('event_type', 'MARKET_DATA')
           .order('created_at', { ascending: false })
           .limit(250)
         
@@ -49,7 +50,10 @@ function App() {
     const channel = supabase
       .channel('public:security_alerts')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'security_alerts' }, (payload) => {
-        setAlerts((current) => [payload.new, ...current].slice(0, 250))
+        setAlerts((current) => {
+          if (payload.new.event_type === 'MARKET_DATA') return current;
+          return [payload.new, ...current].slice(0, 250);
+        })
       })
       .subscribe()
 

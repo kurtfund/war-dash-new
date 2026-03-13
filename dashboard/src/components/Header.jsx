@@ -64,7 +64,7 @@ const Header = () => {
         </div>
         
         {/* Middle: OFFICIAL MOFA SUMMARY (Top Center) */}
-        <div style={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
+        <div style={{ flex: 2, display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
           {mofaSummary?.url ? (
             <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
               <div className="glass-panel hover-glow" style={{

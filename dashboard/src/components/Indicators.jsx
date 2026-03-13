@@ -46,10 +46,11 @@ const Indicators = ({ alerts }) => {
       {/* Bottom Interface Split */}
       <div className="indicators-wrapper" style={{ 
         pointerEvents: 'auto', 
-        justifyContent: 'center', 
+        justifyContent: 'flex-end', 
         alignItems: 'flex-end', 
         gap: '40px', 
-        paddingBottom: '20px' 
+        paddingBottom: '20px',
+        paddingRight: '20px'
       }}>
         
         {/* PREDICTIVE AI INTEL Box (Left Aligned Now) */}

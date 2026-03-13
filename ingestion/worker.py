@@ -719,17 +719,29 @@ def run_poll_cycle(supabase: Client):
                 # We look for digits OR specific words
                 num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
                 
-                b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
-                if b_matches:
-                    ballistic = max([parse_num_match(m) for m in b_matches])
+                # Attempt to explicitly target the cumulative sentence block
+                target_sentence_match = re.search(r'since the onset[^\.]+', full_text, re.IGNORECASE)
+                
+                if target_sentence_match:
+                    target_sentence = target_sentence_match.group(0)
+                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', target_sentence, re.IGNORECASE)
+                    if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
                     
-                c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
-                if c_matches:
-                    cruise = max([parse_num_match(m) for m in c_matches])
+                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', target_sentence, re.IGNORECASE)
+                    if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
                     
-                u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
-                if u_matches:
-                    uavs = max([parse_num_match(m) for m in u_matches])
+                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', target_sentence, re.IGNORECASE)
+                    if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
+                else:
+                    # Fallback to global maximums over the text
+                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
+                    if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
+                        
+                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
+                    if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
+                        
+                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                    if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
                 
                 if ballistic == 0 and cruise == 0 and uavs == 0:
                     print("    [MOFA SUMMARY SKIPPED] Could not confidently extract quantitative totals from the article body. F5 blocking or missing text.")

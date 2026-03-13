@@ -35,10 +35,10 @@ const Header = () => {
          {/* Right: Chronology */}
          <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '0.85rem', textAlign: 'right', fontWeight: 'bold' }}>
             <div style={{ letterSpacing: '1px' }}>
-              Day 12 | Since Saturday, Feb 28, 2026
+              Day {Math.floor((new Date() - new Date('2026-02-28')) / (1000 * 60 * 60 * 24)) + 1} 🚀 | Since Saturday, Feb 28, 2026
             </div>
             <div className="text-muted" style={{ fontSize: '0.7rem', marginTop: '4px', letterSpacing: '2px' }}>
-              <span className="text-red glow-red">●</span> {new Date().toLocaleTimeString('en-US', { hour12: false })} UTC
+              <span className="text-red glow-red">●</span> {new Date().toLocaleTimeString('en-US', { hour12: false })} UTC 🚀
             </div>
          </div>
       </div>

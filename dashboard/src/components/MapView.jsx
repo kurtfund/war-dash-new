@@ -24,11 +24,11 @@ const MapResizer = () => {
 const getCustomIcon = (type) => {
   let emoji = '🔴';
   if (type === 'MISSILE') emoji = '🚀';
-  else if (type === 'AIRSTRIKE') emoji = '✈️';
-  else if (type === 'DRONE') emoji = '🛩️';
+  else if (type === 'AIRSTRIKE') emoji = '🚀💥';
+  else if (type === 'DRONE') emoji = '🛩️🚀';
   else if (type === 'NAVAL') emoji = '⚓';
   else if (type === 'GROUND OPS') emoji = '🪖';
-  else if (type === 'ARTILLERY') emoji = '💥';
+  else if (type === 'ARTILLERY') emoji = '💥🚀';
   else if (type === 'CYBER') emoji = '💻';
   else if (type === 'TERRORISM') emoji = '🧨';
   else if (type === 'OFFICIAL_SUMMARY') emoji = '📜';
@@ -71,10 +71,11 @@ const MapView = ({ alerts }) => {
         center={center} 
         zoom={zoom} 
         style={{ width: '100%', height: '100%' }}
-        zoomControl={false}
+        zoomControl={true}
         scrollWheelZoom={!isMobile}
         dragging={!isMobile}
         tap={!isMobile}
+        maxZoom={12}
       >
         <MapResizer />
         <TileLayer

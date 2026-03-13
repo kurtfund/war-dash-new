@@ -212,18 +212,26 @@ body {
   .indicators-overlay {
     position: relative;
     bottom: auto;
-    padding: 10px 0;
+    padding: 16px;
     height: auto;
+    z-index: 1000;
+    pointer-events: auto;
   }
 
   .indicators-wrapper {
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
 
   .indicators-panel {
     width: 100%;
     flex: none;
+    max-height: none; /* Allow it to grow */
+  }
+  
+  /* Ensure the MOFA summary is at the bottom as requested */
+  #mofa-summary-panel {
+    order: 2;
   }
 
   .header-bar {

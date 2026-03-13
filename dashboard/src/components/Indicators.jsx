@@ -72,10 +72,18 @@ const Indicators = ({ alerts }) => {
            </div>
            
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <div>
-                <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>AVG MISSILES / 24H 🚀</div>
-                <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  452.5 <span className="text-red glow-red" style={{ fontSize: '0.6rem' }}>↑ 12.4%</span>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>TOTAL MISSILES 🚀</div>
+                  <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                    {mofaSummary?.raw_data?.missiles || mofaSummary?.raw_data?.missiles_intercepted || 0}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '4px' }}>TOTAL UAVS 🛸</div>
+                  <div className="font-mono text-main" style={{ fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                    {mofaSummary?.raw_data?.drones || mofaSummary?.raw_data?.drones_intercepted || 0}
+                  </div>
                 </div>
               </div>
               
@@ -143,11 +151,16 @@ const Indicators = ({ alerts }) => {
                   transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                 }}>
                   {!isRevealed ? (
-                     <img 
-                        src="/reactor_alt.png" 
-                        alt="Reactor Logo" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute' }} 
-                     />
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', position: 'absolute' }}>
+                      <img 
+                         src="/logo.png" 
+                         alt="War Dash Logo" 
+                         style={{ width: '70%', height: '70%', objectFit: 'contain', zIndex: 1, marginTop: '-15px' }} 
+                      />
+                      <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', textAlign: 'center', position: 'absolute', bottom: '15px', zIndex: 2 }}>
+                        CLICK TO REVEAL<br/>DAILY SCORE
+                      </div>
+                    </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '2px', marginTop: '-10px' }}>HEARTBEAT</div>

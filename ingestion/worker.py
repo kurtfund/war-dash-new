@@ -57,7 +57,7 @@ RSS_SOURCES = SOURCES_CONFIG.get("RSS_SOURCES", {})
 API_SOURCES = SOURCES_CONFIG.get("API_SOURCES", {})
 CONFLICT_KEYWORDS = KEYWORDS_CONFIG.get("CONFLICT_KEYWORDS", [])
 BANNED_KEYWORDS = KEYWORDS_CONFIG.get("BANNED_KEYWORDS", [])
-BANNED_KEYWORDS.extend(["wsaz", "wsaz.com", "armenian", "sport"])
+BANNED_KEYWORDS.extend(["wsaz", "wsaz.com", "armenian", "armenia", "yerevan", "sport"])
 KEYWORDS = KEYWORDS_CONFIG # For backward compatibility in classify_text
 
 # Source Reliability Scoring
@@ -221,7 +221,7 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     event_type, country = classify_text(headline)
     
     # 4. Strict Theatre Check (Catch-all for explicit theater bypass)
-    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev"]
+    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev", "armenia", "armenian", "yerevan"]
     for k in catchall_geo:
         if k in text:
             if not has_theater_context:
@@ -698,17 +698,27 @@ def run_poll_cycle(supabase: Client):
                     missiles_intercepted = 0
                     drones_intercepted = 0
                     
-                    # Look for digits before missile keywords
-                    m_match = re.search(r'(\d+)\s*(?:ballistic\s*)?missiles?', title_lower)
-                    if m_match: missiles_intercepted = int(m_match.group(1))
+                    search_text = (title_lower + " " + clean_summary.lower())
                     
-                    # Look for digits before drone/uav keywords
-                    d_match = re.search(r'(\d+)\s*(?:uavs?|drones?)', title_lower)
-                    if d_match: drones_intercepted = int(d_match.group(1))
+                    # Look for digits before missile keywords, take max for totals
+                    m_matches = re.findall(r'(\d+)\s*(?:ballistic\s*)?missiles?', search_text)
+                    if m_matches: missiles_intercepted = max(int(m) for m in m_matches)
+                    
+                    # Look for digits before drone/uav keywords, take max for totals
+                    d_matches = re.findall(r'(\d+)\s*(?:uavs?|drones?)', search_text)
+                    if d_matches: drones_intercepted = max(int(d) for d in d_matches)
                     
                     # Deduplication specifically for OFFICIAL_SUMMARY
                     now = datetime.utcnow()
                     twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
+                    
+                    # Use actual publication date if available
+                    pub_date_iso = now.isoformat()
+                    if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                        try:
+                            pub_date_iso = datetime(*entry.published_parsed[:6]).isoformat()
+                        except Exception:
+                            pass
                     
                     query_summary = supabase.table("security_alerts") \
                         .select("id") \
@@ -730,10 +740,10 @@ def run_poll_cycle(supabase: Client):
                             "confidence": 1.0,
                             "raw_data": {
                                 "summary": clean_summary[:500],
-                                "missiles_intercepted": missiles_intercepted,
-                                "drones_intercepted": drones_intercepted
+                                "missiles": missiles_intercepted,
+                                "drones": drones_intercepted
                             },
-                            "created_at": now.isoformat()
+                            "created_at": pub_date_iso
                         }
                         supabase.table("security_alerts").insert(payload).execute()
                         print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (M: {missiles_intercepted}, D: {drones_intercepted})")

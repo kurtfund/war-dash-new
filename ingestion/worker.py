@@ -666,141 +666,120 @@ def run_poll_cycle(supabase: Client):
             print(f"Error in Market Pulse fetch: {e}")
 
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
-            try:
-                # Use Playwright instead of requests due to WAM transforming to an Angular Single Page App
-                from playwright.sync_api import sync_playwright
+        # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
+        try:
+            print("[*] Fetching WAM Official MOFA Summary via DuckDuckGo Cache bypass...")
+            from bs4 import BeautifulSoup
+            import re
+            from datetime import timedelta
+            
+            url = "https://html.duckduckgo.com/html/"
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            }
+            # The query searches specifically for the cumulative totals string pattern WAM uses
+            payload = {
+                'q': 'site:wam.ae "intercepted" "ballistic missiles" "UAVs" OR "drones"'
+            }
+            
+            r = requests.post(url, data=payload, headers=headers, timeout=15)
+            soup = BeautifulSoup(r.text, 'html.parser')
+            results = soup.find_all('a', class_='result__snippet')
+            
+            full_text = ""
+            for res in results:
+                full_text += res.get_text(separator=' ') + " "
                 
-                with sync_playwright() as p:
-                    browser = p.chromium.launch(headless=True)
-                    context = browser.new_context(
-                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                    )
-                    page = context.new_page()
-                    page.goto("https://www.wam.ae/en/list/latest-news", wait_until="networkidle", timeout=20000)
-                    page.wait_for_selector("a", timeout=10000)
+            if full_text.strip():
+                # --- QUANTITATIVE EXTRACTION ---
+                word_to_num = {
+                    'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
+                    'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 
+                    'nineteen': 19, 'twenty': 20
+                }
+                
+                def parse_num_match(m):
+                    m = m.lower().replace(',', '').strip()
+                    if m in word_to_num: return word_to_num[m]
+                    try: return int(m)
+                    except: return 0
+
+                ballistic = 0
+                cruise = 0
+                uavs = 0
+                
+                num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
+                
+                target_sentence_match = re.search(r'since the onset[^\.]+', full_text, re.IGNORECASE)
+                
+                if target_sentence_match:
+                    target_sentence = target_sentence_match.group(0)
+                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', target_sentence, re.IGNORECASE)
+                    if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
                     
-                    links = page.locator("a").element_handles()
-                    target_url = None
-                    target_title = None
+                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', target_sentence, re.IGNORECASE)
+                    if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
                     
-                    for link in links:
-                        try:
-                            href = link.get_attribute("href")
-                            if href and "/en/article/" in href:
-                                text = link.inner_text().strip()
-                                if "intercept" in text.lower():
-                                    target_url = "https://www.wam.ae" + href if href.startswith("/") else href
-                                    target_title = text
-                                    break
-                        except:
-                            pass
-                            
-                    if target_url:
-                        print(f"[*] Found Target WAM Article: {target_title}")
+                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', target_sentence, re.IGNORECASE)
+                    if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
+                else:
+                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
+                    if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
                         
-                        # Navigate to the article to render paragraphs
-                        page.goto(target_url, wait_until="networkidle", timeout=20000)
-                        page.wait_for_selector("p", timeout=10000)
+                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
+                    if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
                         
-                        full_text = page.locator("body").inner_text()
+                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                    if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
+                
+                if ballistic == 0 and cruise == 0 and uavs == 0:
+                    print("    [MOFA SUMMARY SKIPPED] Could not confidently extract quantitative totals from the DDG snippet.")
+                else:
+                    now = datetime.utcnow()
+                    pub_date_iso = now.isoformat()
+                    # The exact headline isn't provided neatly by DDG snippet, so we generalize it.
+                    cleaned_title = f"UAE MOFA Update: {ballistic} Ballistic Missiles, {uavs} UAVs Intercepted"
+                    twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
+                    
+                    query_summary = supabase.table("security_alerts") \
+                        .select("id") \
+                        .eq("event_type", "OFFICIAL_SUMMARY") \
+                        .eq("headline", cleaned_title) \
+                        .gte("created_at", twenty_four_hours_ago) \
+                        .execute()
                         
-                        # --- QUANTITATIVE EXTRACTION ---
-                        import re
-                        
-                        word_to_num = {
-                            'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                            'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                            'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
-                            'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 
-                            'nineteen': 19, 'twenty': 20
+                    if len(query_summary.data) == 0:
+                        payload = {
+                            "headline": cleaned_title,
+                            "source": "UAE MOFA (WAM)",
+                            "url": "https://www.wam.ae/en/list/latest-news",
+                            "event_type": "OFFICIAL_SUMMARY",
+                            "country": "UAE",
+                            "location_name": "Abu Dhabi (Federal)",
+                            "coordinates": "POINT(54.3773 24.4539)",
+                            "deaths": 0,
+                            "confidence": 1.0,
+                            "raw_data": {
+                                "summary": full_text[:500] if full_text else cleaned_title,
+                                "ballistic": ballistic,
+                                "cruise": cruise,
+                                "uavs": uavs,
+                                "missiles": ballistic + cruise, 
+                                "drones": uavs 
+                            },
+                            "created_at": pub_date_iso
                         }
-                        
-                        def parse_num_match(m):
-                            m = m.lower().replace(',', '').strip()
-                            if m in word_to_num: return word_to_num[m]
-                            try: return int(m)
-                            except: return 0
-
-                        ballistic = 0
-                        cruise = 0
-                        uavs = 0
-                        
-                        num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
-                        
-                        target_sentence_match = re.search(r'since the onset[^\.]+', full_text, re.IGNORECASE)
-                        
-                        if target_sentence_match:
-                            target_sentence = target_sentence_match.group(0)
-                            b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', target_sentence, re.IGNORECASE)
-                            if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
-                            
-                            c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', target_sentence, re.IGNORECASE)
-                            if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
-                            
-                            u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', target_sentence, re.IGNORECASE)
-                            if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
-                        else:
-                            b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
-                            if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
-                                
-                            c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
-                            if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
-                                
-                            u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
-                            if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
-                        
-                        if ballistic == 0 and cruise == 0 and uavs == 0:
-                            print("    [MOFA SUMMARY SKIPPED] Could not confidently extract quantitative totals from the article body. F5 blocking or missing text.")
-                            browser.close()
-                            return # Avoid inserting 0s
-                        
-                        # --- DATE EXTRACTION ---
-                        now = datetime.utcnow()
-                        pub_date_iso = now.isoformat() # Fallback to now
-                        
-                        cleaned_title = target_title
-                        twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
-                        
-                        # We specifically check for deduplication of the exact headline
-                        query_summary = supabase.table("security_alerts") \
-                            .select("id") \
-                            .eq("event_type", "OFFICIAL_SUMMARY") \
-                            .eq("headline", cleaned_title) \
-                            .gte("created_at", twenty_four_hours_ago) \
-                            .execute()
-                            
-                        if len(query_summary.data) == 0:
-                            payload = {
-                                "headline": cleaned_title,
-                                "source": "UAE MOFA (WAM)",
-                                "url": target_url,
-                                "event_type": "OFFICIAL_SUMMARY",
-                                "country": "UAE",
-                                "location_name": "Abu Dhabi (Federal)",
-                                "coordinates": "POINT(54.3773 24.4539)",
-                                "deaths": 0,
-                                "confidence": 1.0,
-                                "raw_data": {
-                                    "summary": full_text[:500] if full_text else cleaned_title,
-                                    "ballistic": ballistic,
-                                    "cruise": cruise,
-                                    "uavs": uavs,
-                                    "missiles": ballistic + cruise, # Legacy fallback
-                                    "drones": uavs # Legacy fallback
-                                },
-                                "created_at": pub_date_iso
-                            }
-                            supabase.table("security_alerts").insert(payload).execute()
-                            print(f"    [MOFA SUMMARY INSERTED] {cleaned_title[:40]}... (B: {ballistic}, C: {cruise}, D: {uavs})")
-                        else:
-                            print("    [MOFA SUMMARY SKIPPED] Already extracted recently.")
+                        supabase.table("security_alerts").insert(payload).execute()
+                        print(f"    [MOFA SUMMARY INSERTED] (B: {ballistic}, C: {cruise}, D: {uavs})")
                     else:
-                        print("    [MOFA SUMMARY] No recent intercept articles found on WAM landing page.")
-                    
-                    browser.close()
-            except Exception as e:
-                print(f"Error fetching WAM MOFA Summary: {e}")
-
+                        print("    [MOFA SUMMARY SKIPPED] Already extracted recently.")
+            else:
+                 print("    [MOFA SUMMARY] No recent intercept articles found on DDG Cache.")
+                 
+        except Exception as e:
+            print(f"Error fetching WAM MOFA Summary: {e}")
         # Live Flight Data (OpenSky)
         try:
             lamin, lamax = BOUNDS["lat"]

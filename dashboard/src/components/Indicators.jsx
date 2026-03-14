@@ -66,22 +66,21 @@ const Indicators = ({ alerts }) => {
     return { trajectory, trajectoryProgress, daysLeft, topKeywords };
   }, [alerts]);
 
-  // Default Base Score
-  let heartbeatScore = 65.0;
+  // Base Score: True Interception Total
+  let totalIntercepts = 0;
 
-  // Enhance the score using Real UAE WAM Interception Integer Data
+  // Derive exact integer from UAE WAM Data
   if (mofaSummary && mofaSummary.raw_data) {
-    const missiles = mofaSummary.raw_data.missiles || 0;
-    const drones = mofaSummary.raw_data.drones || 0;
-    heartbeatScore += (missiles * 3.0) + (drones * 1.5);
+    const missiles = mofaSummary.raw_data.missiles || mofaSummary.raw_data.ballistic || 0;
+    const drones = mofaSummary.raw_data.drones || mofaSummary.raw_data.uavs || 0;
+    totalIntercepts = missiles + drones;
   } else {
-    // Fallback: Use standard alerts count if WAM data isn't loaded yet
-    const recentKinetic = alerts.filter(a => ['MISSILE', 'AIRSTRIKE', 'DRONE'].includes(a.event_type)).length;
-    heartbeatScore += (recentKinetic * 0.5);
+    // Before WAM data loads, or as a crude fallback, we count total kinetic alerts
+    totalIntercepts = alerts.filter(a => ['MISSILE', 'AIRSTRIKE', 'DRONE'].includes(a.event_type)).length * 4;
   }
 
-  // Strictly cap the maximum conflict score at 99.9 (DEFCON 1 approaching)
-  heartbeatScore = Math.min(99.9, heartbeatScore).toFixed(1);
+  // Cap fallback purely for aesthetic limits if WAM fails, but true WAM data allows thousands
+  const displayScore = totalIntercepts > 0 ? totalIntercepts.toLocaleString() : "--";
 
   useEffect(() => {
     const fetchMofa = async () => {
@@ -234,16 +233,16 @@ const Indicators = ({ alerts }) => {
                          style={{ maxWidth: '65%', maxHeight: '65%', objectFit: 'contain', zIndex: 1, marginBottom: '15px' }} 
                       />
                       <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', textAlign: 'center', position: 'absolute', bottom: '25px', zIndex: 2 }}>
-                        CLICK TO REVEAL<br/>DAILY SCORE
+                        CLICK TO REVEAL<br/>TOTAL INTERCEPTS
                       </div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '2px', marginTop: '-10px' }}>HEARTBEAT</div>
-                      <div className="font-mono text-main" style={{ fontSize: '3.5rem', fontWeight: 'bold', textShadow: '0 0 20px rgba(255,255,255,0.8)' }}>
-                        {heartbeatScore}
+                      <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '2px', marginTop: '-5px' }}>OFFICIAL WAM DATA</div>
+                      <div className="font-mono text-main" style={{ fontSize: '2.8rem', fontWeight: 'bold', textShadow: '0 0 20px rgba(255,255,255,0.8)', margin: '5px 0' }}>
+                        {displayScore}
                       </div>
-                      <div className="font-mono text-cyan" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CONFLICT SCORE</div>
+                      <div className="font-mono text-cyan" style={{ fontSize: '0.55rem', letterSpacing: '1px' }}>TOTAL INTERCEPTS</div>
                     </div>
                   )}
                 </div>

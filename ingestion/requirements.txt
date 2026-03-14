@@ -7,5 +7,5 @@ geopy
 geocoder
 deep-translator
 tenacity
-playwright
+beautifulsoup4
 # Model is downloaded in build command

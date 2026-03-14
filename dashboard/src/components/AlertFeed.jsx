@@ -4,41 +4,42 @@ import { getHostname } from '../lib/utils';
 const AlertFeed = ({ alerts }) => {
   const scrollRef = useRef(null);
   
-  // Dynamically interleave articles from different sources so one outlet doesn't dominate
+  // Interleave alerts: maintain strictly chronological order, but avoid back-to-back articles from the identical source if possible.
   const interleavedAlerts = useMemo(() => {
     if (!alerts || alerts.length === 0) return [];
     
-    // 1. Group alerts by their source name
-    const sourceGroups = {};
-    alerts.forEach(alert => {
-      const source = alert.source || getHostname(alert.url);
-      if (!sourceGroups[source]) sourceGroups[source] = [];
-      sourceGroups[source].push(alert);
-    });
-
+    // Sort descending by time to ensure newest is always first
+    const sortedAlerts = [...alerts].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    
     const result = [];
-    const groupKeys = Object.keys(sourceGroups);
-    let itemsRemaining = alerts.length;
-
-    // 2. Round-robin draw one article from each source group until all are depleted
-    let roundIndex = 0;
-    while (itemsRemaining > 0) {
-      let drawnInRound = false;
-      for (const key of groupKeys) {
-        if (sourceGroups[key].length > 0) {
-          result.push(sourceGroups[key].shift()); // take the top (newest) item from this source
-          itemsRemaining--;
-          drawnInRound = true;
+    const pending = [...sortedAlerts];
+    
+    while(pending.length > 0) {
+        // Look at the source of the last article we added to the feed
+        const lastSource = result.length > 0 ? (result[result.length - 1].source || getHostname(result[result.length - 1].url)) : null;
+        
+        // Find the newest article whose source is DIFFERENT from the last one
+        let foundIndex = -1;
+        for (let i = 0; i < pending.length; i++) {
+            const currentSource = pending[i].source || getHostname(pending[i].url);
+            if (currentSource !== lastSource) {
+                foundIndex = i;
+                break;
+            }
         }
-      }
-      
-      // If we somehow infinite loop or drew nothing but have items left (sanity check)
-      if (!drawnInRound) break; 
-      roundIndex++;
-      if (roundIndex > 250) break; // safety
+        
+        // If all remaining articles are from the exact same source, we just have to allow them back-to-back
+        if (foundIndex === -1) {
+            foundIndex = 0;
+        }
+        
+        // Push the article to the feed and remove it from the pending pool
+        result.push(pending[foundIndex]);
+        pending.splice(foundIndex, 1);
     }
     
-    return result;
+    // Safety cap to prevent browser lag if database grows infinitely
+    return result.slice(0, 150);
   }, [alerts]);
 
   return (

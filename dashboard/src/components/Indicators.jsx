@@ -132,37 +132,42 @@ const Indicators = ({ alerts }) => {
               </div>
            </div>
            
-           <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '0.5px', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }}>
-              [ANALYZING LIVE GEOPOLITICAL ALERT MOMENTUM]
+           <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '0.5px', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '6px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
+              [ANALYZING LIVE 24H ALERT FEED STREAM]
            </div>
            
-           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              
-              {/* Left Column: Trending Vectors */}
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '6px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                  {predictiveMetrics.topKeywords.map((kw, i) => (
-                    <div key={i} className="font-mono" style={{ 
-                        fontSize: '0.6rem', 
-                        padding: '2px 6px', 
-                        background: 'rgba(255,0,51,0.1)', 
-                        border: '1px solid var(--color-red-dim)',
-                        borderRadius: '2px',
-                        color: 'var(--color-text-main)'
-                    }}>
-                      {kw}
-                    </div>
-                  ))}
+                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Total number of alerts currently loaded and analyzed.">ALERTS PROCESSED</div>
+                <div className="font-mono text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{alerts.length}</div>
+              </div>
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
+                <div className="font-mono text-red" style={{ fontSize: '1.1rem', fontWeight: 'bold', textShadow: '0 0 10px rgba(255,0,51,0.5)' }}>{alerts.filter(a => a.event_type === 'MISSILE').length}</div>
+              </div>
+              <div style={{ textAlign: 'right', flex: 1 }}>
+                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">CONFLICT ARCH ⓘ</div>
+                <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                  {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.55rem' }}>DAYS</span>
                 </div>
               </div>
-              
-              {/* Right Column: Conflict Arch Data */}
-              <div style={{ textAlign: 'right', flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '2px' }} title="Estimated timetable to critical escalation based on current kinetic alert frequency vs rolling baseline.">CONFLICT ARCH ⓘ</div>
-                <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
-                  {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.55rem' }}>DAYS REM.</span>
-                </div>
+           </div>
+           
+           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '6px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {predictiveMetrics.topKeywords.map((kw, i) => (
+                  <div key={i} className="font-mono" style={{ 
+                      fontSize: '0.6rem', 
+                      padding: '2px 6px', 
+                      background: 'rgba(255,0,51,0.1)', 
+                      border: '1px solid var(--color-red-dim)',
+                      borderRadius: '2px',
+                      color: 'var(--color-text-main)'
+                  }}>
+                    {kw}
+                  </div>
+                ))}
               </div>
            </div>
            

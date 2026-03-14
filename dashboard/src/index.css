@@ -204,15 +204,13 @@ body {
     border-bottom: 1px solid #1A1A1A;
     width: 100%;
     /* Compact heights for mobile */
-    min-height: 250px;
-    height: auto; 
-    max-height: 50vh; /* Max half the screen for panels */
+    min-height: 350px;
+    height: 45vh; /* Change to explicit height to prevent overflow bugs / fix internal scrolling */
   }
 
   .map-container {
-    height: 40vh; /* Give map a good chunk of mobile view */
-    min-height: 350px;
-    max-height: 60vh;
+    height: 50vh; /* Give map a good chunk of mobile view */
+    min-height: 400px;
   }
 
   .indicators-overlay {

@@ -152,7 +152,11 @@ const AlertFeed = ({ alerts }) => {
 
                 {/* Headline */}
                 <div className="font-mono text-main" style={{ fontSize: '0.75rem', lineHeight: '1.5', marginTop: '4px', opacity: 0.9 }}>
-                  {alert.headline}
+                  {alert.event_type === 'INSS_STATS' ? (
+                     <div style={{ color: 'var(--color-cyan)', fontSize: '0.65rem', fontStyle: 'italic' }}>
+                        INSS Regional Casualties dataset has been updated via PowerBI.
+                     </div>
+                  ) : alert.headline}
                 </div>
                 
               </div>

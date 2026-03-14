@@ -5,6 +5,7 @@ import Indicators from './components/Indicators'
 import MarketPulse from './components/MarketPulse'
 import MapView from './components/MapView'
 import LiveMediaBox from './components/LiveMediaBox'
+import PowerBIEmbed from './components/PowerBIEmbed'
 import { supabase } from './lib/supabase'
 
 function App() {
@@ -101,10 +102,12 @@ function App() {
           <MapView alerts={alerts} />
           <Indicators alerts={alerts} />
         </div>
-        
-        {/* Column 3: Right Panel (Market Pulse) 25% */}
-        <div className="dashboard-panel">
+        {/* Column 3: Right Panel (Market Pulse + Data) 25% */}
+        <div className="dashboard-panel" style={{ display: 'flex', flexDirection: 'column' }}>
           <MarketPulse />
+          <div style={{ borderTop: '1px solid #1A1A1A', flex: 1, minHeight: 0 }}>
+            <PowerBIEmbed />
+          </div>
         </div>
 
       </div>

@@ -1,7 +1,45 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { getHostname } from '../lib/utils';
 
 const AlertFeed = ({ alerts }) => {
+  const scrollRef = useRef(null);
+  
+  // Auto-scroll logic for round-robin effect
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let animationFrameId;
+    let isHovering = false;
+    
+    // Pause on hover
+    const handleMouseEnter = () => isHovering = true;
+    const handleMouseLeave = () => isHovering = false;
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
+
+    const scrollStep = () => {
+      if (!isHovering && alerts.length > 5) { // Only scroll if we have enough items
+        container.scrollTop += 0.5; // Smooth slow scroll
+        
+        // If we've reached the bottom, reset to top to loop
+        // We use a small threshold (1px) because scrollTop can be fractional
+        if (container.scrollHeight - container.clientHeight <= container.scrollTop + 1) {
+            container.scrollTop = 0;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scrollStep);
+    };
+
+    animationFrameId = requestAnimationFrame(scrollStep);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [alerts]);
+
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
@@ -16,7 +54,18 @@ const AlertFeed = ({ alerts }) => {
         </div>
 
         {/* Scrolling Event List */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div 
+          ref={scrollRef}
+          style={{ 
+            flex: 1, 
+            overflowY: 'auto', 
+            padding: '12px', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '8px', 
+            scrollBehavior: 'auto' // Important for manual scrollTop manipulation
+          }}
+        >
           {alerts.map((alert) => {
              const d = new Date(alert.created_at);
              const dayStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });

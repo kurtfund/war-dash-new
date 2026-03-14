@@ -32,9 +32,11 @@ body {
   background-color: var(--color-obsidian);
   color: var(--color-text-main);
   font-family: var(--font-sans);
-  overflow: hidden; /* Prevent scrolling, full height dashboard */
+  overflow: hidden; /* STRICTLY Prevent scrolling, full height dashboard */
   width: 100vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 #root {
@@ -106,13 +108,16 @@ body {
   height: calc(100vh - 60px); /* Leave room for header */
   position: relative;
   background-color: var(--color-obsidian);
+  overflow: hidden; /* Lock grid */
 }
 
 .dashboard-panel {
   border-right: 1px solid #1A1A1A;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: hidden; /* Panels handle their own internal scroll if needed, lock the outer panel */
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-panel:last-child {
@@ -178,7 +183,7 @@ body {
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
   body {
-    overflow-y: auto !important;
+    overflow-y: auto !important; /* Allow scroll on mobile */
     height: auto !important;
     touch-action: pan-y;
   }
@@ -201,32 +206,39 @@ body {
     /* Compact heights for mobile */
     min-height: 250px;
     height: auto; 
-    max-height: 400px;
+    max-height: 50vh; /* Max half the screen for panels */
   }
 
   .map-container {
-    height: 30vh; 
-    min-height: 250px;
+    height: 40vh; /* Give map a good chunk of mobile view */
+    min-height: 350px;
+    max-height: 60vh;
   }
 
   .indicators-overlay {
-    position: relative;
-    bottom: auto;
-    padding: 16px;
+    position: absolute; /* Revert back to absolute but relative to map container */
+    bottom: 5px;
+    left: 0;
+    padding: 10px;
     height: auto;
     z-index: 1000;
-    pointer-events: auto;
+    pointer-events: none;
   }
 
   .indicators-wrapper {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row; /* Keep elements side by side if possible, or wrap them */
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: flex-end;
   }
 
   .indicators-panel {
     width: 100%;
-    flex: none;
-    max-height: none; /* Allow it to grow */
+    flex: 1 1 100%; /* Force full width wrapper for AI box on very small screens */
+    max-width: 380px;
+    pointer-events: auto;
+    margin-bottom: 15px; /* Space between box and reactor */
   }
   
   /* Ensure the MOFA summary is at the bottom as requested */
@@ -237,7 +249,7 @@ body {
   .header-bar {
     flex-direction: column;
     height: auto;
-    padding: 16px;
+    padding: 12px;
     text-align: center;
     gap: 12px;
   }

@@ -165,16 +165,16 @@ const INSSData = () => {
         </div>
 
         {/* Card: Operations */}
-         <div style={{ gridColumn: 'span 2', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '6px 8px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '4px'}}>STRIKES IN IRAN</div>
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', textAlign: 'center' }}>
+         <div style={{ gridColumn: 'span 2', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '4px 6px' }}>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>STRIKES IN IRAN</div>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', textAlign: 'center' }}>
              <div>
-                <div className="font-mono" style={{ color: '#fff', fontSize: '0.55rem', marginBottom: '1px' }}>American Strikes</div>
-                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.8rem', fontWeight: 'bold' }}>{data.iran_strikes_us}</div>
+                <div className="font-mono" style={{ color: '#fff', fontSize: '0.45rem', margin: '0' }}>American Strikes</div>
+                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', fontWeight: 'bold' }}>{data.iran_strikes_us}</div>
              </div>
              <div>
-                <div className="font-mono" style={{ color: '#fff', fontSize: '0.55rem', marginBottom: '1px' }}>Israeli Strikes</div>
-                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.8rem', fontWeight: 'bold' }}>{data.iran_strikes_israel}</div>
+                <div className="font-mono" style={{ color: '#fff', fontSize: '0.45rem', margin: '0' }}>Israeli Strikes</div>
+                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', fontWeight: 'bold' }}>{data.iran_strikes_israel}</div>
              </div>
            </div>
         </div>

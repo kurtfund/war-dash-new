@@ -523,6 +523,15 @@ def main():
 
     print("--- OSINT WORKER STARTED (POLLING EVERY 1 MINS) ---")
     
+    # ONE-TIME CLEANUP FOR BANNED KEYWORDS (Prevents old alerts from showing up)
+    try:
+        print("Running database cleanup to purge old bad alerts...")
+        supabase.table('security_alerts').delete().ilike('headline', '%Modi%').execute()
+        supabase.table('security_alerts').delete().ilike('headline', '%Kolkata%').execute()
+        print("Database cleanup successful.")
+    except Exception as e:
+        print(f"Database cleanup failed: {e}")
+
     # Heartbeat configuration
     last_heartbeat = time.time()
     

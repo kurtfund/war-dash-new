@@ -87,7 +87,7 @@ const INSSData = () => {
         }}>
           DATA STREAM
         </div>
-        <div style={{
+        <div className="font-mono" style={{
           color: '#00ffff',
           fontSize: '0.9rem',
           fontWeight: 'bold',
@@ -98,7 +98,7 @@ const INSSData = () => {
             INSS REGIONAL CASUALTIES ↗
           </a>
         </div>
-        <div style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>
+        <div className="font-mono" style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>
           LAST SYNC: {lastUpdated}
         </div>
       </div>

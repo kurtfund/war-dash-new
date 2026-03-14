@@ -35,9 +35,9 @@ if [ ! -f ".env_inss" ]; then
     echo "------------------------------------------"
 fi
 
-export set -a
-source .env_inss
-export set +a
+set -a
+[ -f .env_inss ] && source .env_inss
+set +a
 
 # Ensure playwright is installed globally in the environment
 echo "==> Verifying Playwright installation..."

@@ -14,13 +14,14 @@ const INSSData = () => {
     targeted_killings: '...'
   });
   const [lastUpdated, setLastUpdated] = useState('...');
+  const [sourceUrl, setSourceUrl] = useState('https://app.powerbi.com/view?r=eyJrIjoiYmI3MzIzMTAtMTdjNC00NTY1LWFiM2YtNjI0NTk5MWEyYTI5IiwidCI6IjgwOGNmNGIzLTFhOTYtNDEzZi1iMDZiLTlkZTZjOThmNTQ2OSJ9');
 
   useEffect(() => {
     const fetchINSSData = async () => {
       try {
         const { data: records, error } = await supabase
           .from('security_alerts')
-          .select('headline, created_at')
+          .select('headline, created_at, url')
           .eq('event_type', 'INSS_STATS')
           .order('created_at', { ascending: false })
           .limit(1);
@@ -42,6 +43,8 @@ const INSSData = () => {
              targeted_killings: stats.targeted_killings || 'N/A'
           });
           
+          if (records[0].url) setSourceUrl(records[0].url);
+
           const date = new Date(records[0].created_at);
           setLastUpdated(`${date.toLocaleDateString()} ${date.toLocaleTimeString()} UTC`);
         }
@@ -91,7 +94,9 @@ const INSSData = () => {
           letterSpacing: '2px',
           textShadow: '0 0 10px rgba(0, 255, 255, 0.5)'
         }}>
-          INSS REGIONAL CASUALTIES
+          <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
+            INSS REGIONAL CASUALTIES ↗
+          </a>
         </div>
         <div style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>
           LAST SYNC: {lastUpdated}

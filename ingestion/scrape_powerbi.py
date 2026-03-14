@@ -86,7 +86,7 @@ async def main():
     if stats and 'israel_fatalities' in stats: # Basic validation
         payload = {
             "source": "INSS",
-            "source_url": URL,
+            "url": URL,
             "headline": json.dumps(stats),
             "event_type": "INSS_STATS",
             "country": "Regional"

@@ -202,7 +202,7 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     # Theater bypass set (allow banned figures/regions if these theater keywords are present)
     theater_bypass = [
         "iran", "israel", "hezbollah", "houthi", "hamas", "gaza", "beirut", "tehran", "tel aviv", "jerusalem",
-        "syria", "iraq", "yemen", "lebanon", "damascus", "baghdad", "sanaa"
+        "syria", "iraq", "yemen", "lebanon", "damascus", "baghdad", "sanaa", "west bank", "gaza strip", "palestine"
     ]
     has_theater_context = any(tk in text for tk in theater_bypass)
 
@@ -242,15 +242,21 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     event_type, country = classify_text(headline)
     
     # 4. Strict Theatre Check (Catch-all for explicit theater bypass)
-    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev", "armenia", "armenian", "yerevan", "cyprus", "nicosia"]
+    catchall_geo = ["africa", "sudan", "mali", "chad", "belarus", "ukraine", "ukrainian", "russia", "russian", "moscow", "kiev", "armenia", "armenian", "yerevan", "india", "pakistan", "afghanistan", "kolkata", "delhi", "mumbai"]
     for k in catchall_geo:
         if k in text:
             if not has_theater_context:
                 return True, f"Non-Theatre Geography ({k})", "Other", "Unknown"
+                
     # 5. Strict Conflict Keyword Enforcement
     is_official_source = any(k in url.lower() for k in ["idf.il", "centcom.mil", "mofaic.gov.ae", "wam.ae/en/rss"])
     has_conflict_keyword = any(kw.lower() in text for kw in KEYWORDS.get("CONFLICT_KEYWORDS", []))
     
+    # 6. HARD THEATER LOCK: Kinetic keywords (clashes, strikes) MUST have theater context
+    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
+    if is_kinetic and not has_theater_context and not is_official_source:
+        return True, "Kinetic event without Theatre Context (Locked)", "Other", "Unknown"
+
     if not has_conflict_keyword and not is_official_source:
         return True, "No Conflict Keyword (Generic News Blocked)", "Other", "Unknown"
 

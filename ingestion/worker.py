@@ -202,7 +202,8 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     # Theater bypass set (allow banned figures/regions if these theater keywords are present)
     theater_bypass = [
         "iran", "israel", "hezbollah", "houthi", "hamas", "gaza", "beirut", "tehran", "tel aviv", "jerusalem",
-        "syria", "iraq", "yemen", "lebanon", "damascus", "baghdad", "sanaa", "west bank", "gaza strip", "palestine"
+        "syria", "iraq", "yemen", "lebanon", "damascus", "baghdad", "sanaa", "west bank", "gaza strip", "palestine",
+        "red sea", "gulf of aden", "arabian sea", "persian gulf", "middle east"
     ]
     has_theater_context = any(tk in text for tk in theater_bypass)
 
@@ -252,10 +253,9 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     is_official_source = any(k in url.lower() for k in ["idf.il", "centcom.mil", "mofaic.gov.ae", "wam.ae/en/rss"])
     has_conflict_keyword = any(kw.lower() in text for kw in KEYWORDS.get("CONFLICT_KEYWORDS", []))
     
-    # 6. HARD THEATER LOCK: Kinetic keywords (clashes, strikes) MUST have theater context
-    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
-    if is_kinetic and not has_theater_context and not is_official_source:
-        return True, "Kinetic event without Theatre Context (Locked)", "Other", "Unknown"
+    # 6. ABSOLUTE THEATER LOCK: All news must have theater context unless from an official source
+    if not has_theater_context and not is_official_source:
+        return True, "No Middle East Theater Context (Locked)", "Other", "Unknown"
 
     if not has_conflict_keyword and not is_official_source:
         return True, "No Conflict Keyword (Generic News Blocked)", "Other", "Unknown"

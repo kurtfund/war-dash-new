@@ -748,7 +748,7 @@ def run_poll_cycle(supabase: Client):
                 
                 num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
                 
-                target_sentence_match = re.search(r'since the onset[^\.]+', full_text, re.IGNORECASE)
+                target_sentence_match = re.search(r'since the (?:onset|start|beginning)[^\.]+', full_text, re.IGNORECASE)
                 
                 if target_sentence_match:
                     target_sentence = target_sentence_match.group(0)
@@ -838,8 +838,10 @@ def run_poll_cycle(supabase: Client):
         # INSS PowerBI Data
         try:
             print("\n--- Running INSS PowerBI Scraper ---")
-            subprocess.run(["python", "ingestion/scrape_powerbi.py"], check=True)
+            subprocess.run(["python", "ingestion/scrape_powerbi.py"], check=True, timeout=120)
             print("--- INSS PowerBI Scraper Completed ---")
+        except subprocess.TimeoutExpired:
+            print("CRITICAL ERROR: Playwright INSS Scraper hung and timed out after 120s! Aborting to save worker.")
         except subprocess.CalledProcessError as e:
             print(f"Error running INSS scraper subprocess: {e}")
             try:

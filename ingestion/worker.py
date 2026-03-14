@@ -715,7 +715,7 @@ def run_poll_cycle(supabase: Client):
             }
             # The query searches specifically for the cumulative totals string pattern WAM uses
             payload = {
-                'q': 'site:wam.ae "intercepted" "ballistic missiles" "UAVs" OR "drones"'
+                'q': 'site:wam.ae "intercepted" "ballistic missiles" "drones"'
             }
             
             r = requests.post(url, data=payload, headers=headers, timeout=15)
@@ -835,30 +835,9 @@ def run_poll_cycle(supabase: Client):
         except Exception as e:
             print(f"Error polling OpenSky: {e}")
 
-        # INSS PowerBI Data
-        try:
-            print("\n--- Running INSS PowerBI Scraper ---")
-            subprocess.run(["python", "ingestion/scrape_powerbi.py"], check=True, timeout=120)
-            print("--- INSS PowerBI Scraper Completed ---")
-        except subprocess.TimeoutExpired:
-            print("CRITICAL ERROR: Playwright INSS Scraper hung and timed out after 120s! Aborting to save worker.")
-        except subprocess.CalledProcessError as e:
-            print(f"Error running INSS scraper subprocess: {e}")
-            try:
-                import traceback
-                supabase.table("security_alerts").insert({
-                    "headline": f"SYSTEM ERROR: Playwright subprocess failed on Render with code {e.returncode}",
-                    "source": "SYSTEM",
-                    "url": "https://wardash.online",
-                    "event_type": "OTHER",
-                    "country": "Regional",
-                    "severity_score": 100,
-                    "is_important": False
-                }).execute()
-            except:
-                pass
-        except Exception as e:
-            print(f"Error running INSS scraper: {e}")
+        # INSS Scraper completely disabled on production server due to headless browser build limits
+        pass
+
 
         print("--- Sourcing pass finished. Handing back to main loop. ---")
 

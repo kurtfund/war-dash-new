@@ -123,8 +123,8 @@ const Indicators = ({ alerts }) => {
           flexDirection: 'column',
           gap: '8px',
         }}>
-           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-              <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }} title="Mathematical likelihood of escalation based on live kinetic alert momentum.">
                 <span style={{ fontSize: '0.9rem' }}>●</span> PREDICTIVE AI INTEL 🚀
               </div>
               <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px' }}>
@@ -132,11 +132,15 @@ const Indicators = ({ alerts }) => {
               </div>
            </div>
            
+           <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '0.5px', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }}>
+              [ANALYZING LIVE GEOPOLITICAL ALERT MOMENTUM]
+           </div>
+           
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               
               {/* Left Column: Trending Vectors */}
               <div style={{ flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '6px' }}>TRENDING VECTORS</div>
+                <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '6px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {predictiveMetrics.topKeywords.map((kw, i) => (
                     <div key={i} className="font-mono" style={{ 
@@ -155,7 +159,7 @@ const Indicators = ({ alerts }) => {
               
               {/* Right Column: Conflict Arch Data */}
               <div style={{ textAlign: 'right', flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '2px' }}>CONFLICT ARCH</div>
+                <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', marginBottom: '2px' }} title="Estimated timetable to critical escalation based on current kinetic alert frequency vs rolling baseline.">CONFLICT ARCH ⓘ</div>
                 <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
                   {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.55rem' }}>DAYS REM.</span>
                 </div>
@@ -165,9 +169,9 @@ const Indicators = ({ alerts }) => {
            {/* Trajectory Bar */}
            <div style={{ width: '100%', marginTop: '6px' }}>
              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'INCEPTION' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }}>INCEPTION</span>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'PEAK 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }}>PEAK 🚀</span>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ARCH' ? 'var(--color-red)' : 'var(--color-text-muted)' }}>ARCH</span>
+               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'INCEPTION' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }} title="Baseline intelligence gathering, low kinetic momentum.">INCEPTION</span>
+               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'PEAK 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }} title="Elevated kinetic activity detected above normal baseline.">PEAK 🚀</span>
+               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ARCH' ? 'var(--color-red)' : 'var(--color-text-muted)' }} title="Critical sustained escalation in conflict zones.">ARCH</span>
              </div>
              <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
                <div style={{ 

@@ -17,6 +17,9 @@ if [ -d ".venv" ]; then
     source .venv/bin/activate
 else
     echo "Error: Python virtual environment (.venv) not found. Please run 'python3 -m venv .venv' first."
+    exit 1
+fi
+
 # Load keys directly if they exist, or prompt the user for them
 if [ ! -f ".env_inss" ]; then
     echo "=========================================="

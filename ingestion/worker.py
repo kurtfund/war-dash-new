@@ -72,12 +72,18 @@ SOURCE_RELIABILITY = {
     "gov": 0.95,
     "mil": 0.95,
     "reuters": 0.90,
-    "ap": 0.90,
+    "apnews": 0.90,
+    "associated-press": 0.90,
+    "france24": 0.85,
+    "dw.com": 0.85,
     "aljazeera": 0.85,
     "haaretz": 0.85,
     "jpost": 0.85,
     "timesofisrael": 0.85,
+    "alarabiya": 0.80,
+    "aawsat": 0.80,
     "middleeasteye": 0.75,
+    "thenationalnews": 0.75,
     "liveuamap": 0.70,
     "twitter": 0.40,
     "x.com": 0.40
@@ -145,6 +151,20 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
         return "WAM (Emirates News Agency)"
     
     # 3. Major Institutional
+    if "france24" in url_lower: return "France 24"
+    if "alarabiya" in url_lower: return "Al Arabiya"
+    if "dw.com" in url_lower: return "Deutsche Welle (DW)"
+    if "aawsat" in url_lower: return "Asharq Al-Awsat"
+    
+    # "The National" (UAE) vs "The National Interest" (US)
+    if "thenationalnews.com" in url_lower: return "The National (UAE)"
+    if "the national" in headline.lower() or "the+national" in url_lower:
+        if "the national interest" in headline.lower() or "nationalinterest.org" in url_lower:
+            return "The National Interest"
+        return "The National (UAE)"
+
+    if "reuters" in url_lower: return "Reuters"
+    if "apnews" in url_lower or "associated-press" in url_lower: return "Associated Press (AP)"
     if "aljazeera" in url_lower: return "Al Jazeera"
     if "timesofisrael" in url_lower: return "Times of Israel"
     if "haaretz" in url_lower: return "Haaretz"

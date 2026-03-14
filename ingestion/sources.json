@@ -2,9 +2,16 @@
     "RSS_SOURCES": {
         "News": [
             "https://www.aljazeera.com/xml/rss/all.xml",
+            "https://www.france24.com/en/middle-east/rss",
+            "https://rss.dw.com/rdf/rss-en-top",
+            "https://english.aawsat.com/feed",
             "https://thecradle.co/feed",
             "https://www.middleeasteye.net/rss",
             "https://www.timesofisrael.com/feed/",
+            "https://news.google.com/rss/search?q=source:Reuters+Middle+East&hl=en-US&gl=US&ceid=US:en",
+            "https://news.google.com/rss/search?q=source:Associated_Press+Middle+East&hl=en-US&gl=US&ceid=US:en",
+            "https://news.google.com/rss/search?q=source:Al_Arabiya+Middle+East&hl=en-US&gl=US&ceid=US:en",
+            "https://news.google.com/rss/search?q=source:%22The_National%22+UAE&hl=en-AE&gl=AE&ceid=AE:en",
             "https://news.google.com/rss/search?q=source:The_Jerusalem_Post&hl=en-IL&gl=IL&ceid=IL:en",
             "https://news.google.com/rss/search?q=source:Haaretz&hl=en-IL&gl=IL&ceid=IL:en",
             "https://www.dailysabah.com/rss/world.xml",
@@ -14,8 +21,8 @@
             "https://www.rt.com/trends/iran-tehran-oil-gas/",
             "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
             "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/middleeast/rss.xml",
-            "https://news.google.com/rss/search?q=source:Emirates_News_Agency&hl=en-AE&gl=AE&ceid=AE:en",
-            "https://news.google.com/rss/search?q=UAE+Dubai+location:UAE&hl=en-AE&gl=AE&ceid=AE:en"
+            "https://news.google.com/rss/search?q=%22The+National%22+UAE+Middle+East&hl=en-AE&gl=AE&ceid=AE:en",
+            "https://news.google.com/rss/search?q=source:Emirates_News_Agency&hl=en-AE&gl=AE&ceid=AE:en"
         ],
         "Military/Gov": [
             "https://news.google.com/rss/search?q=source:Israel_Defense_Forces&hl=en-IL&gl=IL&ceid=IL:en",

@@ -2,7 +2,8 @@ supabase
 feedparser
 python-dotenv
 requests
-spacy
+spacy>=3.7.2
+pydantic>=2.5.0
 geopy
 geocoder
 deep-translator

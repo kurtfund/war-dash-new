@@ -15,6 +15,7 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from tenacity import retry, wait_fixed, stop_after_attempt, retry_if_exception_type, before_sleep_log
 import logging
+import subprocess
 
 # Configure basic logging for tenacity
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -833,6 +834,14 @@ def run_poll_cycle(supabase: Client):
                         process_alert_data(supabase, headline, "OpenSky Network", "https://opensky-network.org", {"icao24": icao24, "lat": lat, "lon": lon})
         except Exception as e:
             print(f"Error polling OpenSky: {e}")
+
+        # INSS PowerBI Data
+        try:
+            print("\n--- Running INSS PowerBI Scraper ---")
+            subprocess.run(["python", "ingestion/scrape_powerbi.py"], check=True)
+            print("--- INSS PowerBI Scraper Completed ---")
+        except Exception as e:
+            print(f"Error running INSS scraper: {e}")
 
         print("--- Sourcing pass finished. Handing back to main loop. ---")
 

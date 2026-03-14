@@ -89,8 +89,7 @@ async def main():
             "source_url": URL,
             "headline": json.dumps(stats),
             "event_type": "INSS_STATS",
-            "country": "Regional",
-            "severity_score": 100
+            "country": "Regional"
         }
         
         print("Uploading to Supabase...")

@@ -143,7 +143,15 @@ const Indicators = ({ alerts }) => {
               </div>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
-                <div className="font-mono text-red" style={{ fontSize: '1.1rem', fontWeight: 'bold', textShadow: '0 0 10px rgba(255,0,51,0.5)' }}>{alerts.filter(a => a.event_type === 'MISSILE').length}</div>
+                <div className="font-mono" style={{ 
+                  fontSize: '1.8rem', 
+                  fontWeight: '900', 
+                  color: '#FF0033',
+                  textShadow: '0 0 10px rgba(255,0,51,0.6), 0 0 20px rgba(255,0,51,0.4)',
+                  lineHeight: '1'
+                }}>
+                  {alerts.filter(a => a.event_type === 'MISSILE').length}
+                </div>
               </div>
               <div style={{ textAlign: 'right', flex: 1 }}>
                 <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">CONFLICT ARCH ⓘ</div>

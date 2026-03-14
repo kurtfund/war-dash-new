@@ -1,8 +1,45 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { getHostname } from '../lib/utils';
 
 const AlertFeed = ({ alerts }) => {
   const scrollRef = useRef(null);
+  
+  // Dynamically interleave articles from different sources so one outlet doesn't dominate
+  const interleavedAlerts = useMemo(() => {
+    if (!alerts || alerts.length === 0) return [];
+    
+    // 1. Group alerts by their source name
+    const sourceGroups = {};
+    alerts.forEach(alert => {
+      const source = alert.source || getHostname(alert.url);
+      if (!sourceGroups[source]) sourceGroups[source] = [];
+      sourceGroups[source].push(alert);
+    });
+
+    const result = [];
+    const groupKeys = Object.keys(sourceGroups);
+    let itemsRemaining = alerts.length;
+
+    // 2. Round-robin draw one article from each source group until all are depleted
+    let roundIndex = 0;
+    while (itemsRemaining > 0) {
+      let drawnInRound = false;
+      for (const key of groupKeys) {
+        if (sourceGroups[key].length > 0) {
+          result.push(sourceGroups[key].shift()); // take the top (newest) item from this source
+          itemsRemaining--;
+          drawnInRound = true;
+        }
+      }
+      
+      // If we somehow infinite loop or drew nothing but have items left (sanity check)
+      if (!drawnInRound) break; 
+      roundIndex++;
+      if (roundIndex > 250) break; // safety
+    }
+    
+    return result;
+  }, [alerts]);
   
   // Auto-scroll logic for round-robin effect
   useEffect(() => {
@@ -66,7 +103,7 @@ const AlertFeed = ({ alerts }) => {
             scrollBehavior: 'auto' // Important for manual scrollTop manipulation
           }}
         >
-          {alerts.map((alert) => {
+          {interleavedAlerts.map((alert) => {
              const d = new Date(alert.created_at);
              const dayStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
              const timeStr = d.toLocaleTimeString('en-GB', { hour12: false });
@@ -157,7 +194,7 @@ const AlertFeed = ({ alerts }) => {
             );
           })}
           
-          {alerts.length === 0 && (
+          {interleavedAlerts.length === 0 && (
             <div className="text-muted font-mono" style={{ textAlign: 'center', marginTop: '40px' }}>
                AWAITING INTEL DATA...
             </div>

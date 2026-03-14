@@ -11,8 +11,11 @@ const AlertFeed = ({ alerts }) => {
     // Sort descending by time to ensure newest is always first
     const sortedAlerts = [...alerts].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
     
+    // Hide INSS Stats from the main alert feed
+    const displayableAlerts = sortedAlerts.filter(a => a.event_type !== 'INSS_STATS');
+    
     const result = [];
-    const pending = [...sortedAlerts];
+    const pending = [...displayableAlerts];
     
     while(pending.length > 0) {
         // Look at the source of the last article we added to the feed

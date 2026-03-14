@@ -840,6 +840,21 @@ def run_poll_cycle(supabase: Client):
             print("\n--- Running INSS PowerBI Scraper ---")
             subprocess.run(["python", "ingestion/scrape_powerbi.py"], check=True)
             print("--- INSS PowerBI Scraper Completed ---")
+        except subprocess.CalledProcessError as e:
+            print(f"Error running INSS scraper subprocess: {e}")
+            try:
+                import traceback
+                supabase.table("security_alerts").insert({
+                    "headline": f"SYSTEM ERROR: Playwright subprocess failed on Render with code {e.returncode}",
+                    "source": "SYSTEM",
+                    "url": "https://wardash.online",
+                    "event_type": "OTHER",
+                    "country": "Regional",
+                    "severity_score": 100,
+                    "is_important": False
+                }).execute()
+            except:
+                pass
         except Exception as e:
             print(f"Error running INSS scraper: {e}")
 

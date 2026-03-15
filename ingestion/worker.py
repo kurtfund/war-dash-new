@@ -143,6 +143,15 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
     if "alarabiya" in url_lower: return "Al Arabiya"
     if "dw.com" in url_lower: return "Deutsche Welle (DW)"
     if "aawsat" in url_lower: return "Asharq Al-Awsat"
+    if "arabnews" in url_lower: return "Arab News"
+    if "gulfnews" in url_lower: return "Gulf News"
+    if "jordantimes" in url_lower: return "The Jordan Times"
+    if "dailystar" in url_lower: return "The Daily Star"
+    if "egypttoday" in url_lower: return "Egypt Today"
+    if "al-monitor" in url_lower: return "Al-Monitor"
+    if "kuwaittimes" in url_lower: return "Kuwait Times"
+    if "qatar-tribune" in url_lower: return "Qatar Tribune"
+    if "bna.bh" in url_lower: return "Bahrain News Agency"
     
     # "The National" (UAE) vs "The National Interest" (US)
     if "thenationalnews.com" in url_lower: return "The National (UAE)"

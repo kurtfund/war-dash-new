@@ -7,8 +7,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 
 # Load Supabase credentials
-load_dotenv()
-load_dotenv('dashboard/.env')
+load_dotenv('../../.env_inss')
 
 SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
@@ -54,10 +53,10 @@ def parse_inss_data(body_text):
         stats['iran_countries_targeted'] = countries_targeted_match.group(1)
 
     # 5. Strikes in Iran
-    strikes_match = re.search(r'American Strikes in Iran\s*Israeli Strikes in Iran\s*([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE)
+    strikes_match = re.search(r'Israeli Strikes in Iran\s*American Strikes in Iran\s*([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE)
     if strikes_match:
-        stats['iran_strikes_us'] = strikes_match.group(1).replace(',', '')
-        stats['iran_strikes_israel'] = strikes_match.group(2).replace(',', '')
+        stats['iran_strikes_israel'] = strikes_match.group(1).replace(',', '')
+        stats['iran_strikes_us'] = strikes_match.group(2).replace(',', '')
 
 
     return stats

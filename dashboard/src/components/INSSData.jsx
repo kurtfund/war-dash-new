@@ -97,7 +97,7 @@ const INSSData = () => {
           textShadow: '0 0 10px rgba(0, 255, 255, 0.5)'
         }}>
           <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
-            INSS REGIONAL CASUALTIES ↗
+            INSS MIDDLE EAST CASUALTIES ↗
           </a>
         </div>
         <div className="font-mono" style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>
@@ -116,7 +116,7 @@ const INSSData = () => {
         
         {/* ROW 1: Regional & Iranian Casualties */}
         <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '8px 10px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>REGIONAL CASUALTIES</div>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>MIDDLE EAST CASUALTIES</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
             <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Fatalities:</span>
             <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.regional_fatalities}</span>

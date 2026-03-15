@@ -60,7 +60,7 @@ const LiveMediaBox = () => {
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',
-          bottom: '16px',
+          bottom: '80px',
           right: '16px',
           background: 'rgba(5, 7, 9, 0.9)',
           border: '2px solid #0A4A8B',
@@ -84,7 +84,7 @@ const LiveMediaBox = () => {
       {isOpen && (
         <div style={{
           position: 'fixed',
-          bottom: '70px',
+          bottom: '140px',
           right: '16px',
           width: '380px',
           background: 'rgba(10, 14, 18, 0.95)',

@@ -102,7 +102,7 @@ const AlertFeed = ({ alerts }) => {
                        fontWeight: 'bold',
                        border: '1px solid #333'
                      }}>
-                       🚀 {alert.country?.toUpperCase().substring(0, 10) || 'UNKNOWN'}
+                       🚀 {alert.country?.toUpperCase().substring(0, 10) === 'UNKNOWN' ? 'REGIONAL' : alert.country?.toUpperCase().substring(0, 10)}
                      </div>
                      <a href={alert.url} target="_blank" rel="noreferrer" className="font-mono" style={{ 
                        color: 'var(--color-cyan)', 

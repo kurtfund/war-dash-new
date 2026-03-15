@@ -1,39 +1,25 @@
 import os
+from supabase import create_client, Client
 from dotenv import load_dotenv
-from supabase import create_client
 
-load_dotenv('dashboard/.env.local')
-url = os.environ.get('VITE_SUPABASE_URL')
-key = os.environ.get('VITE_SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('VITE_SUPABASE_ANON_KEY')
-supabase = create_client(url, key)
+load_dotenv('.env_inss')
 
-res = supabase.table('security_alerts').select('id, headline').order('created_at', desc=True).limit(200).execute()
-to_delete = []
-seen_headlines = set()
+SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
-import re
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("Missing Supabase credentials. Exiting.")
+    exit(1)
 
-for row in res.data:
-    low = row['headline'].lower()
-    
-    # 1. Check for out-of-scope regions or sports
-    bad_words = ['azerbaijan', 'armenia', 'taiwan', 'china', 'football', 'asian cup', 'coach', 'stadium']
-    if any(bw in low for bw in bad_words):
-        to_delete.append(row['id'])
-        print('Deleting Out-of-Scope:', row['headline'])
-        continue
-    
-    # 2. Check for exact duplicate headlines (regardless of source)
-    # Strip any trailing "- Source"
-    cleaned_head = re.sub(r'\s+-\s+[^-]+$', '', low).strip()
-    
-    if cleaned_head in seen_headlines:
-        to_delete.append(row['id'])
-        print('Deleting Duplicate:', row['headline'])
-    else:
-        seen_headlines.add(cleaned_head)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-for did in to_delete:
-    supabase.table('security_alerts').delete().eq('id', did).execute()
+def clean_db():
+    print("Running database cleanup to purge old aviation/business alerts...")
+    # Delete alerts that talk about flights or airlines based on our new banned keywords
+    for keyword in ["flight", "flights", "airline", "airlines", "aviation", "economy", "stocks", "earnings", "business", "airport"]:
+        res = supabase.table('security_alerts').delete().ilike('headline', f'%{keyword}%').execute()
+        if hasattr(res, 'data') and len(res.data) > 0:
+            print(f"Deleted {len(res.data)} alerts matching '{keyword}'")
 
-print(f"Cleanup complete. Deleted {len(to_delete)} rows.")
+if __name__ == "__main__":
+    clean_db()

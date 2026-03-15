@@ -416,7 +416,6 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     # Strip common Google News RSS suffixes (e.g., " - Al Jazeera", " - WVLT")
     headline = re.sub(r'\s+-\s+[^-]+$', '', headline).strip()
     
-    original_headline = headline
     try:
         from deep_translator import GoogleTranslator
         headline = GoogleTranslator(source='auto', target='en').translate(headline)
@@ -475,7 +474,7 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     
     alert_payload = {
         "headline": headline,
-        "source": get_clean_source_name(url, headline),
+        "source": get_clean_source_name(url, original_headline),
         "url": url,
         "event_type": event_type,
         "country": country,

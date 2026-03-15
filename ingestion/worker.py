@@ -6,7 +6,6 @@ import hashlib
 import feedparser
 import requests
 import re
-import spacy
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
 from supabase import create_client, Client
@@ -27,16 +26,22 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
-# --- LOAD RESOURCES ---
+# --- LOAD RESOURCES SAFELY ---
+# Handles Python 3.14 breaking changes inside pydantic v1 (dependency of spacy)
 try:
-    nlp = spacy.load("en_core_web_sm")
-except:
-    print("Warning: spaCy model not found. Attempting to download...")
+    import spacy
     try:
-        os.system("python -m spacy download en_core_web_sm")
         nlp = spacy.load("en_core_web_sm")
     except:
-        nlp = None
+        print("Warning: spaCy model not found. Attempting to download...")
+        try:
+            os.system("python -m spacy download en_core_web_sm")
+            nlp = spacy.load("en_core_web_sm")
+        except:
+            nlp = None
+except Exception as e:
+    print(f"Warning: Failed to import spacy ({e}). NLP features will be disabled. Running geographical fallback mode.")
+    nlp = None
 
 # Load Dynamic Configurations
 CONFIG_PATH = os.path.dirname(__file__)
@@ -63,13 +68,6 @@ KEYWORDS = KEYWORDS_CONFIG # For backward compatibility in classify_text
 
 # Source Reliability Scoring
 SOURCE_RELIABILITY = {
-    "gov": 0.95, "mil": 0.95, "reuters": 0.90, "ap": 0.90,
-    "aljazeera": 0.85, "haaretz": 0.85, "jpost": 0.85, "timesofisrael": 0.85,
-    "middleeasteye": 0.75, "liveuamap": 0.70, "twitter": 0.40, "x.com": 0.40
-}
-
-# Source Reliability Scoring
-SOURCE_RELIABILITY = {
     "gov": 0.95,
     "mil": 0.95,
     "reuters": 0.90,
@@ -89,17 +87,6 @@ SOURCE_RELIABILITY = {
     "twitter": 0.40,
     "x.com": 0.40
 }
-
-# --- LOAD RESOURCES ---
-try:
-    nlp = spacy.load("en_core_web_sm")
-except:
-    print("Warning: spaCy model not found. Attempting to download...")
-    try:
-        os.system("python -m spacy download en_core_web_sm")
-        nlp = spacy.load("en_core_web_sm")
-    except:
-        nlp = None
 
 # geolocator moved to top with custom UA
 
@@ -290,20 +277,34 @@ NATIONALITY_MAP = {
 }
 
 def detect_location(text: str) -> Tuple[Optional[str], Optional[float], Optional[float]]:
-    if not nlp: return None, None, None
-    doc = nlp(text)
-    
-    # Prioritize entities: GPE (Places) > LOC (Landmarks) > NORP (Nationalities)
-    gpe_candidates = [ent.text for ent in doc.ents if ent.label_ == "GPE"]
-    loc_candidates = [ent.text for ent in doc.ents if ent.label_ in ["LOC", "FAC"]]
+    gpe_candidates = []
+    loc_candidates = []
     norp_candidates = []
     
-    # Map nationalities to countries
-    for ent in doc.ents:
-        if ent.label_ == "NORP" and ent.text.lower() in NATIONALITY_MAP:
-            norp_candidates.append(NATIONALITY_MAP[ent.text.lower()])
-        elif ent.label_ in ["NORP", "ORG"]:
-            norp_candidates.append(ent.text)
+    if nlp is not None:
+        doc = nlp(text)
+        
+        # Prioritize entities: GPE (Places) > LOC (Landmarks) > NORP (Nationalities)
+        gpe_candidates = [ent.text for ent in doc.ents if ent.label_ == "GPE"]
+        loc_candidates = [ent.text for ent in doc.ents if ent.label_ in ["LOC", "FAC"]]
+        
+        # Map nationalities to countries
+        for ent in doc.ents:
+            if ent.label_ == "NORP" and ent.text.lower() in NATIONALITY_MAP:
+                norp_candidates.append(NATIONALITY_MAP[ent.text.lower()])
+            elif ent.label_ in ["NORP", "ORG"]:
+                norp_candidates.append(ent.text)
+    else:
+        # --- Native Fallback when NLP is disabled due to Python 3.14 bug ---
+        lower_text = text.lower()
+        fallback_places = [
+            "Israel", "Lebanon", "Iran", "Yemen", "Iraq", "Syria", "Gaza", 
+            "UK", "USA", "UAE", "Saudi Arabia", "Abu Dhabi", "Dubai", 
+            "Tehran", "Beirut", "Tel Aviv", "Jerusalem", "Baghdad", "Sanaa", "Damascus"
+        ]
+        for fp in fallback_places:
+            if fp.lower() in lower_text:
+                gpe_candidates.append(fp)
 
     # Priority order:
     # 1. Targets (places following verbs like 'hits', 'strikes', 'towards')
@@ -416,6 +417,7 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
     # Strip common Google News RSS suffixes (e.g., " - Al Jazeera", " - WVLT")
     headline = re.sub(r'\s+-\s+[^-]+$', '', headline).strip()
     
+    original_headline = headline
     try:
         from deep_translator import GoogleTranslator
         headline = GoogleTranslator(source='auto', target='en').translate(headline)

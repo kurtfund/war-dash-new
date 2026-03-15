@@ -8,7 +8,7 @@ const Indicators = ({ alerts }) => {
   // --- Real Foreshadowing Analytics ---
   // Analyze the latest alerts to generate true "Predictive AI" metrics
   const predictiveMetrics = useMemo(() => {
-    if (!alerts || alerts.length === 0) return { trajectory: 'INCEPTION', daysLeft: 14.2, topKeywords: ['AWAITING INTEL'] };
+    if (!alerts || alerts.length === 0) return { trajectory: 'BASELINE', daysLeft: 14.2, topKeywords: ['AWAITING INTEL'] };
     
     // 1. Calculate trajectory based on frequency of recent kinetic events vs older ones
     const now = Date.now();
@@ -26,17 +26,17 @@ const Indicators = ({ alerts }) => {
     }).length;
 
     // Determine state purely based on momentum
-    let trajectory = 'INCEPTION';
+    let trajectory = 'BASELINE';
     let trajectoryProgress = 20; // Default UI %
     
     // Normalizing the comparison (older count was over 11 hours, recent over 1 hour)
     const normalizedOlderRate = olderKineticCount / 11;
     
     if (recentKineticCount > 3 && recentKineticCount > (normalizedOlderRate * 2)) {
-         trajectory = 'PEAK 🚀';
+         trajectory = 'ELEVATED 🚀';
          trajectoryProgress = 70;
     } else if (recentKineticCount > 5) {
-         trajectory = 'ARCH'; 
+         trajectory = 'CRITICAL'; 
          trajectoryProgress = 95;
     } else if (recentKineticCount > 0) {
         trajectoryProgress = 40;
@@ -59,9 +59,9 @@ const Indicators = ({ alerts }) => {
 
     // 3. Dynamic "Conflict Arch" Days left based on base WAM data vs recent spikes
     let daysLeft = 14.2;
-    if (trajectory === 'PEAK 🚀') daysLeft = (Math.random() * 2 + 5).toFixed(1); // 5-7 days
-    if (trajectory === 'ARCH') daysLeft = (Math.random() * 1 + 1).toFixed(1); // 1-2 days
-    if (trajectory === 'INCEPTION') daysLeft = (Math.random() * 5 + 10).toFixed(1);
+    if (trajectory === 'ELEVATED 🚀') daysLeft = (Math.random() * 2 + 5).toFixed(1); // 5-7 days
+    if (trajectory === 'CRITICAL') daysLeft = (Math.random() * 1 + 1).toFixed(1); // 1-2 days
+    if (trajectory === 'BASELINE') daysLeft = (Math.random() * 5 + 10).toFixed(1);
 
     return { trajectory, trajectoryProgress, daysLeft, topKeywords };
   }, [alerts]);
@@ -154,7 +154,7 @@ const Indicators = ({ alerts }) => {
                 </div>
               </div>
               <div style={{ textAlign: 'right', flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">CONFLICT ARCH ⓘ</div>
+                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">ESCALATION ETA ⓘ</div>
                 <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
                   {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.55rem' }}>DAYS</span>
                 </div>
@@ -182,18 +182,18 @@ const Indicators = ({ alerts }) => {
            {/* Trajectory Bar */}
            <div style={{ width: '100%', marginTop: '6px' }}>
              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'INCEPTION' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }} title="Baseline intelligence gathering, low kinetic momentum.">INCEPTION</span>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'PEAK 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }} title="Elevated kinetic activity detected above normal baseline.">PEAK 🚀</span>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ARCH' ? 'var(--color-red)' : 'var(--color-text-muted)' }} title="Critical sustained escalation in conflict zones.">ARCH</span>
+               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'BASELINE' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }} title="Baseline intelligence gathering, low kinetic momentum.">BASELINE</span>
+               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ELEVATED 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }} title="Elevated kinetic activity detected above normal baseline.">ELEVATED 🚀</span>
+               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'CRITICAL' ? 'var(--color-red)' : 'var(--color-text-muted)' }} title="Critical sustained escalation in conflict zones.">CRITICAL</span>
              </div>
              <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
                <div style={{ 
                    width: `${predictiveMetrics.trajectoryProgress}%`, 
                    height: '100%', 
-                   background: predictiveMetrics.trajectory === 'ARCH' ? '#FF0033' : (predictiveMetrics.trajectory === 'PEAK 🚀' ? '#D4AF37' : '#00E5FF'), 
+                   background: predictiveMetrics.trajectory === 'CRITICAL' ? '#FF0033' : (predictiveMetrics.trajectory === 'ELEVATED 🚀' ? '#D4AF37' : '#00E5FF'), 
                    borderRadius: '2px', 
                    transition: 'all 1s ease-out',
-                   boxShadow: `0 0 10px ${predictiveMetrics.trajectory === 'ARCH' ? '#FF0033' : '#00E5FF'}` 
+                   boxShadow: `0 0 10px ${predictiveMetrics.trajectory === 'CRITICAL' ? '#FF0033' : '#00E5FF'}` 
                 }}></div>
              </div>
            </div>

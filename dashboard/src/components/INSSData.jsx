@@ -63,7 +63,7 @@ const INSSData = () => {
   }, []);
 
   return (
-    <div style={{
+    <div className="inss-container" style={{
       display: 'flex',
       flexDirection: 'column',
       flex: 1, // Take up remaining bottom half space sharing with MarketPulse
@@ -141,7 +141,7 @@ const INSSData = () => {
         
         {/* ROW 2: Military Activity & Iranian Inventory */}
         <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '8px 10px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>LAUNCHES TOWARD M.E.</div>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>LAUNCHES TOWARD MIDDLE EAST</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
             <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Missiles:</span>
             <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.launches_missiles}</span>

@@ -1,0 +1,14 @@
+================================
+WAR DASH - INSS DATA UPDATER
+================================
+
+To update the dashboard with the newest casualty & military metrics from the INSS PowerBI, simply open your Terminal and paste these exact two lines:
+
+cd /Users/kirkspencer/Documents/war-dash-new/scrapers/inss
+./run_inss_scraper.sh
+
+--------------------------------
+Notes:
+- You must run this from your MacBook (Render cannot run the headless browser).
+- The script takes about 15 seconds to load the graphics in the background.
+- It will automatically upload the parsed data to the dashboard database.

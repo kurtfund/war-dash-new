@@ -37,6 +37,7 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
+  touch-action: pan-x pan-y pinch-zoom; /* allow zoom explicitly */
 }
 
 #root {
@@ -250,5 +251,15 @@ body {
     padding: 12px;
     text-align: center;
     gap: 12px;
+  }
+
+  /* Make INSS Data larger and more legible on mobile */
+  .inss-container .font-mono {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .inss-container .font-mono span {
+    font-size: 1.15rem !important; /* Making the numbers specifically pop */
   }
 }

@@ -1,21 +1,46 @@
 import os
-import requests
+from supabase import create_client, Client
 from dotenv import load_dotenv
 
-load_dotenv()
-url = os.environ.get("VITE_SUPABASE_URL")
-key = os.environ.get("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("VITE_SUPABASE_ANON_KEY")
+load_dotenv('.env_inss')
 
-headers = {
-    "apikey": key,
-    "Authorization": f"Bearer {key}"
-}
+SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
-# Delete OFFICIAL SUMMARY
-r1 = requests.delete(f"{url}/rest/v1/security_alerts?event_type=eq.OFFICIAL_SUMMARY", headers=headers)
-print("Deleted summaries status:", r1.status_code)
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("Missing Supabase credentials. Exiting.")
+    exit(1)
 
-# Get the rows matching wsaz.com using the correct ilike syntax
-# In PostgREST, ilike expects the pattern to be embedded in the query string 
-r2 = requests.delete(f"{url}/rest/v1/security_alerts?url=ilike.*wsaz.com*", headers=headers)
-print("Deleted wsaz status:", r2.status_code)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def clean_db():
+    print("Running database cleanup to thin out high-volume sources and reset for feed variety...")
+    
+    # Identify high volume sources
+    high_volume_sources = [
+        "Asharq Al-Awsat",
+        "Middle East Eye",
+        "Anadolu Agency"
+    ]
+    
+    # We fetch all the recent alerts from these sources
+    for source in high_volume_sources:
+        print(f"Cleaning out backlog for: {source}")
+        
+        # We pull the IDs of everything from this source
+        res = supabase.table('security_alerts').select('id').eq('source', source).order('created_at', desc=True).limit(200).execute()
+        
+        if hasattr(res, 'data') and len(res.data) > 20: 
+            # We keep the newest 20 of each, and delete the rest so the feed doesn't scroll forever with just them.
+            ids_to_delete = [item['id'] for item in res.data[20:]]
+            if ids_to_delete:
+                print(f"Deleting {len(ids_to_delete)} historical entries for {source} to restore feed variety.")
+                # Supabase Python SDK doesn't natively support "delete where ID in list" in a single call simply, so we loop batch.
+                for i in range(0, len(ids_to_delete), 50):
+                    batch = ids_to_delete[i:i+50]
+                    supabase.table('security_alerts').delete().in_('id', batch).execute()
+
+    print("Cleanup complete.")
+
+if __name__ == "__main__":
+    clean_db()

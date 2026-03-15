@@ -610,14 +610,14 @@ def run_poll_cycle(supabase: Client):
                     # Use browser-like headers and ignore SSL errors for sensitive gov sites
                     resp = requests.get(url, timeout=15, headers=COMMON_HEADERS, verify=False)
                     feed = feedparser.parse(resp.content)
-                    raw_feed_data[(category, url)] = feed.entries[:20]
+                    raw_feed_data[(category, url)] = feed.entries[:5]
             except Exception as e:
                 print(f"    [POLL_ERROR] {url}: {e}")
 
         # 2. Interleave and Flatten All Gathered Intel
         # We take entry[0] from every sources, then entry[1], etc.
         interleaved_entries = []
-        max_entries = 20
+        max_entries = 5
         for i in range(max_entries):
             # For each pass, shuffle the sources to avoid bias
             source_keys = list(raw_feed_data.keys())

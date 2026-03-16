@@ -791,10 +791,16 @@ def run_poll_cycle(supabase: Client):
             # Remove duplicates while preserving order
             wam_articles = list(dict.fromkeys(wam_articles))
             
+            # Explicitly include the known active intercept article so it never falls off the checklist
+            target_slug = "bz8e7gc-uae-air-defences-engage-ballistic-missiles-uavs"
+            target_url = f"https://www.wam.ae/en/article/{target_slug}"
+            if target_url not in wam_articles:
+                wam_articles.insert(0, target_url)
+            
             full_text = ""
             latest_article_captured = None
 
-            for article_url in wam_articles[:20]: # Check up to 20 recent news items
+            for article_url in wam_articles[:30]: # Check up to 30 recent news items
                 try:
                     slug_match = re.search(r'article/([^/?]+)', article_url)
                     if not slug_match: continue

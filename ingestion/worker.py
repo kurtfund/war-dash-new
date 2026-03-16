@@ -728,21 +728,17 @@ def run_poll_cycle(supabase: Client):
 
             if market_payload:
                 now = datetime.utcnow()
-                payload = {
-                    "headline": "Live Market Pulse Update",
-                    "source": "Yahoo Finance (Backend)",
-                    "url": "https://finance.yahoo.com",
-                    "event_type": "MARKET_DATA",
-                    "country": "Global",
-                    "location_name": "Global Markets",
-                    "deaths": 0,
-                    "confidence": 1.0,
+                # Store in isolated table
+                market_isolated_payload = {
                     "raw_data": market_payload,
                     "created_at": now.isoformat()
                 }
                 
-                supabase.table("security_alerts").insert(payload).execute()
-                print("    [MARKET DATA INSERTED]")
+                try:
+                    supabase.table("market_pulse_data").insert(market_isolated_payload).execute()
+                    print("    [MARKET DATA INSERTED TO ISOLATED TABLE]")
+                except Exception as e:
+                    print(f"      [SUPABASE_MARKET_INSERT_ERROR]: {e}")
         except Exception as e:
             print(f"Error in Market Pulse fetch: {e}")
 

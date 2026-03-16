@@ -754,30 +754,48 @@ def run_poll_cycle(supabase: Client):
             import re
             from datetime import timedelta
             
-            # 1. Get latest WAM articles related to intercepts 
-            # We hit the search API directly if possible, or use the RSS items already gathered
-            # For robustness, we'll try to find any WAM articles in the current poll cycle's entries
+            # Deep Crawl of WAM Latest News API
             wam_articles = []
-            for sk, entry in interleaved_entries:
-                if "wam.ae" in entry.link.lower() and "article" in entry.link.lower():
-                    wam_articles.append(entry.link)
             
-            # Also add some hardcoded recent ones if needed, but better to be dynamic
-            # Let's try to hit a search URL that usually works or just use the ones found
-            
-            full_text = ""
-            latest_article_captured = None
-
-            # Headers for WAM API
             API_HEADERS = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Accept': 'application/json',
                 'Referer': 'https://www.wam.ae/en'
             }
+            
+            try:
+                # Get the view for latest news
+                view_url = "https://www.wam.ae/api/app/views/GetViewByUrl?url=en/list/latest-news"
+                resp = requests.get(view_url, headers=API_HEADERS, timeout=10)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    # The articles are usually in a 'components' array or similar. 
+                    # We'll just dump it to a string and look for slugs if we have to, 
+                    # but let's try to extract cleanly.
+                    
+                    # Look through the JSON structure for "slug": "bz8e7gc-uae-air-defences..." or just collect all slugs
+                    import json
+                    dumped = json.dumps(data)
+                    # Find all slugs
+                    slugs = re.findall(r'"slug"\s*:\s*"([^"]+)"', dumped)
+                    for s in slugs:
+                        wam_articles.append(f"https://www.wam.ae/en/article/{s}")
+            except Exception as e:
+                print(f"      [WAM_VIEW_API_ERROR]: {e}")
+                
+            # Fallback to appending from RSS if the view API failed to yield enough
+            for sk, entry in interleaved_entries:
+                if "wam.ae" in entry.link.lower() and "article" in entry.link.lower():
+                    wam_articles.append(entry.link)
+            
+            # Remove duplicates while preserving order
+            wam_articles = list(dict.fromkeys(wam_articles))
+            
+            full_text = ""
+            latest_article_captured = None
 
-            for article_url in wam_articles[:5]: # Check top 5 WAM news
+            for article_url in wam_articles[:20]: # Check up to 20 recent news items
                 try:
-                    # Extract slug from URL: https://www.wam.ae/en/article/bz8e7gc-uae-air-defences...
                     slug_match = re.search(r'article/([^/?]+)', article_url)
                     if not slug_match: continue
                     slug = slug_match.group(1)
@@ -788,13 +806,19 @@ def run_poll_cycle(supabase: Client):
                         data = resp.json()
                         body = data.get('body', '')
                         summary = data.get('summary', '')
-                        content = (summary + " " + body).strip()
-                        if "ballistic" in content.lower() or "intercepted" in content.lower():
-                            full_text = content
-                            latest_article_captured = article_url
-                            break # Found the intercept report
+                        subTitle = data.get('subTitle', '') # Often contains the key data on WAM
+                        
+                        # Combine text components
+                        content = f"{subTitle} {summary} {body}".strip()
+                        
+                        # Check for our key targets
+                        if "ballistic" in content.lower() or "intercepted" in content.lower() or "engaged" in content.lower():
+                            if re.search(r'\d+\s+(?:ballistic|cruise|uav|drone)', content, re.IGNORECASE):
+                                full_text = content
+                                latest_article_captured = article_url
+                                break # Found the intercept report
                 except Exception as e:
-                    print(f"      [WAM_API_ERROR] {article_url}: {e}")
+                    print(f"      [WAM_ARTICLE_API_ERROR] {article_url}: {e}")
 
             if full_text.strip():
                 # --- QUANTITATIVE EXTRACTION ---
@@ -877,10 +901,30 @@ def run_poll_cycle(supabase: Client):
                         }
                         supabase.table("security_alerts").insert(payload).execute()
                         print(f"    [MOFA SUMMARY INSERTED] (B: {ballistic}, C: {cruise}, D: {uavs})")
+                        
+                        # Store in isolated table
+                        isolated_payload = {
+                            "url": latest_article_captured,
+                            "headline": full_text[:500] if full_text else "WAM Quantitative Data Extracted",
+                            "missiles": ballistic,
+                            "cruise": cruise,
+                            "uavs": uavs,
+                            "raw_data": {
+                                "ballistic": ballistic,
+                                "cruise": cruise,
+                                "uavs": uavs
+                            }
+                        }
+                        
+                        try:
+                            print(f"      -> Upserting Official Summary (Isolating): {ballistic} Ballistic, {cruise} Cruise, {uavs} UAVs")
+                            supabase.table('wam_official_data').insert(isolated_payload).execute()
+                        except Exception as e:
+                            print(f"      [SUPABASE_SUMMARY_INSERT_ERROR]: {e}")
                     else:
                         print(f"    [MOFA SUMMARY SKIPPED] Data (B:{ballistic}, D:{uavs}) already recorded.")
             else:
-                 print("    [MOFA SUMMARY] No recent intercept articles found in current poll cycle.")
+                print("    [MOFA SUMMARY ERROR] Could not find relevant intercept data in standard WAM articles.")
                  
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")

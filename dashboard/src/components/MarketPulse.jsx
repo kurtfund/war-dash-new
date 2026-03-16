@@ -20,9 +20,8 @@ const MarketPulse = () => {
     const fetchMarketData = async () => {
       try {
         const { data, error } = await supabase
-          .from('security_alerts')
+          .from('market_pulse_data')
           .select('*')
-          .eq('event_type', 'MARKET_DATA')
           .order('created_at', { ascending: false })
           .limit(1);
 

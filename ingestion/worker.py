@@ -73,6 +73,7 @@ SOURCE_RELIABILITY = {
     "reuters": 0.90,
     "bbc": 0.90,
     "theguardian": 0.90,
+    "nytimes": 0.90,
     "apnews": 0.90,
     "newsatme": 0.90,
     "associated-press": 0.90,
@@ -84,12 +85,16 @@ SOURCE_RELIABILITY = {
     "tehrantimes": 0.75,
     "tasnimnews": 0.75,
     "mehrnews": 0.75,
+    "rt.com": 0.65,
     "wam.ae": 0.85,
     "thenationalnews": 0.75,
     "khaleejtimes": 0.75,
+    "gulfnews": 0.75,
     "alarabiya": 0.80,
+    "arabnews": 0.75,
     "aawsat": 0.80,
     "aljazeera": 0.85,
+    "dailynewsegypt": 0.75,
     "middleeasteye": 0.75,
     "middleeastmonitor": 0.75,
     "haaretz": 0.85,
@@ -164,12 +169,16 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
     if "tehrantimes" in url_lower: return "Tehran Times"
     if "tasnimnews" in url_lower: return "Tasnim News Agency"
     if "mehrnews" in url_lower: return "Mehr News Agency"
+    if "rt.com" in url_lower: return "RT News"
     
     if "khaleejtimes" in url_lower: return "Khaleej Times"
+    if "gulfnews" in url_lower: return "Gulf News"
     if "alarabiya" in url_lower: return "Al Arabiya"
     if "aawsat" in url_lower: return "Asharq Al-Awsat"
+    if "arabnews" in url_lower: return "Arab News"
     
     if "aljazeera" in url_lower: return "Al Jazeera"
+    if "dailynewsegypt" in url_lower: return "Daily News Egypt"
     if "middleeasteye" in url_lower: return "Middle East Eye"
     if "middleeastmonitor" in url_lower: return "Middle East Monitor"
     
@@ -177,8 +186,6 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
     if "jpost" in url_lower: return "Jerusalem Post"
     if "timesofisrael" in url_lower: return "Times of Israel"
 
-    if "arabnews" in url_lower: return "Arab News"
-    if "gulfnews" in url_lower: return "Gulf News"
     if "jordantimes" in url_lower: return "The Jordan Times"
     if "dailystar" in url_lower: return "The Daily Star"
     if "egypttoday" in url_lower: return "Egypt Today"
@@ -198,7 +205,7 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
     if "aa.com.tr" in url_lower: return "Anadolu Agency"
     if "saudigazette" in url_lower: return "Saudi Gazette"
     if "dailysabah" in url_lower: return "Daily Sabah"
-    if "rt.com" in url_lower: return "RT News"
+    
     if "nytimes" in url_lower: return "New York Times"
     
     # 4. OSINT

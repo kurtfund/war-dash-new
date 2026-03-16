@@ -285,11 +285,11 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     is_official_source = any(k in url.lower() for k in ["idf.il", "centcom.mil", "mofaic.gov.ae", "wam.ae/en/rss"])
     has_conflict_keyword = any(kw.lower() in text for kw in KEYWORDS.get("CONFLICT_KEYWORDS", []))
     
-    # 6. RELAXED THEATRE CHECK: Only require theater context if the source is not an official source AND the news doesn't contain a conflict keyword
-    if not has_theater_context and not is_official_source and not has_conflict_keyword:
+    # 6. ABSOLUTE THEATER LOCK: All news must have theater context unless from an official source
+    if not has_theater_context and not is_official_source:
         return True, "No Middle East Theater Context (Locked)", "Other", "Unknown"
 
-    if not has_conflict_keyword and not has_theater_context and not is_official_source:
+    if not has_conflict_keyword and not is_official_source:
         return True, "No Conflict Keyword (Generic News Blocked)", "Other", "Unknown"
 
     return False, None, event_type, country

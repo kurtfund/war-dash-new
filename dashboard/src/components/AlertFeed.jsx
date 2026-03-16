@@ -4,7 +4,7 @@ import { getHostname } from '../lib/utils';
 const AlertFeed = ({ alerts }) => {
   const scrollRef = useRef(null);
   
-  // Interleave alerts: maintain strictly chronological order, but avoid back-to-back articles from the identical source if possible.
+  // Display alerts in strictly chronological order.
   const interleavedAlerts = useMemo(() => {
     if (!alerts || alerts.length === 0) return [];
     
@@ -14,35 +14,8 @@ const AlertFeed = ({ alerts }) => {
     // Hide INSS Stats from the main alert feed
     const displayableAlerts = sortedAlerts.filter(a => a.event_type !== 'INSS_STATS');
     
-    const result = [];
-    const pending = [...displayableAlerts];
-    
-    while(pending.length > 0) {
-        // Look at the source of the last article we added to the feed
-        const lastSource = result.length > 0 ? (result[result.length - 1].source || getHostname(result[result.length - 1].url)) : null;
-        
-        // Find the newest article whose source is DIFFERENT from the last one
-        let foundIndex = -1;
-        for (let i = 0; i < pending.length; i++) {
-            const currentSource = pending[i].source || getHostname(pending[i].url);
-            if (currentSource !== lastSource) {
-                foundIndex = i;
-                break;
-            }
-        }
-        
-        // If all remaining articles are from the exact same source, we just have to allow them back-to-back
-        if (foundIndex === -1) {
-            foundIndex = 0;
-        }
-        
-        // Push the article to the feed and remove it from the pending pool
-        result.push(pending[foundIndex]);
-        pending.splice(foundIndex, 1);
-    }
-    
     // Safety cap to prevent browser lag if database grows infinitely
-    return result.slice(0, 150);
+    return displayableAlerts.slice(0, 150);
   }, [alerts]);
 
   return (

@@ -9,9 +9,8 @@ const Header = () => {
     // 1. Fetch initial latest summary
     const fetchMofa = async () => {
       const { data, error } = await supabase
-        .from('security_alerts')
+        .from('wam_official_data')
         .select('*')
-        .eq('event_type', 'OFFICIAL_SUMMARY')
         .order('created_at', { ascending: false })
         .limit(1);
       
@@ -24,12 +23,11 @@ const Header = () => {
 
     // 2. Subscribe to realtime Mofa updates
     const channel = supabase
-      .channel('public:mofa_summary')
+      .channel('public:wam_official_data')
       .on('postgres_changes', { 
         event: 'INSERT', 
         schema: 'public', 
-        table: 'security_alerts',
-        filter: "event_type=eq.OFFICIAL_SUMMARY" 
+        table: 'wam_official_data'
       }, (payload) => {
         setMofaSummary(payload.new);
       })
@@ -63,8 +61,8 @@ const Header = () => {
           </div>
         </div>
         
-        {/* Middle: OFFICIAL MOFA SUMMARY (Top Center) */}
-        <div style={{ flex: 2, display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
+        {/* Middle: OFFICIAL MOFA SUMMARY (Top Center - Hidden on Mobile, handled via CSS) */}
+        <div className="mofa-header-container" style={{ flex: 2, display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
           {mofaSummary?.url ? (
             <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
               <div className="glass-panel hover-glow" style={{
@@ -92,7 +90,7 @@ const Header = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.ballistic || mofaSummary.raw_data?.missiles || 0}
+                    {mofaSummary.missiles || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>BALLISTIC MISSILES STOPPED</div>
                 </div>
@@ -101,7 +99,7 @@ const Header = () => {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.cruise || 0}
+                    {mofaSummary.cruise || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CRUISE MISSILES STOPPED</div>
                 </div>
@@ -110,7 +108,7 @@ const Header = () => {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                    {mofaSummary.raw_data?.uavs || mofaSummary.raw_data?.drones || 0}
+                    {mofaSummary.uavs || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>UAVS DOWNED</div>
                 </div>
@@ -158,7 +156,7 @@ const Header = () => {
         </div>
          
          {/* Right: Chronology */}
-         <div className="font-mono text-yellow glow-yellow" style={{ flex: 1, fontSize: '0.85rem', textAlign: 'right', fontWeight: 'bold' }}>
+         <div className="header-chronology font-mono text-yellow glow-yellow" style={{ flex: 1, fontSize: '0.85rem', textAlign: 'right', fontWeight: 'bold' }}>
             <div style={{ letterSpacing: '1px' }}>
               Day {Math.floor((new Date() - new Date('2026-02-28')) / (1000 * 60 * 60 * 24)) + 1} 🚀 | Since Saturday, Feb 28, 2026
             </div>

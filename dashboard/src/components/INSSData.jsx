@@ -21,17 +21,17 @@ const INSSData = () => {
     const fetchINSSData = async () => {
       try {
         const { data: records, error } = await supabase
-          .from('security_alerts')
-          .select('headline, created_at, url')
-          .eq('event_type', 'INSS_STATS')
+          .from('inss_casualties_data')
+          .select('stats, created_at, source_url')
           .order('created_at', { ascending: false })
           .limit(1);
 
         if (error) throw error;
         
         if (records && records.length > 0) {
-          const stats = JSON.parse(records[0].headline);
-          // Set to parsed data but stringified with commas if needed
+          const stats = typeof records[0].stats === 'string' 
+            ? JSON.parse(records[0].stats) 
+            : records[0].stats;
           setData({
              regional_fatalities: stats.regional_fatalities || 'N/A',
              regional_injured: stats.regional_injured || 'N/A',
@@ -45,7 +45,7 @@ const INSSData = () => {
              iran_strikes_israel: stats.iran_strikes_israel || 'N/A'
           });
           
-          if (records[0].url) setSourceUrl(records[0].url);
+          if (records[0].source_url) setSourceUrl(records[0].source_url);
 
           const date = new Date(records[0].created_at);
           setLastUpdated(`${date.toLocaleDateString()} ${date.toLocaleTimeString()} UTC`);

@@ -186,7 +186,7 @@ body {
   body {
     overflow-y: auto !important; /* Allow scroll on mobile */
     height: auto !important;
-    touch-action: pan-y;
+    touch-action: pan-x pan-y pinch-zoom;
   }
   
   #root {
@@ -230,6 +230,8 @@ body {
     gap: 10px;
     justify-content: center;
     align-items: flex-end;
+    transform: scale(0.85); /* Scale down the reactor and feed UI on mobile to fix the cramped layout issues */
+    transform-origin: bottom center;
   }
 
   .indicators-panel {

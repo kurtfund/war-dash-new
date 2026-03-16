@@ -55,23 +55,19 @@ const LiveMediaBox = () => {
 
   return (
     <>
-      {/* The Floating Toggle Button */}
+      {/* The Toggle Button (Now relative to its container to avoid text overlap) */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          position: 'fixed',
-          bottom: '80px',
-          right: '16px',
           background: 'rgba(5, 7, 9, 0.9)',
-          border: '2px solid #0A4A8B',
-          borderRadius: '4px',
-          padding: '8px 16px',
+          borderTop: '2px solid #0A4A8B',
+          padding: '12px 16px',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
           gap: '8px',
           cursor: 'pointer',
-          zIndex: 1001,
-          boxShadow: '0 0 10px rgba(0,0,0,0.8)',
+          marginTop: 'auto', // Push to the very bottom of the flex column
           transition: 'all 0.2s ease-in-out',
         }}
       >

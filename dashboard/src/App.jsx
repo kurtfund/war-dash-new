@@ -108,10 +108,11 @@ function App() {
           <div style={{ borderTop: '1px solid #1A1A1A', flex: 1, minHeight: 0, display: 'flex' }}>
             <INSSData />
           </div>
+          {/* Render INTEL FEED button naturally at the bottom of this column */}
+          <LiveMediaBox />
         </div>
 
       </div>
-      <LiveMediaBox />
     </>
   )
 }

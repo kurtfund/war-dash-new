@@ -11,8 +11,10 @@ const AlertFeed = ({ alerts }) => {
     // Sort descending by time to ensure newest is always first
     const sortedAlerts = [...alerts].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
     
-    // Hide INSS Stats from the main alert feed
-    const displayableAlerts = sortedAlerts.filter(a => a.event_type !== 'INSS_STATS');
+    // Hide INSS Stats and Market Data from the main alert feed
+    const displayableAlerts = sortedAlerts.filter(
+      a => a.event_type !== 'INSS_STATS' && a.event_type !== 'MARKET_DATA'
+    );
     
     // Safety cap to prevent browser lag if database grows infinitely
     return displayableAlerts.slice(0, 150);

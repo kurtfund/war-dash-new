@@ -233,7 +233,9 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     theater_bypass = [
         "iran", "israel", "hezbollah", "houthi", "hamas", "gaza", "beirut", "tehran", "tel aviv", "jerusalem",
         "syria", "iraq", "yemen", "lebanon", "damascus", "baghdad", "sanaa", "west bank", "gaza strip", "palestine",
-        "red sea", "gulf of aden", "arabian sea", "persian gulf", "middle east"
+        "red sea", "gulf of aden", "arabian sea", "persian gulf", "middle east", "uae", "emirates", "abu dhabi",
+        "dubai", "saudi", "riyadh", "egypt", "cairo", "jordan", "amman", "qatar", "doha", "kuwait", "oman", 
+        "bahrain", "manama", "idf", "irgc"
     ]
     has_theater_context = any(tk in text for tk in theater_bypass)
 
@@ -283,11 +285,11 @@ def should_filter_alert(headline: str, source: str, url: str) -> Tuple[bool, str
     is_official_source = any(k in url.lower() for k in ["idf.il", "centcom.mil", "mofaic.gov.ae", "wam.ae/en/rss"])
     has_conflict_keyword = any(kw.lower() in text for kw in KEYWORDS.get("CONFLICT_KEYWORDS", []))
     
-    # 6. ABSOLUTE THEATER LOCK: All news must have theater context unless from an official source
-    if not has_theater_context and not is_official_source:
+    # 6. RELAXED THEATRE CHECK: Only require theater context if the source is not an official source AND the news doesn't contain a conflict keyword
+    if not has_theater_context and not is_official_source and not has_conflict_keyword:
         return True, "No Middle East Theater Context (Locked)", "Other", "Unknown"
 
-    if not has_conflict_keyword and not is_official_source:
+    if not has_conflict_keyword and not has_theater_context and not is_official_source:
         return True, "No Conflict Keyword (Generic News Blocked)", "Other", "Unknown"
 
     return False, None, event_type, country
@@ -427,24 +429,12 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
         if len(query_headline.data) > 0:
             return True
 
-        # Check 2: Event + Location Match (Window: 12 Hours around the article's time)
-        # Fallback for slight headline variations of the same event
-        twelve_hours_before = (alert_time - timedelta(hours=12)).isoformat()
-        twelve_hours_after = (alert_time + timedelta(hours=12)).isoformat()
-        
-        if alert.get("location_name") and alert.get("event_type") and alert["event_type"] not in ["Other", "DIPLOMACY"] and alert["location_name"] not in ["Unknown", "Middle East Regional"]:
-            query_event = supabase.table("security_alerts") \
-                .select("id") \
-                .eq("event_type", alert["event_type"]) \
-                .eq("location_name", alert["location_name"]) \
-                .gte("created_at", twelve_hours_before) \
-                .lte("created_at", twelve_hours_after) \
-                .execute()
-            if len(query_event.data) > 0:
-                return True
-        
+        # We removed Check 2 (Event + Location Match) because it was far too greedy 
+        # and blocking valid news events that share the same general type and location (e.g., Israel strikes Iran multiple times a day).
         return False
-    except: return False
+    except Exception as e:
+        print(f"Dedup error: {e}")
+        return False
 
 # --- LOGIC ---
 
@@ -680,12 +670,24 @@ def run_poll_cycle(supabase: Client):
         for source_key, entry in interleaved_entries:
             # Try to extract the actual article publication date to maintain chronological integrity
             pub_date = None
+            from datetime import datetime, timezone
             if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                from datetime import datetime, timezone
+                # Use feedparser's parsed struct if available
                 try:
                     pub_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc).isoformat()
                 except: pass
-                
+            elif hasattr(entry, 'published') and entry.published:
+                # Try raw string
+                try:
+                    from dateutil import parser
+                    pub_date = parser.parse(entry.published).astimezone(timezone.utc).isoformat()
+                except: pass
+            elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
+                # Try updated field
+                try:
+                    pub_date = datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc).isoformat()
+                except: pass
+
             process_alert_data(supabase, entry.title, source_key[0], entry.link, {"summary": getattr(entry, 'summary', '')}, published_at=pub_date)
             time.sleep(0.5) 
 

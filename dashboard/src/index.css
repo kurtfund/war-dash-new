@@ -198,16 +198,19 @@ body {
     flex-direction: column;
     height: auto !important;
     overflow: visible !important;
+    padding: 10px;
+    gap: 15px; /* Space between sections */
   }
 
   .dashboard-panel {
-    border-right: none;
-    border-bottom: 1px solid #1A1A1A;
+    border: 1px solid var(--color-cyan);
+    border-radius: 8px;
     width: 100%;
     /* Compact heights for mobile */
     min-height: 400px;
     height: auto; /* Allow content to dictate height more naturally on mobile */
     max-height: 60vh;
+    box-shadow: 0 0 15px var(--color-cyan-dim);
   }
 
   .map-container {

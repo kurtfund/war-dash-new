@@ -75,7 +75,9 @@ const Header = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                minWidth: '450px',
+                minWidth: '280px',
+                maxWidth: '600px',
+                width: '100%',
                 boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease-in-out'

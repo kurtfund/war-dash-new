@@ -205,8 +205,9 @@ body {
     border-bottom: 1px solid #1A1A1A;
     width: 100%;
     /* Compact heights for mobile */
-    min-height: 350px;
-    height: 45vh; /* Change to explicit height to prevent overflow bugs / fix internal scrolling */
+    min-height: 400px;
+    height: auto; /* Allow content to dictate height more naturally on mobile */
+    max-height: 60vh;
   }
 
   .map-container {
@@ -225,12 +226,12 @@ body {
   }
 
   .indicators-wrapper {
-    flex-direction: row; /* Keep elements side by side if possible, or wrap them */
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    align-items: flex-end;
-    transform: scale(0.85); /* Scale down the reactor and feed UI on mobile to fix the cramped layout issues */
+    flex-direction: column; /* Stack vertically on small mobile to avoid horizontal overlap */
+    width: auto;
+    gap: 15px;
+    justify-content: flex-end;
+    align-items: center;
+    transform: scale(0.75); /* Scale down a bit more to fit smaller iPhone screens */
     transform-origin: bottom center;
   }
 

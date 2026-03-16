@@ -71,18 +71,30 @@ SOURCE_RELIABILITY = {
     "gov": 0.95,
     "mil": 0.95,
     "reuters": 0.90,
+    "bbc": 0.90,
+    "theguardian": 0.90,
     "apnews": 0.90,
+    "newsatme": 0.90,
     "associated-press": 0.90,
+    "bloomberg": 0.90,
     "france24": 0.85,
     "dw.com": 0.85,
+    "irna": 0.80,
+    "presstv": 0.75,
+    "tehrantimes": 0.75,
+    "tasnimnews": 0.75,
+    "mehrnews": 0.75,
+    "wam.ae": 0.85,
+    "thenationalnews": 0.75,
+    "khaleejtimes": 0.75,
+    "alarabiya": 0.80,
+    "aawsat": 0.80,
     "aljazeera": 0.85,
+    "middleeasteye": 0.75,
+    "middleeastmonitor": 0.75,
     "haaretz": 0.85,
     "jpost": 0.85,
     "timesofisrael": 0.85,
-    "alarabiya": 0.80,
-    "aawsat": 0.80,
-    "middleeasteye": 0.75,
-    "thenationalnews": 0.75,
     "liveuamap": 0.70,
     "twitter": 0.40,
     "x.com": 0.40
@@ -139,10 +151,32 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
         return "WAM (Emirates News Agency)"
     
     # 3. Major Institutional
+    if "reuters" in url_lower: return "Reuters"
+    if "bbc" in url_lower: return "BBC News"
+    if "theguardian" in url_lower: return "The Guardian"
+    if "apnews" in url_lower or "associated-press" in url_lower or "newsatme" in url_lower: return "Associated Press (AP)"
+    if "bloomberg" in url_lower: return "Bloomberg"
     if "france24" in url_lower: return "France 24"
-    if "alarabiya" in url_lower: return "Al Arabiya"
     if "dw.com" in url_lower: return "Deutsche Welle (DW)"
+    
+    if "irna" in url_lower: return "IRNA"
+    if "presstv" in url_lower: return "Press TV"
+    if "tehrantimes" in url_lower: return "Tehran Times"
+    if "tasnimnews" in url_lower: return "Tasnim News Agency"
+    if "mehrnews" in url_lower: return "Mehr News Agency"
+    
+    if "khaleejtimes" in url_lower: return "Khaleej Times"
+    if "alarabiya" in url_lower: return "Al Arabiya"
     if "aawsat" in url_lower: return "Asharq Al-Awsat"
+    
+    if "aljazeera" in url_lower: return "Al Jazeera"
+    if "middleeasteye" in url_lower: return "Middle East Eye"
+    if "middleeastmonitor" in url_lower: return "Middle East Monitor"
+    
+    if "haaretz" in url_lower: return "Haaretz"
+    if "jpost" in url_lower: return "Jerusalem Post"
+    if "timesofisrael" in url_lower: return "Times of Israel"
+
     if "arabnews" in url_lower: return "Arab News"
     if "gulfnews" in url_lower: return "Gulf News"
     if "jordantimes" in url_lower: return "The Jordan Times"
@@ -160,19 +194,11 @@ def get_clean_source_name(url: str, headline: str = "") -> str:
             return "The National Interest"
         return "The National (UAE)"
 
-    if "reuters" in url_lower: return "Reuters"
-    if "apnews" in url_lower or "associated-press" in url_lower: return "Associated Press (AP)"
-    if "aljazeera" in url_lower: return "Al Jazeera"
-    if "timesofisrael" in url_lower: return "Times of Israel"
-    if "haaretz" in url_lower: return "Haaretz"
-    if "jpost" in url_lower: return "Jerusalem Post"
     if "thecradle" in url_lower: return "The Cradle"
-    if "middleeasteye" in url_lower: return "Middle East Eye"
     if "aa.com.tr" in url_lower: return "Anadolu Agency"
     if "saudigazette" in url_lower: return "Saudi Gazette"
     if "dailysabah" in url_lower: return "Daily Sabah"
     if "rt.com" in url_lower: return "RT News"
-    if "bbc" in url_lower: return "BBC News"
     if "nytimes" in url_lower: return "New York Times"
     
     # 4. OSINT

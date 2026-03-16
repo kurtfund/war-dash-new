@@ -72,9 +72,9 @@ const MapView = ({ alerts }) => {
         zoom={zoom} 
         style={{ width: '100%', height: '100%' }}
         zoomControl={true}
-        scrollWheelZoom={!isMobile}
-        dragging={!isMobile}
-        tap={!isMobile}
+        scrollWheelZoom={true}
+        dragging={true}
+        tap={true}
         maxZoom={12}
       >
         <MapResizer />

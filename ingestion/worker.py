@@ -399,7 +399,7 @@ def is_duplicate(supabase: Client, alert: Dict) -> bool:
         twelve_hours_before = (alert_time - timedelta(hours=12)).isoformat()
         twelve_hours_after = (alert_time + timedelta(hours=12)).isoformat()
         
-        if alert.get("location_name") and alert.get("event_type") and alert["location_name"] != "Unknown":
+        if alert.get("location_name") and alert.get("event_type") and alert["event_type"] not in ["Other", "DIPLOMACY"] and alert["location_name"] not in ["Unknown", "Middle East Regional"]:
             query_event = supabase.table("security_alerts") \
                 .select("id") \
                 .eq("event_type", alert["event_type"]) \
@@ -443,23 +443,9 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
 
     print(f" -> Processing: {headline[:60]}...")
     deaths = extract_casualties(headline)
-    confidence = get_source_confidence(source)
+    confidence = get_source_confidence(url)
     loc_name, lat, lon = detect_location(headline)
 
-    # --- THEATER ENFORCEMENT ---
-    EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
-    # REJECT if geocoded to an excluded region
-    if loc_name and any(region.lower() in loc_name.lower() for region in EXCLUDED_REGIONS):
-        log_rejection(headline, f"Geocoded to Excluded Region ({loc_name})")
-        return
-
-    # REJECT Unknown/Low-Auth if not high kinetic score
-    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
-    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
-    if not loc_name and not is_high_authority and not is_kinetic:
-        log_rejection(headline, "Unknown Location / Low Context")
-        return
-    
     # --- INTELLIGENCE FALLBACK ---
     # --- INTELLIGENCE FALLBACK ---
     # Guarantee Coordinates: If any news passes the filters above, it MUST be mapped!
@@ -477,6 +463,20 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
         elif "iq" in source_lower: loc_name, lat, lon = "Iraq", 33.2232, 43.6793
         elif "rt.com" in source_lower: loc_name, lat, lon = "Syria (RT)", 33.5138, 36.2765
         else: loc_name, lat, lon = "Middle East Regional", 28.0, 45.0
+
+    # --- THEATER ENFORCEMENT ---
+    EXCLUDED_REGIONS = KEYWORDS.get("EXCLUDED_REGIONS", [])
+    # REJECT if geocoded to an excluded region
+    if loc_name and any(region.lower() in loc_name.lower() for region in EXCLUDED_REGIONS) and loc_name != "Middle East Regional":
+        log_rejection(headline, f"Geocoded to Excluded Region ({loc_name})")
+        return
+
+    # REJECT Unknown/Low-Auth if not high kinetic score
+    is_high_authority = any(cat in source for cat in ["Military/Gov", "OSINT"])
+    is_kinetic = event_type in ["AIRSTRIKE", "MISSILE", "NAVAL", "DRONE", "ARTILLERY", "GROUND OPS"]
+    if not loc_name and not is_high_authority and not is_kinetic:
+        log_rejection(headline, "Unknown Location / Low Context")
+        return
 
     if raw_data is None: raw_data = {}
     if lat is not None and lon is not None:

@@ -92,7 +92,7 @@ const Header = () => {
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.missiles || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>BALLISTIC MISSILES STOPPED</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>BALLISTIC MISSILES STOPPED</div>
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
@@ -101,7 +101,7 @@ const Header = () => {
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.cruise || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>CRUISE MISSILES STOPPED</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>CRUISE MISSILES STOPPED</div>
                 </div>
 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
@@ -110,7 +110,7 @@ const Header = () => {
                   <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.uavs || 0}
                   </div>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>UAVS DOWNED</div>
+                  <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>UAVS DOWNED</div>
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>

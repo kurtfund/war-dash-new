@@ -749,28 +749,53 @@ def run_poll_cycle(supabase: Client):
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
         try:
-            print("[*] Fetching WAM Official MOFA Summary via DuckDuckGo Cache bypass...")
+            print("[*] Fetching WAM Official MOFA Summary via Direct API...")
             from bs4 import BeautifulSoup
             import re
             from datetime import timedelta
             
-            url = "https://html.duckduckgo.com/html/"
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            }
-            # The query searches specifically for the cumulative totals string pattern WAM uses
-            payload = {
-                'q': 'site:wam.ae "intercepted" "ballistic missiles" "drones"'
-            }
+            # 1. Get latest WAM articles related to intercepts 
+            # We hit the search API directly if possible, or use the RSS items already gathered
+            # For robustness, we'll try to find any WAM articles in the current poll cycle's entries
+            wam_articles = []
+            for sk, entry in interleaved_entries:
+                if "wam.ae" in entry.link.lower() and "article" in entry.link.lower():
+                    wam_articles.append(entry.link)
             
-            r = requests.post(url, data=payload, headers=headers, timeout=15)
-            soup = BeautifulSoup(r.text, 'html.parser')
-            results = soup.find_all('a', class_='result__snippet')
+            # Also add some hardcoded recent ones if needed, but better to be dynamic
+            # Let's try to hit a search URL that usually works or just use the ones found
             
             full_text = ""
-            for res in results:
-                full_text += res.get_text(separator=' ') + " "
-                
+            latest_article_captured = None
+
+            # Headers for WAM API
+            API_HEADERS = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json',
+                'Referer': 'https://www.wam.ae/en'
+            }
+
+            for article_url in wam_articles[:5]: # Check top 5 WAM news
+                try:
+                    # Extract slug from URL: https://www.wam.ae/en/article/bz8e7gc-uae-air-defences...
+                    slug_match = re.search(r'article/([^/?]+)', article_url)
+                    if not slug_match: continue
+                    slug = slug_match.group(1)
+                    
+                    api_url = f"https://www.wam.ae/api/app/articles/GetArticleBySlug?slug={slug}"
+                    resp = requests.get(api_url, headers=API_HEADERS, timeout=10)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        body = data.get('body', '')
+                        summary = data.get('summary', '')
+                        content = (summary + " " + body).strip()
+                        if "ballistic" in content.lower() or "intercepted" in content.lower():
+                            full_text = content
+                            latest_article_captured = article_url
+                            break # Found the intercept report
+                except Exception as e:
+                    print(f"      [WAM_API_ERROR] {article_url}: {e}")
+
             if full_text.strip():
                 # --- QUANTITATIVE EXTRACTION ---
                 word_to_num = {
@@ -793,49 +818,47 @@ def run_poll_cycle(supabase: Client):
                 
                 num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
                 
-                target_sentence_match = re.search(r'since the (?:onset|start|beginning)[^\.]+', full_text, re.IGNORECASE)
+                # Contextual Extraction: Find the sentence describing the totals
+                # Clean text to remove extra whitespaces
+                clean_text = re.sub(r'\s+', ' ', full_text)
                 
-                if target_sentence_match:
-                    target_sentence = target_sentence_match.group(0)
-                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', target_sentence, re.IGNORECASE)
+                # Use the improved regex from our test script
+                engaged_match = re.search(r'engaged\s+.*?(?:ballistic|cruise|uav|drone).*?since', clean_text, re.IGNORECASE)
+                if not engaged_match:
+                    engaged_match = re.search(r'[^.]*(?:ballistic|cruise|uav|drone)[^.]*', clean_text, re.IGNORECASE)
+                
+                if engaged_match:
+                    context = engaged_match.group(0)
+                    print(f"    [WAM_EXTRACT] Context: {context[:100]}...")
+                    
+                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', context, re.IGNORECASE)
                     if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
                     
-                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', target_sentence, re.IGNORECASE)
+                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', context, re.IGNORECASE)
                     if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
                     
-                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', target_sentence, re.IGNORECASE)
-                    if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
-                else:
-                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
-                    if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
-                        
-                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
-                    if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
-                        
-                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', context, re.IGNORECASE)
                     if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
                 
                 if ballistic == 0 and cruise == 0 and uavs == 0:
-                    print("    [MOFA SUMMARY SKIPPED] Could not confidently extract quantitative totals from the DDG snippet.")
+                    print("    [MOFA SUMMARY SKIPPED] No quantitative totals found in active WAM articles.")
                 else:
                     now = datetime.utcnow()
                     pub_date_iso = now.isoformat()
-                    # The exact headline isn't provided neatly by DDG snippet, so we generalize it.
                     cleaned_title = f"UAE MOFA Update: {ballistic} Ballistic Missiles, {uavs} UAVs Intercepted"
-                    twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
                     
+                    # Check for existing alert with same numbers to avoid spam
                     query_summary = supabase.table("security_alerts") \
                         .select("id") \
                         .eq("event_type", "OFFICIAL_SUMMARY") \
                         .eq("headline", cleaned_title) \
-                        .gte("created_at", twenty_four_hours_ago) \
                         .execute()
                         
                     if len(query_summary.data) == 0:
                         payload = {
                             "headline": cleaned_title,
                             "source": "UAE MOFA (WAM)",
-                            "url": "https://www.wam.ae/en/list/latest-news",
+                            "url": latest_article_captured or "https://www.wam.ae/en/list/latest-news",
                             "event_type": "OFFICIAL_SUMMARY",
                             "country": "UAE",
                             "location_name": "Abu Dhabi (Federal)",
@@ -855,9 +878,9 @@ def run_poll_cycle(supabase: Client):
                         supabase.table("security_alerts").insert(payload).execute()
                         print(f"    [MOFA SUMMARY INSERTED] (B: {ballistic}, C: {cruise}, D: {uavs})")
                     else:
-                        print("    [MOFA SUMMARY SKIPPED] Already extracted recently.")
+                        print(f"    [MOFA SUMMARY SKIPPED] Data (B:{ballistic}, D:{uavs}) already recorded.")
             else:
-                 print("    [MOFA SUMMARY] No recent intercept articles found on DDG Cache.")
+                 print("    [MOFA SUMMARY] No recent intercept articles found in current poll cycle.")
                  
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")

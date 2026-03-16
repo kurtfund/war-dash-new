@@ -22,9 +22,19 @@ const AlertFeed = ({ alerts }) => {
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
         {/* Panel Header */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-obsidian)' }}>
+        <div style={{ 
+          padding: '16px', 
+          borderBottom: '1px solid #1A1A1A', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          background: 'var(--color-obsidian)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10
+        }}>
            <div className="font-mono" style={{ color: 'var(--color-green-teal)', fontSize: '0.85rem', letterSpacing: '1px', fontWeight: 'bold' }}>
-             ● LIVE GEOPOLITICAL ALERT FEED
+             - ● LIVE GEOPOLITICAL ALERT FEED
            </div>
            <div className="text-muted font-mono" style={{ fontSize: '0.65rem' }}>
              GMT<br/>{new Date().toLocaleTimeString('en-GB', { hour12: false })}

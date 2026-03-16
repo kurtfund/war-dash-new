@@ -872,10 +872,10 @@ def run_poll_cycle(supabase: Client):
                     cleaned_title = f"UAE MOFA Update: {ballistic} Ballistic Missiles, {uavs} UAVs Intercepted"
                     
                     # Check for existing alert with same numbers to avoid spam
-                    query_summary = supabase.table("security_alerts") \
+                    query_summary = supabase.table("wam_official_data") \
                         .select("id") \
-                        .eq("event_type", "OFFICIAL_SUMMARY") \
-                        .eq("headline", cleaned_title) \
+                        .eq("missiles", ballistic) \
+                        .eq("uavs", uavs) \
                         .execute()
                         
                     if len(query_summary.data) == 0:

@@ -115,8 +115,16 @@ const Header = () => {
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '300px' }}>
-                  <div className="font-mono text-muted" style={{ fontSize: '0.6rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '350px' }}>
+                  <div className="font-mono text-muted" style={{ 
+                    fontSize: '0.6rem', 
+                    width: '100%',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    lineHeight: '1.4'
+                  }}>
                     {mofaSummary.headline}
                   </div>
                   <div className="font-mono text-cyan" style={{ fontSize: '0.5rem', marginTop: '2px' }}>

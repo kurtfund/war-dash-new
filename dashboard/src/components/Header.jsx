@@ -93,6 +93,9 @@ const Header = () => {
                     {mofaSummary.missiles || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>BALLISTIC MISSILES STOPPED</div>
+                  {mofaSummary.raw_data?.daily_ballistic > 0 && (
+                    <div className="font-mono text-green-teal glow-green-teal" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_ballistic} TODAY)</div>
+                  )}
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
@@ -102,6 +105,9 @@ const Header = () => {
                     {mofaSummary.cruise || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>CRUISE MISSILES STOPPED</div>
+                  {mofaSummary.raw_data?.daily_cruise > 0 && (
+                    <div className="font-mono text-green-teal glow-green-teal" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_cruise} TODAY)</div>
+                  )}
                 </div>
 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
@@ -111,6 +117,9 @@ const Header = () => {
                     {mofaSummary.uavs || 0}
                   </div>
                   <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>UAVS DOWNED</div>
+                  {mofaSummary.raw_data?.daily_uavs > 0 && (
+                    <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_uavs} TODAY)</div>
+                  )}
                 </div>
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>

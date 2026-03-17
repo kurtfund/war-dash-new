@@ -801,14 +801,38 @@ def run_poll_cycle(supabase: Client):
                     uavs = 0
                     num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
                     
-                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', full_text, re.IGNORECASE)
+                    # 1. Total extraction
+                    total_context_match = re.search(r'since\s+[^.]*?(?:ballistic|cruise|uav|drone)[^.]*', full_text, re.IGNORECASE)
+                    total_context = total_context_match.group(0) if total_context_match else ""
+                    
+                    b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', total_context, re.IGNORECASE)
                     if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
                     
-                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', full_text, re.IGNORECASE)
+                    c_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', total_context, re.IGNORECASE)
                     if c_matches: cruise = max([parse_num_match(m) for m in c_matches])
                     
-                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', full_text, re.IGNORECASE)
+                    u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', total_context, re.IGNORECASE)
                     if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
+                    
+                    # 2. Daily extraction
+                    daily_ballistic = daily_cruise = daily_uavs = 0
+                    sentences = re.split(r'\.|Since', full_text, flags=re.IGNORECASE)
+                    daily_context = ""
+                    
+                    for s in sentences:
+                        if 'engage' in s.lower() and ('ballistic' in s.lower() or 'uav' in s.lower()):
+                            daily_context = s.strip()
+                            break
+                            
+                    if daily_context:
+                        db_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', daily_context, re.IGNORECASE)
+                        if db_matches: daily_ballistic = max([parse_num_match(m) for m in db_matches])
+                        
+                        dc_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', daily_context, re.IGNORECASE)
+                        if dc_matches: daily_cruise = max([parse_num_match(m) for m in dc_matches])
+                        
+                        du_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', daily_context, re.IGNORECASE)
+                        if du_matches: daily_uavs = max([parse_num_match(m) for m in du_matches])
                     
                     if ballistic == 0 and cruise == 0 and uavs == 0:
                         print("    [MOFA SUMMARY SKIPPED] No quantitative totals found.")
@@ -836,6 +860,9 @@ def run_poll_cycle(supabase: Client):
                                     "ballistic": ballistic,
                                     "cruise": cruise,
                                     "uavs": uavs,
+                                    "daily_ballistic": daily_ballistic,
+                                    "daily_cruise": daily_cruise,
+                                    "daily_uavs": daily_uavs,
                                     "missiles": ballistic + cruise, 
                                     "drones": uavs 
                                 },
@@ -853,7 +880,10 @@ def run_poll_cycle(supabase: Client):
                                 "raw_data": {
                                     "ballistic": ballistic,
                                     "cruise": cruise,
-                                    "uavs": uavs
+                                    "uavs": uavs,
+                                    "daily_ballistic": daily_ballistic,
+                                    "daily_cruise": daily_cruise,
+                                    "daily_uavs": daily_uavs
                                 }
                             }
                             

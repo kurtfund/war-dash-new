@@ -74,8 +74,8 @@ const Header = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minWidth: '280px',
-                maxWidth: '600px',
-                width: '100%',
+                width: 'max-content',
+                maxWidth: '900px',
                 boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease-in-out'
@@ -124,19 +124,16 @@ const Header = () => {
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '350px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: '350px' }}>
                   <div className="font-mono text-muted" style={{ 
                     fontSize: '0.6rem', 
                     width: '100%',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
+                    display: 'block',
                     lineHeight: '1.4'
                   }}>
                     {mofaSummary.headline}
                   </div>
-                  <div className="font-mono text-cyan" style={{ fontSize: '0.5rem', marginTop: '2px' }}>
+                  <div className="font-mono text-cyan" style={{ fontSize: '0.5rem', marginTop: '6px' }}>
                      {new Date(mofaSummary.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })} UTC
                   </div>
                  </div>

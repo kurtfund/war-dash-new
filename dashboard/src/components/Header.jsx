@@ -62,7 +62,7 @@ const Header = () => {
         </div>
         
         {/* Middle: OFFICIAL MOFA SUMMARY (Top Center - Hidden on Mobile, handled via CSS) */}
-        <div className="mofa-header-container" style={{ flex: 2, display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
+        <div className="mofa-header-container" style={{ flex: '0 1 auto', display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
           {mofaSummary?.url ? (
             <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
               <div className="glass-panel hover-glow" style={{
@@ -74,7 +74,7 @@ const Header = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minWidth: '280px',
-                width: 'max-content',
+                width: '100%',
                 maxWidth: '900px',
                 boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
                 cursor: 'pointer',
@@ -87,7 +87,7 @@ const Header = () => {
                 </div>
             
             {mofaSummary ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'nowrap' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.missiles || 0}
@@ -98,7 +98,7 @@ const Header = () => {
                   )}
                 </div>
                 
-                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
+                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }}></div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
@@ -110,7 +110,7 @@ const Header = () => {
                   )}
                 </div>
 
-                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
+                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }}></div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
@@ -122,9 +122,9 @@ const Header = () => {
                   )}
                 </div>
                 
-                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)' }}></div>
+                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }}></div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: '350px', maxWidth: '350px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: '150px', maxWidth: '400px' }}>
                   <div className="font-mono text-muted" style={{ 
                     fontSize: '0.64rem', 
                     width: '100%',

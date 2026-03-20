@@ -34,12 +34,12 @@ function App() {
           .limit(250)
         
         if (error) {
-          console.error('Error fetching alerts:', error)
+          console.error('Error fetching alerts: Data unavailable')
         } else {
           setAlerts(data || [])
         }
       } catch (err) {
-        console.error('Fatal fetch error:', err)
+        console.error('Fatal fetch error: Data unavailable')
       } finally {
         setLoading(false)
       }

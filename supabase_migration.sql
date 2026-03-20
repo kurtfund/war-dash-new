@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.wam_official_data (
 -- Enable RLS and create policy (allow read access for frontend)
 ALTER TABLE public.wam_official_data ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to wam_official_data" ON public.wam_official_data FOR SELECT USING (true);
-CREATE POLICY "Allow service role insert to wam_official_data" ON public.wam_official_data FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow service role insert to wam_official_data" ON public.wam_official_data AS PERMISSIVE FOR INSERT TO service_role WITH CHECK (true);
 
 -- 2. INSS Casualties Data Table
 CREATE TABLE IF NOT EXISTS public.inss_casualties_data (
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.inss_casualties_data (
 
 ALTER TABLE public.inss_casualties_data ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to inss_casualties_data" ON public.inss_casualties_data FOR SELECT USING (true);
-CREATE POLICY "Allow service role insert to inss_casualties_data" ON public.inss_casualties_data FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow service role insert to inss_casualties_data" ON public.inss_casualties_data AS PERMISSIVE FOR INSERT TO service_role WITH CHECK (true);
 
 -- 3. Market Pulse Data Table
 CREATE TABLE IF NOT EXISTS public.market_pulse_data (
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS public.market_pulse_data (
 
 ALTER TABLE public.market_pulse_data ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to market_pulse_data" ON public.market_pulse_data FOR SELECT USING (true);
-CREATE POLICY "Allow service role insert to market_pulse_data" ON public.market_pulse_data FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow service role insert to market_pulse_data" ON public.market_pulse_data AS PERMISSIVE FOR INSERT TO service_role WITH CHECK (true);
 
 -- Optional: Clean up old data from security_alerts to prevent clutter (Run with caution)
 -- DELETE FROM public.security_alerts WHERE event_type IN ('OFFICIAL_SUMMARY', 'INSS_STATS', 'MARKET_DATA');

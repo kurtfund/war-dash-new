@@ -51,7 +51,7 @@ const INSSData = () => {
           setLastUpdated(`${date.toLocaleDateString()} ${date.toLocaleTimeString()} UTC`);
         }
       } catch (err) {
-        console.error("Error fetching INSS data:", err);
+        console.error("Error fetching INSS data: Data unavailable");
       }
     };
 

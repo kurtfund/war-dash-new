@@ -34,7 +34,7 @@ const MarketPulse = () => {
                           ? JSON.parse(data[0].raw_data) 
                           : data[0].raw_data || {};
           } catch (e) {
-            console.error("Failed to parse market data JSON", e);
+            console.error("Failed to parse market data JSON: Data unavailable");
             liveResults = {};
           }
         }
@@ -72,7 +72,7 @@ const MarketPulse = () => {
         
         setMarketData(results);
       } catch (err) {
-        console.error("Critical failure resolving market data:", err);
+        console.error("Critical failure resolving market data: Data unavailable");
       } finally {
         setLoading(false);
       }

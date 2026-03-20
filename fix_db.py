@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 url: str = os.environ.get("VITE_SUPABASE_URL")
-key: str = os.environ.get("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("VITE_SUPABASE_ANON_KEY")
+key: str = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 supabase: Client = create_client(url, key)
 
 # Delete the bad summary so it can be re-inserted

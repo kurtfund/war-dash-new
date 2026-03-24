@@ -210,15 +210,18 @@ const Indicators = ({ alerts }) => {
                 <div style={{
                   position: 'absolute', top: '10px', left: '10px', right: '10px', bottom: '10px',
                   borderRadius: '50%',
-                  border: '2px solid rgba(255, 0, 51, 0.3)',
+                  border: '1px solid rgba(255, 0, 51, 0.3)',
                   borderTopColor: 'rgba(255, 0, 51, 0.8)',
                   animation: 'spin 12s linear infinite'
                 }}></div>
+                {/* Radar Sweep Needle */}
                 <div style={{
-                  position: 'absolute', top: '20px', left: '20px', right: '20px', bottom: '20px',
+                  position: 'absolute', top: '15px', left: '15px', right: '15px', bottom: '15px',
                   borderRadius: '50%',
-                  border: '2px dashed rgba(0, 229, 255, 0.4)',
-                  animation: 'spin 25s linear infinite reverse'
+                  background: 'conic-gradient(from 0deg, transparent 70%, rgba(0, 229, 255, 0.1) 95%, rgba(0, 229, 255, 0.5) 99%, #00E5FF 100%)',
+                  animation: 'spin 4s linear infinite',
+                  pointerEvents: 'none',
+                  zIndex: 0
                 }}></div>
                 
                 {/* Inside Score / Reactor State */}
@@ -262,8 +265,8 @@ const Indicators = ({ alerts }) => {
                       }}>
                         {displayScore}
                       </div>
-                      <div className="font-mono text-cyan" style={{ fontSize: '0.5rem', letterSpacing: '1px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                        TOTAL INTERCEPTS
+                      <div className="font-mono text-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                        TOTAL TO DATE INTERCEPTS
                       </div>
                       <div className="font-mono text-muted" style={{ fontSize: '0.4rem', letterSpacing: '1px', marginTop: '4px', whiteSpace: 'nowrap' }}>
                         AS OF FEB 28TH

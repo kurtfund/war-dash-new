@@ -172,8 +172,8 @@ const Header = () => {
             <div style={{ letterSpacing: '1px' }}>
               Day {Math.floor((new Date() - new Date('2026-02-28')) / (1000 * 60 * 60 * 24)) + 1} 🚀 | Since Saturday, Feb 28, 2026
             </div>
-            <div className="text-muted" style={{ fontSize: '0.7rem', marginTop: '4px', letterSpacing: '2px' }}>
-              <span className="text-red glow-red">●</span> {new Date().toLocaleTimeString('en-US', { hour12: false })} UTC 🚀
+            <div className="text-muted" style={{ fontSize: '0.65rem', marginTop: '4px', letterSpacing: '1px' }}>
+              <span className="text-red glow-red">●</span> {new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' })} GMT <span style={{ color: '#00F2FF', margin: '0 6px' }}>|</span> {new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'Asia/Dubai' })} UAE 🚀
             </div>
          </div>
       </div>

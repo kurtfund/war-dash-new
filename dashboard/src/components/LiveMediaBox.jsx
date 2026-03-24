@@ -8,6 +8,7 @@ const CHANNELS = [
   { name: 'ABC NEWS', id: '_03-Efdda7s', type: 'youtube' },
   { name: 'BLOOMBERG', id: 'iEpJwprxDdk', type: 'youtube' },
   { name: 'FOX (LNOW)', id: 'sMPp8XGFbkQ', type: 'youtube' },
+  { name: 'FRANCE 24', id: 'Ap-UM1O9RBU', type: 'youtube' },
   { name: 'DW NEWS', id: 'LuKwFajn37U', type: 'youtube' }
 ];
 
@@ -15,6 +16,14 @@ const LiveMediaBox = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const timerRef = useRef(null);
+
+  // Dragging State
+  const [pos, setPos] = useState({ 
+    x: typeof window !== 'undefined' ? window.innerWidth - 420 : 0, 
+    y: typeof window !== 'undefined' ? window.innerHeight - 440 : 0 
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const startAutoCycle = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -41,6 +50,29 @@ const LiveMediaBox = () => {
   };
 
   const currentChannel = CHANNELS[currentIndex];
+
+  const handlePointerDown = (e) => {
+    setIsDragging(true);
+    setDragOffset({
+      x: e.clientX - pos.x,
+      y: e.clientY - pos.y
+    });
+    e.target.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (isDragging) {
+      setPos({
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y
+      });
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    setIsDragging(false);
+    e.target.releasePointerCapture(e.pointerId);
+  };
   
   // Resolve source URL based on platform type. Mute is set to 0 to enable sound per user request.
   const getEmbedUrl = (channel) => {
@@ -80,8 +112,8 @@ const LiveMediaBox = () => {
       {isOpen && (
         <div style={{
           position: 'fixed',
-          bottom: '140px',
-          right: '16px',
+          top: `${pos.y}px`,
+          left: `${pos.x}px`,
           width: '380px',
           background: 'rgba(10, 14, 18, 0.95)',
           border: '1px solid #00A86B',
@@ -93,14 +125,22 @@ const LiveMediaBox = () => {
           overflow: 'hidden'
         }}>
           
-          {/* Top Header */}
-          <div style={{ 
+          {/* Top Header - DRAG HANDLE */}
+          <div 
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            style={{ 
             padding: '10px 16px', 
             borderBottom: '1px solid #1A1A1A', 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            background: 'rgba(5, 7, 9, 1)'
+            background: 'rgba(5, 7, 9, 1)',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            userSelect: 'none',
+            touchAction: 'none'
           }}>
             <div className="font-mono text-green glow-green" style={{ fontSize: '0.85rem', letterSpacing: '1px', fontWeight: 'bold', color: '#00FF41' }}>
               ● LIVE GEOPOLITICAL FEED

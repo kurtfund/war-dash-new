@@ -239,11 +239,9 @@ const Indicators = ({ alerts }) => {
                 }}>
                   {!isRevealed ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                      <img 
-                         src="/logo.png" 
-                         alt="War Dash Logo" 
-                         style={{ maxWidth: '45%', maxHeight: '45%', objectFit: 'contain', zIndex: 1, marginBottom: '6px' }} 
-                      />
+                      <div style={{ fontSize: '3.5rem', zIndex: 1, marginBottom: '2px', textShadow: '0 0 15px rgba(255,255,255,0.6)' }}>
+                        🚀
+                      </div>
                       <div className="font-mono" style={{ color: '#FFF', fontSize: '0.45rem', letterSpacing: '1px', textAlign: 'center', zIndex: 2, textShadow: '0 0 10px rgba(255,255,255,0.5)', lineHeight: '1.4' }}>
                         CLICK TO REVEAL<br/>UAE INTERCEPTS
                       </div>

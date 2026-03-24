@@ -101,6 +101,15 @@ body {
 }
 
 /* Layout Blocks */
+.mofa-header-container {
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: 30px;
+  z-index: 100;
+}
+
 .dashboard-container {
   display: grid;
   grid-template-columns: 22% 56% 22%;
@@ -328,8 +337,8 @@ body {
     /* Compact heights for mobile */
     min-height: 400px;
     height: auto; /* Allow content to dictate height more naturally on mobile */
-    max-height: 60vh;
     box-shadow: 0 0 15px var(--color-cyan-dim);
+    overflow-y: visible !important;
   }
 
   .right-column {
@@ -390,6 +399,20 @@ body {
     justify-content: center;
     gap: 20px;
     text-align: center;
+  }
+
+  .header-branding {
+    order: 1;
+  }
+
+  .header-chronology {
+    order: 2;
+  }
+
+  .mofa-header-container {
+    order: 3;
+    top: 0;
+    margin-top: 10px;
   }
 
   .mofa-stats-row {

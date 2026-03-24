@@ -43,7 +43,7 @@ const Header = () => {
       <div className="header-content w-full">
         
         {/* Left: Branding */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+        <div className="header-branding" style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
           <div style={{ 
             width: '56px', 
             height: '56px', 
@@ -62,7 +62,7 @@ const Header = () => {
         </div>
         
         {/* Middle: OFFICIAL MOFA SUMMARY (Top Center - Hidden on Mobile, handled via CSS) */}
-        <div className="mofa-header-container" style={{ flex: '0 1 auto', display: 'flex', justifyContent: 'center', position: 'relative', top: '30px', zIndex: 100 }}>
+        <div className="mofa-header-container">
           {mofaSummary?.url ? (
             <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
               <div className="glass-panel hover-glow mofa-statement-panel" style={{

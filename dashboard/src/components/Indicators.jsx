@@ -187,42 +187,7 @@ const Indicators = ({ alerts }) => {
               </div>
            </div>
            
-           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                {predictiveMetrics.topKeywords.map((kw, i) => (
-                  <div key={i} className="font-mono" style={{ 
-                      fontSize: '0.45rem', 
-                      padding: '1px 4px', 
-                      background: 'rgba(255,0,51,0.1)', 
-                      border: '1px solid var(--color-red-dim)',
-                      borderRadius: '2px',
-                      color: 'var(--color-text-main)'
-                  }}>
-                    {kw}
-                  </div>
-                ))}
-              </div>
-           </div>
            
-           {/* Trajectory Bar */}
-           <div style={{ width: '100%', marginTop: '4px' }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'BASELINE' ? 'var(--color-cyan)' : '#FFF' }} title="Baseline intelligence gathering, low kinetic momentum.">BASELINE</span>
-               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'ELEVATED 🚀' ? 'var(--color-yellow)' : '#FFF' }} title="Elevated kinetic activity detected above normal baseline.">ELEVATED 🚀</span>
-               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'CRITICAL' ? 'var(--color-red)' : '#FFF' }} title="Critical sustained escalation in conflict zones.">CRITICAL</span>
-             </div>
-             <div style={{ width: '100%', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
-               <div style={{ 
-                   width: `${predictiveMetrics.trajectoryProgress}%`, 
-                   height: '100%', 
-                   background: predictiveMetrics.trajectory === 'CRITICAL' ? '#FF0033' : (predictiveMetrics.trajectory === 'ELEVATED 🚀' ? '#D4AF37' : '#00E5FF'), 
-                   borderRadius: '2px', 
-                   transition: 'all 1s ease-out',
-                   boxShadow: `0 0 10px ${predictiveMetrics.trajectory === 'CRITICAL' ? '#FF0033' : '#00E5FF'}` 
-                }}></div>
-             </div>
-           </div>
            
         </div>
       </div>

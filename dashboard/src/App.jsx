@@ -31,7 +31,7 @@ function App() {
           .select('*')
           .neq('event_type', 'MARKET_DATA')
           .order('created_at', { ascending: false })
-          .limit(250)
+          .limit(500)
         
         if (error) {
           console.error('Error fetching alerts: Data unavailable')
@@ -53,7 +53,7 @@ function App() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'security_alerts' }, (payload) => {
         setAlerts((current) => {
           if (payload.new.event_type === 'MARKET_DATA') return current;
-          return [payload.new, ...current].slice(0, 250);
+          return [payload.new, ...current].slice(0, 500);
         })
       })
       .subscribe()

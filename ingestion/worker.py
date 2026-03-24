@@ -479,7 +479,8 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
         elif "mod.gov.sa" in source_lower or "saudigazette" in source_lower: loc_name, lat, lon = "Saudi Arabia", 23.8859, 45.0792
         elif "ir" in source_lower or "tasnim" in source_lower: loc_name, lat, lon = "Iran", 32.4279, 53.6880
         elif "aljazeera" in source_lower: loc_name, lat, lon = "Qatar (Al Jazeera)", 25.276987, 51.520008
-        elif "wam.ae" in source_lower or "mofaic" in source_lower: loc_name, lat, lon = "UAE", 23.4241, 53.8478
+        elif "wam.ae" in source_lower or "mofaic" in source_lower: loc_name, lat, lon = "UAE (Abu Dhabi)", 23.4241, 53.8478
+        elif "khaleejtimes" in source_lower or "gulfnews" in source_lower or "thenational" in source_lower: loc_name, lat, lon = "UAE (Dubai)", 25.2048, 55.2708
         elif "thecradle" in source_lower: loc_name, lat, lon = "Lebanon (The Cradle)", 33.8938, 35.5018
         elif "centcom.mil" in source_lower: loc_name, lat, lon = "Middle East (CENTCOM)", 25.0, 45.0
         elif "yem" in source_lower: loc_name, lat, lon = "Yemen", 15.5527, 48.5164

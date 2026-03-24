@@ -132,22 +132,22 @@ const Indicators = ({ alerts }) => {
                 </div>
                 PREDICTIVE AI INTEL 🚀
               </div>
-              <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px' }}>
+              <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.45rem', letterSpacing: '1px' }}>
                 LIVE NLP FORECAST
               </div>
            </div>
            
-           <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '0.5px', marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
+           <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '0.5px', marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
               [ANALYZING LIVE 24H ALERT FEED STREAM]
            </div>
 
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', padding: '6px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Historical average of daily intercepted missiles.">AVG DAILY INTERCEPTS</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Historical average of daily intercepted missiles.">AVG DAILY INTERCEPTS</div>
                 <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)}</div>
               </div>
               <div style={{ flex: 1, textAlign: 'right' }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Deviation of today's intercepts versus the historical daily average.">OFFSET VS AVG</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Deviation of today's intercepts versus the historical daily average.">OFFSET VS AVG</div>
                 <div className="font-mono" style={{ 
                   fontSize: '0.8rem', 
                   fontWeight: 'bold',
@@ -160,11 +160,11 @@ const Indicators = ({ alerts }) => {
            
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total number of alerts currently loaded and analyzed.">ALERTS PROCESSED</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total number of alerts currently loaded and analyzed.">ALERTS PROCESSED</div>
                 <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{alerts.length}</div>
               </div>
               <div style={{ flex: 1, textAlign: 'center' }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
                 <div className="font-mono" style={{ 
                   fontSize: '1.2rem', 
                   fontWeight: '900', 
@@ -176,15 +176,15 @@ const Indicators = ({ alerts }) => {
                 </div>
               </div>
               <div style={{ textAlign: 'right', flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">ESCALATION ETA ⓘ</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">ESCALATION ETA ⓘ</div>
                 <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
-                  {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.45rem' }}>DAYS</span>
+                  {predictiveMetrics.daysLeft} <span style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.45rem' }}>DAYS</span>
                 </div>
               </div>
            </div>
            
            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
+              <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {predictiveMetrics.topKeywords.map((kw, i) => (
                   <div key={i} className="font-mono" style={{ 
@@ -204,9 +204,9 @@ const Indicators = ({ alerts }) => {
            {/* Trajectory Bar */}
            <div style={{ width: '100%', marginTop: '4px' }}>
              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'BASELINE' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }} title="Baseline intelligence gathering, low kinetic momentum.">BASELINE</span>
-               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ELEVATED 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }} title="Elevated kinetic activity detected above normal baseline.">ELEVATED 🚀</span>
-               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'CRITICAL' ? 'var(--color-red)' : 'var(--color-text-muted)' }} title="Critical sustained escalation in conflict zones.">CRITICAL</span>
+               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'BASELINE' ? 'var(--color-cyan)' : '#FFF' }} title="Baseline intelligence gathering, low kinetic momentum.">BASELINE</span>
+               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'ELEVATED 🚀' ? 'var(--color-yellow)' : '#FFF' }} title="Elevated kinetic activity detected above normal baseline.">ELEVATED 🚀</span>
+               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'CRITICAL' ? 'var(--color-red)' : '#FFF' }} title="Critical sustained escalation in conflict zones.">CRITICAL</span>
              </div>
              <div style={{ width: '100%', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
                <div style={{ 

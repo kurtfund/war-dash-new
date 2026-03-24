@@ -115,7 +115,7 @@ const MarketPulse = () => {
               style={{ textDecoration: 'none' }}
             >
               <div style={{ 
-                padding: '8px 10px', 
+                padding: '12px 14px', 
                 background: 'rgba(5, 7, 9, 0.8)', 
                 border: '1px solid #1A1A1A',
                 borderRadius: '4px',
@@ -132,18 +132,18 @@ const MarketPulse = () => {
               onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1A1A1A'}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
-                  <span className="font-mono" style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#E0E0E0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#E0E0E0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {asset.name} <span style={{ color: '#666', fontSize: '0.6rem' }}>↗</span>
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.5rem', letterSpacing: '0.5px', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.5px', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {asset.type}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-                  <span className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#FFF' }}>
+                  <span className="font-mono" style={{ fontSize: '1.15rem', fontWeight: 'bold', color: '#FFF' }}>
                     {asset.price}
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.65rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
+                  <span className="font-mono" style={{ fontSize: '0.8rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
                     {asset.change}
                   </span>
                 </div>

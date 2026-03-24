@@ -356,17 +356,19 @@ body {
   .dashboard-container {
     display: flex;
     flex-direction: column;
+    align-items: center; /* Forces all flex children to center horizontally */
     height: auto !important;
     overflow: visible !important;
-    padding: 20px 0px; /* Zero sides, rely on child margins */
+    padding: 20px 0;
     gap: 40px; /* Space between sections to easily swipe */
+    width: 100%;
   }
 
   .dashboard-panel {
     border: 1px solid var(--color-cyan);
     border-radius: 8px;
-    margin: 0 25px;
-    width: calc(100% - 50px) !important;
+    margin: 0 !important;
+    width: 90% !important; /* 90% width guarantees a 5% margin on both sides */
     box-shadow: 0 0 15px var(--color-cyan-dim);
     overflow-y: hidden !important; /* Hide outer overflow container and let inner elements scroll natively */
   }
@@ -383,21 +385,22 @@ body {
     box-shadow: none !important;
     background: transparent !important;
     margin: 0 !important;
-    width: 100% !important;
+    width: 100% !important; /* Takes full width of parent, letting children dictate bounds */
     padding: 0 !important;
     gap: 40px; /* Extra gap between right column sections */
     max-height: none;
     min-height: unset;
     height: auto !important;
     overflow-y: visible !important;
+    align-items: center; /* Centers its children natively */
   }
   .right-panel-section {
     border: 1px solid var(--color-cyan);
     border-radius: 8px;
     box-shadow: 0 0 15px var(--color-cyan-dim);
     background: var(--color-obsidian);
-    margin: 0 25px;
-    width: calc(100% - 50px);
+    margin: 0 auto !important;
+    width: 90% !important; /* Same width rule as parent panels for pure alignment */
     display: flex;
     flex-direction: column;
   }

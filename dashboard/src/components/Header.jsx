@@ -132,7 +132,6 @@ const Header = () => {
                     paddingTop: '8px',
                     borderTop: '1px solid rgba(0, 168, 107, 0.2)',
                     width: '100%',
-                    maxWidth: '500px',
                     textAlign: 'center'
                   }}>
                     <div className="font-mono" style={{ 

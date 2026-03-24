@@ -896,7 +896,23 @@ def run_poll_cycle(supabase: Client):
                             except Exception as e:
                                 print(f"      [SUPABASE_SUMMARY_INSERT_ERROR]: {e}")
                         else:
-                            print(f"    [MOFA SUMMARY SKIPPED] Data (B:{ballistic}, D:{uavs}) already recorded.")
+                            print(f"    [MOFA SUMMARY SKIPPED] Data (B:{ballistic}, D:{uavs}) already recorded. Attempting strict payload resync...")
+                            if daily_ballistic > 0 or daily_uavs > 0:
+                                row_id = query_summary.data[0]['id']
+                                try:
+                                    isolated_payload = {
+                                        "raw_data": {
+                                            "summary": full_text[:500],
+                                            "ballistic": ballistic, "cruise": cruise, "uavs": uavs,
+                                            "daily_ballistic": daily_ballistic, "daily_cruise": daily_cruise, "daily_uavs": daily_uavs,
+                                            "missiles": ballistic, "drones": uavs,
+                                            "lat": 24.4539, "lon": 54.3773
+                                        }
+                                    }
+                                    supabase.table('wam_official_data').update(isolated_payload).eq('id', row_id).execute()
+                                    print("      -> Successfully patched zeroed daily intercepts on the live database row!")
+                                except Exception as u_err:
+                                    print("      [SUPABASE_SUMMARY_UPDATE_ERROR]:", u_err)
                 else:
                     print("    [MOFA SUMMARY ERROR] Could not find relevant UAE intercept data in WAM list API.")
             else:

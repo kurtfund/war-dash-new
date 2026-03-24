@@ -246,12 +246,28 @@ const Indicators = ({ alerts }) => {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '2px', marginTop: '-5px' }}>OFFICIAL WAM DATA</div>
-                      <div className="font-mono text-main" style={{ fontSize: '2.8rem', fontWeight: 'bold', textShadow: '0 0 20px rgba(255,255,255,0.8)', margin: '5px 0' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '0 10px' }}>
+                      <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginTop: '-5px', whiteSpace: 'nowrap' }}>
+                        OFFICIAL WAM DATA
+                      </div>
+                      <div style={{ 
+                        fontFamily: '"Courier New", Courier, monospace', 
+                        fontSize: '2.1rem', 
+                        fontWeight: '900', 
+                        color: '#FFF', 
+                        textShadow: '0 0 10px rgba(255,255,255,0.5)', 
+                        margin: '2px 0', 
+                        letterSpacing: '-1px',
+                        lineHeight: '1'
+                      }}>
                         {displayScore}
                       </div>
-                      <div className="font-mono text-cyan" style={{ fontSize: '0.55rem', letterSpacing: '1px' }}>TOTAL INTERCEPTS</div>
+                      <div className="font-mono text-cyan" style={{ fontSize: '0.5rem', letterSpacing: '1px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                        TOTAL INTERCEPTS
+                      </div>
+                      <div className="font-mono text-muted" style={{ fontSize: '0.4rem', letterSpacing: '1px', marginTop: '4px', whiteSpace: 'nowrap' }}>
+                        AS OF FEB 28TH
+                      </div>
                     </div>
                   )}
                 </div>

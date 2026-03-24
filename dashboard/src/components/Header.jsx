@@ -121,7 +121,7 @@ const Header = () => {
                   </div>
                 </div>
                 
-                {mofaSummary.raw_data?.summary && (
+                {mofaSummary.headline && (
                   <div style={{
                     marginTop: '8px',
                     paddingTop: '8px',
@@ -137,7 +137,7 @@ const Header = () => {
                       color: 'rgba(0, 168, 107, 0.9)',
                       fontStyle: 'italic' 
                     }}>
-                      {mofaSummary.raw_data.summary}
+                      {mofaSummary.headline}
                     </div>
                   </div>
                 )}

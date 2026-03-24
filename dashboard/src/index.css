@@ -403,8 +403,8 @@ body {
   .map-container {
     height: 50vh; /* Give map a good chunk of mobile view */
     min-height: 400px;
-    margin: 0 10px; /* Add margin on mobile so users can drag outside the map */
-    width: calc(100% - 20px);
+    margin: 0 25px; /* Thicker margin on mobile so users can drag outside the map */
+    width: calc(100% - 50px);
     border-radius: 8px;
     overflow: hidden;
   }

@@ -143,28 +143,37 @@ body {
   position: relative;
 }
 
-.indicators-overlay {
+.ai-intel-overlay {
   position: absolute;
-  bottom: 20px;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 15px;
+  left: 15px;
   z-index: 1000;
   pointer-events: none;
+  width: calc(100% - 30px);
+  max-width: 380px;
+}
+.ai-intel-overlay > * {
+  pointer-events: auto;
+}
+
+.reactor-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 40px 30px 40px;
+  align-items: center;
+  pointer-events: none;
+}
+.reactor-overlay > * {
+  pointer-events: auto;
 }
 
-.indicators-wrapper {
-  display: flex;
-  width: 100%;
-  gap: 40px;
-}
-
-.indicators-panel {
-  flex: 1;
+@keyframes radar-ping {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
 }
 
 /* Leaflet Overrides */
@@ -265,33 +274,17 @@ body {
     overflow: hidden;
   }
 
-  .indicators-overlay {
-    position: absolute; /* Revert back to absolute but relative to map container */
+  .ai-intel-overlay {
+    top: 5px;
+    left: 5px;
+    width: calc(100% - 10px);
+    max-width: unset;
+  }
+
+  .reactor-overlay {
     bottom: 5px;
-    left: 0;
-    padding: 10px;
-    height: auto;
-    width: 100%;
-    z-index: 1000;
-    pointer-events: none;
-  }
-
-  .indicators-wrapper {
-    flex-direction: column; /* Stack vertically on small mobile to avoid horizontal overlap */
-    width: 100%;
-    gap: 15px;
-    justify-content: flex-end;
-    align-items: center;
-    transform: scale(0.70); /* Scale down a bit more to fit smaller iPhone screens */
+    transform: translateX(-50%) scale(0.85);
     transform-origin: bottom center;
-  }
-
-  .indicators-panel {
-    width: 100%;
-    flex: 1 1 100%; /* Force full width wrapper for AI box on very small screens */
-    max-width: 380px;
-    pointer-events: auto;
-    margin-bottom: 15px; /* Space between box and reactor */
   }
   
   /* Ensure the MOFA summary is at the bottom as requested */

@@ -121,7 +121,7 @@ const Header = () => {
                   </div>
                 </div>
                 
-                {mofaSummary.headline && (
+                {mofaSummary.raw_data && (
                   <div style={{
                     marginTop: '8px',
                     paddingTop: '8px',
@@ -131,13 +131,15 @@ const Header = () => {
                     textAlign: 'center'
                   }}>
                     <div className="font-mono" style={{ 
-                      fontSize: '0.55rem', 
+                      fontSize: '0.65rem', 
                       letterSpacing: '0.5px', 
                       lineHeight: '1.5', 
-                      color: 'rgba(0, 168, 107, 0.9)',
-                      fontStyle: 'italic' 
+                      color: '#FFF',
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase',
+                      textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
                     }}>
-                      {mofaSummary.headline}
+                      INTERCEPTED {mofaSummary.raw_data.daily_ballistic || 0} BALLISTIC MISSILES, {mofaSummary.raw_data.daily_cruise || 0} CRUISE MISSILES, AND {mofaSummary.raw_data.daily_uavs || 0} UAVs LAUNCHED FROM IRAN.
                     </div>
                   </div>
                 )}

@@ -124,6 +124,18 @@ body {
   border-right: none;
 }
 
+.right-column {
+  display: flex;
+  flex-direction: column;
+}
+.right-panel-section {
+  display: flex;
+  flex-direction: column;
+}
+.right-panel-section.inss-section {
+  border-top: 1px solid #1A1A1A;
+}
+
 .header-bar {
   height: 60px;
   display: flex;
@@ -263,6 +275,27 @@ body {
     height: auto; /* Allow content to dictate height more naturally on mobile */
     max-height: 60vh;
     box-shadow: 0 0 15px var(--color-cyan-dim);
+  }
+
+  .right-column {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    gap: 15px;
+    max-height: none;
+    min-height: unset;
+  }
+  .right-panel-section {
+    border: 1px solid var(--color-cyan);
+    border-radius: 8px;
+    box-shadow: 0 0 15px var(--color-cyan-dim);
+    background: var(--color-obsidian);
+    display: flex;
+    flex-direction: column;
+  }
+  .right-panel-section.inss-section {
+    border-top: 1px solid var(--color-cyan) !important;
   }
 
   .map-container {

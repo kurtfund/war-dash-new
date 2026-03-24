@@ -3,13 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 const Tickers = [
-  { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number', prefix: '$' },
+  // Line 1: Crude Oil, Natural Gas
   { symbol: 'CL=F', name: 'Crude Oil', type: 'ENERGY', format: 'number', prefix: '$' },
+  { symbol: 'NG=F', name: 'Nat Gas', type: 'ENERGY', format: 'number', prefix: '$' },
+  // Line 2: Gold, USD Index
   { symbol: 'GC=F', name: 'Gold', type: 'SAFE HAVEN', prefix: '$' },
-  { symbol: '^TASI.SR', name: 'Tadawul', type: 'MIDDLE EAST', format: 'number' },
+  { symbol: 'DX-Y.NYB', name: 'USD Index', type: 'CURRENCY', format: 'number', prefix: '' },
+  // Line 3: VIX, S&P 500
+  { symbol: '^VIX', name: 'VIX Vol.', type: 'INDEX', format: 'number' },
   { symbol: '^GSPC', name: 'S&P 500', type: 'US MARKETS', format: 'number' },
-  { symbol: 'AAPL', name: 'Apple', type: 'TECH', prefix: '$' },
-  { symbol: '2222.SR', name: 'Saudi Aramco', type: 'ENERGY', format: 'number' }
+  // Line 4: Saudi Aramco, Tadawul
+  { symbol: '2222.SR', name: 'Aramco', type: 'ENERGY', format: 'number' },
+  { symbol: '^TASI.SR', name: 'Tadawul', type: 'MIDDLE EAST', format: 'number' },
+  // Line 5: UAE DFM, AED
+  { symbol: 'DFMGI.AE', name: 'DFM Index', type: 'UAE MARKETS', format: 'number' },
+  { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number', prefix: '$' }
 ];
 
 const MarketPulse = () => {
@@ -46,12 +54,7 @@ const MarketPulse = () => {
 
           // Default fallback data if live fetch fails
           if (ticker.name === '$AED') { fallbackPrice = '3.67'; fallbackChange = '0.00%'; isPositive = true; }
-          else if (ticker.name === 'Crude Oil') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'Gold') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'Tadawul') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'S&P 500') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'Apple') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
-          else if (ticker.name === 'Saudi Aramco') { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
+          else { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
 
           const liveData = liveResults[ticker.symbol];
           if (liveData) {
@@ -102,7 +105,7 @@ const MarketPulse = () => {
           INITIALIZING MARKET DATAFEED...
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
           {marketData.map((asset, index) => (
             <a 
               key={index} 
@@ -112,32 +115,35 @@ const MarketPulse = () => {
               style={{ textDecoration: 'none' }}
             >
               <div style={{ 
-                padding: '12px 16px', 
+                padding: '8px 10px', 
                 background: 'rgba(5, 7, 9, 0.8)', 
                 border: '1px solid #1A1A1A',
                 borderRadius: '4px',
                 display: 'flex', 
+                flexDirection: 'column',
                 justifyContent: 'space-between', 
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 transition: 'border 0.2s',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                gap: '8px',
+                height: '100%'
               }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-cyan-dim)'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1A1A1A'}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <span className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#E0E0E0' }}>
-                    {asset.name} <span style={{ color: '#666', fontSize: '0.7rem' }}>↗</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
+                  <span className="font-mono" style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#E0E0E0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {asset.name} <span style={{ color: '#666', fontSize: '0.6rem' }}>↗</span>
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '1px', color: '#666' }}>
+                  <span className="font-mono" style={{ fontSize: '0.5rem', letterSpacing: '0.5px', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {asset.type}
                   </span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                  <span className="font-mono" style={{ fontSize: '1.0rem', fontWeight: 'bold', color: '#FFF' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
+                  <span className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#FFF' }}>
                     {asset.price}
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
+                  <span className="font-mono" style={{ fontSize: '0.65rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
                     {asset.change}
                   </span>
                 </div>

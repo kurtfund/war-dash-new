@@ -103,13 +103,15 @@ function App() {
           <Indicators alerts={alerts} />
         </div>
         {/* Column 3: Right Panel (Market Pulse + Data) 25% */}
-        <div className="dashboard-panel" style={{ display: 'flex', flexDirection: 'column' }}>
-          <MarketPulse />
-          <div style={{ borderTop: '1px solid #1A1A1A', flex: 1, minHeight: 0, display: 'flex' }}>
-            <INSSData />
+        <div className="dashboard-panel right-column">
+          <div className="right-panel-section market-pulse-section">
+            <MarketPulse />
           </div>
-          {/* Render INTEL FEED button naturally at the bottom of this column */}
-          <LiveMediaBox />
+          <div className="right-panel-section inss-section" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <INSSData />
+            {/* Render INTEL FEED button naturally at the bottom of this column */}
+            <LiveMediaBox />
+          </div>
         </div>
 
       </div>

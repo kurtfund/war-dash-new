@@ -411,6 +411,7 @@ body {
   .map-container {
     height: 50vh; /* Give map a good chunk of mobile view */
     min-height: 400px;
+    width: 75% !important; /* Shrunk by 15% to provide an extra large swiping margin specifically for the map */
     border-radius: 8px;
     overflow: hidden;
   }

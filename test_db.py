@@ -1,14 +1,36 @@
 import os
-from dotenv import load_dotenv
-load_dotenv(".env")
 from supabase import create_client
+from dotenv import load_dotenv
 
-SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+load_dotenv('.env')
+s = create_client(os.environ.get('SUPABASE_URL'), os.environ.get('SUPABASE_SERVICE_ROLE_KEY'))
+r = s.table('wam_official_data').select('*').order('created_at', desc=True).limit(1).execute()
+row = r.data[0]
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-res = supabase.table("security_alerts").select("headline, created_at, source, event_type").order("created_at", desc=True).limit(25).execute()
+# Construct exact wam_official_data clone payload WITHOUT created_at to avoid RLS rejection
+clone = {
+    "url": row["url"],
+    "headline": row["headline"],
+    "missiles": row["missiles"],
+    "cruise": row["cruise"],
+    "uavs": row["uavs"],
+    "raw_data": {
+        "summary": row["raw_data"].get("summary", ""),
+        "ballistic": row["missiles"],
+        "cruise": row["cruise"],
+        "uavs": row["uavs"],
+        "daily_ballistic": 5,
+        "daily_cruise": 0,
+        "daily_uavs": 17,
+        "missiles": row["missiles"],
+        "drones": row["uavs"],
+        "lat": 24.4539,
+        "lon": 54.3773
+    }
+}
 
-print(f"{'CREATED_AT':<25} | {'SOURCE':<20} | {'EVENT':<10} | HEADLINE")
-for r in res.data:
-    print(f"{r['created_at'][:22]:<25} | {r['source'][:15]:<20} | {r['event_type']:<10} | {r['headline'][:50]}")
+try:
+    s.table('wam_official_data').insert(clone).execute()
+    print("SUCCESS: Forced the daily intel into the database feed.")
+except Exception as e:
+    print("Failed to insert override row:", e)

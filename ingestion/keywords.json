@@ -6,7 +6,7 @@
     "EXCLUDED_REGIONS": [
         "Sudan", "Eritrea", "Ethiopia", "Somalia", "South Sudan", 
         "Djibouti", "Kenya", "Uganda", "Central African Republic", "Chad",
-        "Libya", "Egypt", "Mali", "Nigeria", "Niger", "Burkina Faso",
+        "Libya", "Mali", "Nigeria", "Niger", "Burkina Faso",
         "Algeria", "Morocco", "Tunisia", "Africa", "Sahel",
         "Azerbaijan", "Armenia", "Taiwan", "China", "India", "Pakistan",
         "Kolkata", "Delhi", "Mumbai", "Ukraine", "Russia", "Europe", "USA",
@@ -19,7 +19,8 @@
         "war", "attack", "troops", "forces", "army", "military", "commanders", "retaliation",
         "threatens", "intelligence", "assassination", "killed", "casualty", "ceasefire", "sanctions",
         "defense", "defensive", "offensive", "invasion", "invaded", "deploy", "deployment", 
-        "escalation", "marine", "air force", "combat", "weapon", "terror", "terrorist", "hostage"
+        "escalation", "marine", "air force", "combat", "weapon", "terror", "terrorist", "hostage",
+        "fire", "tensions", "crisis", "genocide", "ultimatum", "evacuation"
     ],
     "BANNED_KEYWORDS": [
         "restaurant", "dining", "menu", "shopping", "festival", "holiday", 

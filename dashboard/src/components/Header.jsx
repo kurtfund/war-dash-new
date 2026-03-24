@@ -62,7 +62,7 @@ const Header = () => {
         </div>
         
         {/* Middle: OFFICIAL MOFA SUMMARY (Top Center - Hidden on Mobile, handled via CSS) */}
-        <div className="mofa-header-container" style={{ flex: '0 1 auto', display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
+        <div className="mofa-header-container" style={{ flex: '0 1 auto', display: 'flex', justifyContent: 'center', position: 'relative', top: '30px', zIndex: 100 }}>
           {mofaSummary?.url ? (
             <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
               <div className="glass-panel hover-glow mofa-statement-panel" style={{
@@ -126,27 +126,7 @@ const Header = () => {
                   </div>
                 </div>
                 
-                {mofaSummary.raw_data && (
-                  <div style={{
-                    marginTop: '8px',
-                    paddingTop: '8px',
-                    borderTop: '1px solid rgba(0, 168, 107, 0.2)',
-                    width: '100%',
-                    textAlign: 'center'
-                  }}>
-                    <div className="font-mono" style={{ 
-                      fontSize: '0.65rem', 
-                      letterSpacing: '0.5px', 
-                      lineHeight: '1.5', 
-                      color: '#FFF',
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase',
-                      textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
-                    }}>
-                      TODAY - INTERCEPTED {b} BALLISTIC MISSILES, {c} CRUISE MISSILES, AND {u} UAVs LAUNCHED FROM IRAN.
-                    </div>
-                  </div>
-                )}
+                
               </div>
               );
             })() : (

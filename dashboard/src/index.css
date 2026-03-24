@@ -164,6 +164,14 @@ body {
   width: calc(100% - 30px);
   max-width: 380px;
 }
+
+@media (min-width: 1025px) {
+  .ai-intel-overlay {
+    top: 120px;
+    left: 20px;
+  }
+}
+
 .ai-intel-overlay > * {
   pointer-events: auto;
 }

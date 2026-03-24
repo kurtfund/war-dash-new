@@ -87,7 +87,7 @@ const MarketPulse = () => {
   }, []);
 
   return (
-    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, minHeight: 0, overflowY: 'auto' }}>
+    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}>
       
 
       {/* Header */}
@@ -151,19 +151,6 @@ const MarketPulse = () => {
             </a>
           ))}
           
-          {/* Add Watchlist Ticker Button */}
-          <div style={{ 
-            marginTop: '8px',
-            padding: '16px', 
-            border: '1px dashed #333',
-            borderRadius: '4px',
-            textAlign: 'center',
-            cursor: 'pointer'
-          }}>
-            <span className="font-mono" style={{ color: '#666', fontSize: '0.75rem', letterSpacing: '1px' }}>
-              + ADD WATCHLIST TICKER
-            </span>
-          </div>
         </div>
       )}
     </div>

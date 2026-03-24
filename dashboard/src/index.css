@@ -181,9 +181,48 @@ body {
   box-shadow: 0 0 15px var(--color-cyan-dim);
 }
 
+/* Layout Overrides for React Components */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mofa-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+.mofa-statement-panel {
+  min-width: 450px;
+}
+
+.mofa-header-container a .mofa-statement-panel {
+  min-width: 280px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.mofa-stats-message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 150px;
+  max-width: 400px;
+}
+
+.predictive-ai-box {
+  flex: 0 1 380px !important;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
   body {
+    overflow-x: hidden !important;
     overflow-y: auto !important; /* Allow scroll on mobile */
     height: auto !important;
     touch-action: pan-x pan-y pinch-zoom;
@@ -257,11 +296,45 @@ body {
   }
 
   .header-bar {
-    flex-direction: column;
     height: auto;
     padding: 12px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
     text-align: center;
-    gap: 12px;
+  }
+
+  .mofa-stats-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .mofa-statement-panel, .mofa-header-container a .mofa-statement-panel {
+    min-width: unset !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px;
+  }
+
+  .mofa-stats-message {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    text-align: center;
+    align-items: center !important;
+  }
+
+  .predictive-ai-box {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .header-chronology {
+    text-align: center !important;
   }
 
   /* Make INSS Data larger and more legible on mobile */

@@ -213,6 +213,7 @@ const Indicators = ({ alerts }) => {
            
            
            
+           </div>
         )}
       </div>
 

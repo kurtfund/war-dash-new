@@ -106,35 +106,39 @@ const Indicators = ({ alerts }) => {
       <div className="ai-intel-overlay">
         {/* PREDICTIVE AI INTEL Box (Refactored, Computed, Compact) */}
         <div className="glass-panel predictive-ai-box" style={{  
-          padding: '12px',
+          padding: '8px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 229, 255, 0.2)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px',
+          gap: '6px',
         }}>
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-              <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }} title="Mathematical likelihood of escalation based on live kinetic alert momentum.">
-                <span style={{ fontSize: '0.9rem' }}>●</span> PREDICTIVE AI INTEL 🚀
+              <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.6rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }} title="Mathematical likelihood of escalation based on live kinetic alert momentum.">
+                <div style={{ position: 'relative', width: '6px', height: '6px' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '50%', background: 'var(--color-cyan)' }}></div>
+                    <div style={{ position: 'absolute', top: '-4px', left: '-4px', right: '-4px', bottom: '-4px', borderRadius: '50%', border: '1px solid var(--color-cyan)', animation: 'radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}></div>
+                </div>
+                PREDICTIVE AI INTEL 🚀
               </div>
-              <div className="font-mono text-muted" style={{ fontSize: '0.55rem', letterSpacing: '1px' }}>
+              <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px' }}>
                 LIVE NLP FORECAST
               </div>
            </div>
            
-           <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '0.5px', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '6px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
+           <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '0.5px', marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
               [ANALYZING LIVE 24H ALERT FEED STREAM]
            </div>
            
-           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Total number of alerts currently loaded and analyzed.">ALERTS PROCESSED</div>
-                <div className="font-mono text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{alerts.length}</div>
+                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total number of alerts currently loaded and analyzed.">ALERTS PROCESSED</div>
+                <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{alerts.length}</div>
               </div>
               <div style={{ flex: 1, textAlign: 'center' }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
+                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
                 <div className="font-mono" style={{ 
-                  fontSize: '1.8rem', 
+                  fontSize: '1.2rem', 
                   fontWeight: '900', 
                   color: '#FF0033',
                   textShadow: '0 0 10px rgba(255,0,51,0.6), 0 0 20px rgba(255,0,51,0.4)',
@@ -144,20 +148,20 @@ const Indicators = ({ alerts }) => {
                 </div>
               </div>
               <div style={{ textAlign: 'right', flex: 1 }}>
-                <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '4px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">ESCALATION ETA ⓘ</div>
-                <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-                  {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.55rem' }}>DAYS</span>
+                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Estimated timetable to critical escalation based on current kinetic momentum vs rolling baseline.">ESCALATION ETA ⓘ</div>
+                <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
+                  {predictiveMetrics.daysLeft} <span className="text-muted" style={{ fontSize: '0.45rem' }}>DAYS</span>
                 </div>
               </div>
            </div>
            
            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <div className="font-mono text-muted" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '6px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Countries most frequently targeted in kinetic alerts over the last 24h.">MOST TARGETED</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {predictiveMetrics.topKeywords.map((kw, i) => (
                   <div key={i} className="font-mono" style={{ 
-                      fontSize: '0.6rem', 
-                      padding: '2px 6px', 
+                      fontSize: '0.45rem', 
+                      padding: '1px 4px', 
                       background: 'rgba(255,0,51,0.1)', 
                       border: '1px solid var(--color-red-dim)',
                       borderRadius: '2px',
@@ -170,13 +174,13 @@ const Indicators = ({ alerts }) => {
            </div>
            
            {/* Trajectory Bar */}
-           <div style={{ width: '100%', marginTop: '6px' }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'BASELINE' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }} title="Baseline intelligence gathering, low kinetic momentum.">BASELINE</span>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ELEVATED 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }} title="Elevated kinetic activity detected above normal baseline.">ELEVATED 🚀</span>
-               <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'CRITICAL' ? 'var(--color-red)' : 'var(--color-text-muted)' }} title="Critical sustained escalation in conflict zones.">CRITICAL</span>
+           <div style={{ width: '100%', marginTop: '4px' }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'BASELINE' ? 'var(--color-cyan)' : 'var(--color-text-muted)' }} title="Baseline intelligence gathering, low kinetic momentum.">BASELINE</span>
+               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'ELEVATED 🚀' ? 'var(--color-yellow)' : 'var(--color-text-muted)' }} title="Elevated kinetic activity detected above normal baseline.">ELEVATED 🚀</span>
+               <span className="font-mono" style={{ fontSize: '0.4rem', letterSpacing: '1px', color: predictiveMetrics.trajectory === 'CRITICAL' ? 'var(--color-red)' : 'var(--color-text-muted)' }} title="Critical sustained escalation in conflict zones.">CRITICAL</span>
              </div>
-             <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
+             <div style={{ width: '100%', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
                <div style={{ 
                    width: `${predictiveMetrics.trajectoryProgress}%`, 
                    height: '100%', 
@@ -192,12 +196,8 @@ const Indicators = ({ alerts }) => {
       </div>
 
       <div className="reactor-overlay">
-        {/* Center Iron Man Reactor / Heat Index */}
+        {/* Center Iron Man Reactor (Clean Base) */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setIsRevealed(!isRevealed)}>
-            <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '10px' }}>
-              GEOPOLITICAL HEAT INDEX 🚀
-            </div>
-            
             <div style={{ position: 'relative', width: '185px', height: '185px' }}>
                 {/* Visual Dial Rings */}
                 <div style={{
@@ -255,10 +255,6 @@ const Indicators = ({ alerts }) => {
                     </div>
                   )}
                 </div>
-            </div>
-            
-            <div className="font-mono text-red glow-red" style={{ fontSize: '0.6rem', letterSpacing: '2px', marginTop: '10px' }}>
-              -- CRITICAL IMMINENT THREAT --
             </div>
         </div>
       </div>

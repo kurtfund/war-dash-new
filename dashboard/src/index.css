@@ -358,14 +358,15 @@ body {
     flex-direction: column;
     height: auto !important;
     overflow: visible !important;
-    padding: 20px 25px; /* 25px left/right padding applies "margins" to all sections globally */
+    padding: 20px 0px; /* Zero sides, rely on child margins */
     gap: 40px; /* Space between sections to easily swipe */
   }
 
   .dashboard-panel {
     border: 1px solid var(--color-cyan);
     border-radius: 8px;
-    width: 100%;
+    margin: 0 25px;
+    width: calc(100% - 50px) !important;
     box-shadow: 0 0 15px var(--color-cyan-dim);
     overflow-y: hidden !important; /* Hide outer overflow container and let inner elements scroll natively */
   }
@@ -381,6 +382,8 @@ body {
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
+    margin: 0 !important;
+    width: 100% !important;
     padding: 0 !important;
     gap: 40px; /* Extra gap between right column sections */
     max-height: none;
@@ -393,6 +396,8 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 15px var(--color-cyan-dim);
     background: var(--color-obsidian);
+    margin: 0 25px;
+    width: calc(100% - 50px);
     display: flex;
     flex-direction: column;
   }
@@ -403,7 +408,6 @@ body {
   .map-container {
     height: 50vh; /* Give map a good chunk of mobile view */
     min-height: 400px;
-    width: 100%;
     border-radius: 8px;
     overflow: hidden;
   }

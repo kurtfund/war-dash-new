@@ -84,40 +84,63 @@ const Header = () => {
                 </div>
             
             {mofaSummary ? (
-              <div className="mofa-stats-row" style={{ display: 'flex', alignItems: 'center', gap: '24px', padding: '4px 8px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div className="font-mono text-main glow-main" style={{ fontSize: '1.6rem', fontWeight: 'bold', lineHeight: '1.1' }}>
-                    {mofaSummary.missiles || 0}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                <div className="mofa-stats-row" style={{ display: 'flex', alignItems: 'center', gap: '24px', padding: '4px 8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div className="font-mono text-main glow-main" style={{ fontSize: '1.6rem', fontWeight: 'bold', lineHeight: '1.1' }}>
+                      {mofaSummary.missiles || 0}
+                    </div>
+                    <div className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px', color: '#FF0033' }}>BALLISTIC MISSILES</div>
+                    {mofaSummary.raw_data?.daily_ballistic > 0 && (
+                      <div className="font-mono glow-main" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px', color: '#FF0033' }}>(+{mofaSummary.raw_data.daily_ballistic} TODAY)</div>
+                    )}
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px', color: '#FF0033' }}>BALLISTIC MISSILES</div>
-                  {mofaSummary.raw_data?.daily_ballistic > 0 && (
-                    <div className="font-mono glow-main" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px', color: '#FF0033' }}>(+{mofaSummary.raw_data.daily_ballistic} TODAY)</div>
-                  )}
-                </div>
-                
-                <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.6rem', fontWeight: 'bold', lineHeight: '1.1' }}>
-                    {mofaSummary.cruise || 0}
+                  
+                  <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '1.6rem', fontWeight: 'bold', lineHeight: '1.1' }}>
+                      {mofaSummary.cruise || 0}
+                    </div>
+                    <div className="font-mono text-cyan" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>CRUISE MISSILES</div>
+                    {mofaSummary.raw_data?.daily_cruise > 0 && (
+                      <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_cruise} TODAY)</div>
+                    )}
                   </div>
-                  <div className="font-mono text-cyan" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>CRUISE MISSILES</div>
-                  {mofaSummary.raw_data?.daily_cruise > 0 && (
-                    <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_cruise} TODAY)</div>
-                  )}
-                </div>
 
-                <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.6rem', fontWeight: 'bold', lineHeight: '1.1' }}>
-                    {mofaSummary.uavs || 0}
+                  <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '1.6rem', fontWeight: 'bold', lineHeight: '1.1' }}>
+                      {mofaSummary.uavs || 0}
+                    </div>
+                    <div className="font-mono text-yellow" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>DRONES DOWNED</div>
+                    {mofaSummary.raw_data?.daily_uavs > 0 && (
+                      <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_uavs} TODAY)</div>
+                    )}
                   </div>
-                  <div className="font-mono text-yellow" style={{ fontSize: '0.55rem', letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>DRONES DOWNED</div>
-                  {mofaSummary.raw_data?.daily_uavs > 0 && (
-                    <div className="font-mono text-yellow glow-yellow" style={{ fontSize: '0.55rem', marginTop: '4px', letterSpacing: '1px' }}>(+{mofaSummary.raw_data.daily_uavs} TODAY)</div>
-                  )}
                 </div>
+                
+                {mofaSummary.raw_data?.summary && (
+                  <div style={{
+                    marginTop: '8px',
+                    paddingTop: '8px',
+                    borderTop: '1px solid rgba(0, 168, 107, 0.2)',
+                    width: '100%',
+                    maxWidth: '500px',
+                    textAlign: 'center'
+                  }}>
+                    <div className="font-mono" style={{ 
+                      fontSize: '0.55rem', 
+                      letterSpacing: '0.5px', 
+                      lineHeight: '1.5', 
+                      color: 'rgba(0, 168, 107, 0.9)',
+                      fontStyle: 'italic' 
+                    }}>
+                      {mofaSummary.raw_data.summary}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
                 <div className="font-mono text-muted" style={{ fontSize: '0.8rem', padding: '6px 0', fontStyle: 'italic' }}>

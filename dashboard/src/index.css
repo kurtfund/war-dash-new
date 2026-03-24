@@ -219,9 +219,54 @@ body {
 
 .mofa-stats-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
   gap: 20px;
   flex-wrap: nowrap;
+  width: 100%;
+}
+
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-val {
+  font-size: 1.6rem;
+}
+
+.stat-label {
+  font-size: 0.55rem;
+}
+
+.stat-daily {
+  font-size: 0.55rem;
+}
+
+@media (max-width: 600px) {
+  .mofa-stats-row {
+    gap: 8px;
+  }
+  
+  .stat-val {
+    font-size: 1.2rem;
+  }
+  
+  .stat-label {
+    font-size: 0.45rem;
+    max-width: 60px;
+  }
+  
+  .stat-daily {
+    font-size: 0.45rem;
+  }
+  
+  .stat-divider {
+    height: 24px !important;
+  }
 }
 
 .mofa-statement-panel {

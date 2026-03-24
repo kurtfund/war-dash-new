@@ -864,7 +864,9 @@ def run_poll_cycle(supabase: Client):
                                     "daily_cruise": daily_cruise,
                                     "daily_uavs": daily_uavs,
                                     "missiles": ballistic + cruise, 
-                                    "drones": uavs 
+                                    "drones": uavs,
+                                    "lat": 24.4539,
+                                    "lon": 54.3773
                                 },
                                 "created_at": pub_date_iso
                             }

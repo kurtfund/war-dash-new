@@ -102,19 +102,10 @@ const Indicators = ({ alerts }) => {
   }, []);
 
   return (
-    <div className="indicators-overlay">
-      {/* Bottom Interface Split */}
-      <div className="indicators-wrapper" style={{ 
-        pointerEvents: 'auto', 
-        justifyContent: 'flex-end', 
-        alignItems: 'flex-end', 
-        gap: '40px', 
-        paddingBottom: '20px',
-        paddingRight: '20px'
-      }}>
-        
+    <>
+      <div className="ai-intel-overlay">
         {/* PREDICTIVE AI INTEL Box (Refactored, Computed, Compact) */}
-        <div className="glass-panel indicators-panel predictive-ai-box" style={{  
+        <div className="glass-panel predictive-ai-box" style={{  
           padding: '12px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 229, 255, 0.2)',
@@ -198,21 +189,23 @@ const Indicators = ({ alerts }) => {
            </div>
            
         </div>
+      </div>
 
+      <div className="reactor-overlay">
         {/* Center Iron Man Reactor / Heat Index */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setIsRevealed(!isRevealed)}>
             <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.7rem', letterSpacing: '2px', marginBottom: '10px' }}>
               GEOPOLITICAL HEAT INDEX 🚀
             </div>
             
-            <div style={{ position: 'relative', width: '220px', height: '220px' }}>
+            <div style={{ position: 'relative', width: '185px', height: '185px' }}>
                 {/* Visual Dial Rings */}
                 <div style={{
                   position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                   borderRadius: '50%',
                   border: '4px solid rgba(0, 229, 255, 0.1)',
                   boxShadow: '0 0 30px rgba(0, 229, 255, 0.2), inset 0 0 30px rgba(0, 229, 255, 0.1)',
-                  animation: 'pulse 4s infinite alternate'
+                  animation: 'radar-ping 3s cubic-bezier(0, 0, 0.2, 1) infinite'
                 }}></div>
                 <div style={{
                   position: 'absolute', top: '10px', left: '10px', right: '10px', bottom: '10px',
@@ -268,9 +261,8 @@ const Indicators = ({ alerts }) => {
               -- CRITICAL IMMINENT THREAT --
             </div>
         </div>
-        
       </div>
-    </div>
+    </>
   );
 };
 

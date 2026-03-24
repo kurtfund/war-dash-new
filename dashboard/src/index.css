@@ -417,8 +417,9 @@ body {
   }
 
   .ai-intel-overlay {
-    bottom: 55px; /* above the mobile attribution/arches if needed */
-    right: 5px;
+    top: 15px;
+    bottom: auto;
+    right: 15px;
     width: auto;
     max-width: unset;
   }

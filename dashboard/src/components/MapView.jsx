@@ -66,7 +66,7 @@ const MapView = ({ alerts }) => {
   const isMobile = window.innerWidth <= 1024;
 
   return (
-    <div className="map-container">
+    <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1, background: 'var(--color-obsidian)' }}>
       <MapContainer 
         center={center} 
         zoom={zoom} 

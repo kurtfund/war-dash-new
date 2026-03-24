@@ -115,7 +115,6 @@ const Indicators = ({ alerts }) => {
         
         {/* PREDICTIVE AI INTEL Box (Refactored, Computed, Compact) */}
         <div className="glass-panel indicators-panel predictive-ai-box" style={{  
-          flex: '0 1 380px', // slightly smaller width
           padding: '12px',
           background: 'rgba(5, 7, 9, 0.85)',
           border: '1px solid rgba(0, 229, 255, 0.2)',

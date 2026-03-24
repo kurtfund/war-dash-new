@@ -40,7 +40,7 @@ const Header = () => {
 
   return (
     <header className="header-bar" style={{ padding: '0 32px' }}>
-      <div className="flex items-center w-full" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+      <div className="header-content w-full">
         
         {/* Left: Branding */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
@@ -65,7 +65,7 @@ const Header = () => {
         <div className="mofa-header-container" style={{ flex: '0 1 auto', display: 'flex', justifyContent: 'center', position: 'relative', top: '15px', zIndex: 100 }}>
           {mofaSummary?.url ? (
             <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-              <div className="glass-panel hover-glow" style={{
+              <div className="glass-panel hover-glow mofa-statement-panel" style={{
                 background: 'rgba(5, 7, 9, 0.85)',
                 border: '1px solid rgba(0, 168, 107, 0.5)',
                 borderRadius: '6px',
@@ -73,9 +73,6 @@ const Header = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                minWidth: '280px',
-                width: '100%',
-                maxWidth: '900px',
                 boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease-in-out'
@@ -87,7 +84,7 @@ const Header = () => {
                 </div>
             
             {mofaSummary ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'nowrap' }}>
+              <div className="mofa-stats-row">
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div className="font-mono text-main glow-main" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {mofaSummary.missiles || 0}
@@ -124,7 +121,7 @@ const Header = () => {
                 
                 <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }}></div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: '150px', maxWidth: '400px' }}>
+                <div className="mofa-stats-message">
                   <div className="font-mono text-muted" style={{ 
                     fontSize: '0.64rem', 
                     width: '100%',
@@ -148,7 +145,7 @@ const Header = () => {
             </div>
           </a>
           ) : (
-            <div className="glass-panel hover-glow" style={{
+            <div className="glass-panel hover-glow mofa-statement-panel" style={{
               background: 'rgba(5, 7, 9, 0.85)',
               border: '1px solid rgba(0, 168, 107, 0.5)',
               borderRadius: '6px',
@@ -156,7 +153,6 @@ const Header = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              minWidth: '450px',
               boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
             }}>
               <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>

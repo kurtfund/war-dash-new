@@ -358,7 +358,7 @@ body {
     flex-direction: column;
     height: auto !important;
     overflow: visible !important;
-    padding: 20px 10px; /* Extra padding top/bottom */
+    padding: 20px 25px; /* 25px left/right padding applies "margins" to all sections globally */
     gap: 40px; /* Space between sections to easily swipe */
   }
 
@@ -403,8 +403,7 @@ body {
   .map-container {
     height: 50vh; /* Give map a good chunk of mobile view */
     min-height: 400px;
-    margin: 0 25px; /* Thicker margin on mobile so users can drag outside the map */
-    width: calc(100% - 50px);
+    width: 100%;
     border-radius: 8px;
     overflow: hidden;
   }

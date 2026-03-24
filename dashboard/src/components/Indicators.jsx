@@ -70,10 +70,11 @@ const Indicators = ({ alerts }) => {
   let totalIntercepts = 0;
 
   // Derive exact integer from UAE WAM Data
-  if (mofaSummary && mofaSummary.raw_data) {
-    const missiles = mofaSummary.raw_data.missiles || mofaSummary.raw_data.ballistic || 0;
-    const drones = mofaSummary.raw_data.drones || mofaSummary.raw_data.uavs || 0;
-    totalIntercepts = missiles + drones;
+  if (mofaSummary) {
+    const missiles = mofaSummary.missiles || 0;
+    const cruise = mofaSummary.cruise || 0;
+    const drones = mofaSummary.uavs || 0;
+    totalIntercepts = missiles + cruise + drones;
   } else {
     // Before WAM data loads, or as a crude fallback, we count total kinetic alerts
     totalIntercepts = alerts.filter(a => ['MISSILE', 'AIRSTRIKE', 'DRONE'].includes(a.event_type)).length * 4;
@@ -85,9 +86,8 @@ const Indicators = ({ alerts }) => {
   useEffect(() => {
     const fetchMofa = async () => {
       const { data, error } = await supabase
-        .from('security_alerts')
+        .from('wam_official_data')
         .select('*')
-        .eq('event_type', 'OFFICIAL_SUMMARY')
         .order('created_at', { ascending: false })
         .limit(1);
       
@@ -97,9 +97,20 @@ const Indicators = ({ alerts }) => {
     };
 
     fetchMofa();
-    const interval = setInterval(fetchMofa, 300000); // 5 minutes
+    const interval = setInterval(fetchMofa, 60000); // 1 minute
     return () => clearInterval(interval);
   }, []);
+
+  const startOfWar = new Date('2026-02-28');
+  const currentDays = Math.max(1, Math.floor((new Date() - startOfWar) / (1000 * 60 * 60 * 24)) + 1);
+  const totalMissiles = mofaSummary ? ((mofaSummary.missiles || 0) + (mofaSummary.cruise || 0)) : 0;
+  const avgDailyMissiles = currentDays > 0 ? (totalMissiles / currentDays) : 0;
+  const todayMissiles = mofaSummary && mofaSummary.raw_data ? ((mofaSummary.raw_data.daily_ballistic || 0) + (mofaSummary.raw_data.daily_cruise || 0)) : 0;
+  
+  let pctChange = 0;
+  if (avgDailyMissiles > 0) {
+     pctChange = ((todayMissiles - avgDailyMissiles) / avgDailyMissiles) * 100;
+  }
 
   return (
     <>
@@ -128,6 +139,23 @@ const Indicators = ({ alerts }) => {
            
            <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '0.5px', marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
               [ANALYZING LIVE 24H ALERT FEED STREAM]
+           </div>
+
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', padding: '6px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
+              <div style={{ flex: 1 }}>
+                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Historical average of daily intercepted missiles.">AVG DAILY INTERCEPTS</div>
+                <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)}</div>
+              </div>
+              <div style={{ flex: 1, textAlign: 'right' }}>
+                <div className="font-mono text-muted" style={{ fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Deviation of today's intercepts versus the historical daily average.">OFFSET VS AVG</div>
+                <div className="font-mono" style={{ 
+                  fontSize: '0.8rem', 
+                  fontWeight: 'bold',
+                  color: pctChange > 0 ? '#FF0033' : '#00FF41'
+                }}>
+                  {pctChange > 0 ? '▲' : '▼'} {Math.abs(pctChange).toFixed(1)}%
+                </div>
+              </div>
            </div>
            
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>

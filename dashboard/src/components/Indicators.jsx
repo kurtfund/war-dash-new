@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 const Indicators = ({ alerts }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [mofaSummary, setMofaSummary] = useState(null);
+  const [isIntelExpanded, setIsIntelExpanded] = useState(false);
 
   // --- Real Foreshadowing Analytics ---
   // Analyze the latest alerts to generate true "Predictive AI" metrics
@@ -117,17 +118,40 @@ const Indicators = ({ alerts }) => {
 
   return (
     <>
-      <div className="ai-intel-overlay">
-        {/* PREDICTIVE AI INTEL Box (Refactored, Computed, Compact) */}
-        <div className="glass-panel predictive-ai-box" style={{  
-          padding: '8px',
-          background: 'rgba(5, 7, 9, 0.85)',
-          border: '1px solid rgba(0, 229, 255, 0.2)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '6px',
-        }}>
-           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+      <div 
+        className="ai-intel-overlay"
+        onMouseEnter={() => setIsIntelExpanded(true)}
+        onMouseLeave={() => setIsIntelExpanded(false)}
+        onClick={() => setIsIntelExpanded(!isIntelExpanded)}
+      >
+        {!isIntelExpanded ? (
+          <div className="glass-panel" style={{
+            padding: '12px',
+            background: 'var(--color-obsidian)',
+            border: '1px solid rgba(0, 229, 255, 0.4)',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 15px rgba(0,229,255,0.2)'
+          }}>
+            <div style={{ position: 'relative', width: '20px', height: '20px' }}>
+              <div style={{ position: 'absolute', top: '8px', left: '8px', right: '8px', bottom: '8px', borderRadius: '50%', background: 'var(--color-cyan)' }}></div>
+              <div style={{ position: 'absolute', top: '0px', left: '0px', right: '0px', bottom: '0px', borderRadius: '50%', border: '1px solid var(--color-cyan)', animation: 'radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}></div>
+            </div>
+          </div>
+        ) : (
+          <div className="glass-panel predictive-ai-box" style={{  
+            padding: '8px',
+            background: 'rgba(5, 7, 9, 0.85)',
+            border: '1px solid rgba(0, 229, 255, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+            transformOrigin: 'bottom right',
+          }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
               <div className="font-mono" style={{ color: 'var(--color-cyan)', fontSize: '0.6rem', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }} title="Mathematical likelihood of escalation based on live kinetic alert momentum.">
                 <div style={{ position: 'relative', width: '6px', height: '6px' }}>
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '50%', background: 'var(--color-cyan)' }}></div>
@@ -189,10 +213,48 @@ const Indicators = ({ alerts }) => {
            
            
            
-        </div>
+        )}
       </div>
 
       <div className="reactor-overlay">
+        {/* Left Arch (Conflict Score) */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ position: 'relative', width: '130px', height: '130px' }}>
+                <div style={{
+                  position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                  borderRadius: '50%',
+                  border: '2px solid rgba(0, 229, 255, 0.1)',
+                  boxShadow: '0 0 15px rgba(0, 229, 255, 0.1), inset 0 0 15px rgba(0, 229, 255, 0.1)',
+                }}></div>
+                <div style={{
+                  position: 'absolute', top: '10px', left: '10px', right: '10px', bottom: '10px',
+                  borderRadius: '50%',
+                  background: `conic-gradient(from 180deg, var(--color-cyan) ${predictiveMetrics.trajectoryProgress}%, transparent ${predictiveMetrics.trajectoryProgress}%)`,
+                  opacity: 0.3,
+                  maskImage: 'radial-gradient(transparent 65%, black 66%)',
+                  WebkitMaskImage: 'radial-gradient(transparent 65%, black 66%)',
+                }}></div>
+                <div style={{
+                  position: 'absolute', top: '20px', left: '20px', right: '20px', bottom: '20px',
+                  backgroundColor: 'rgba(5, 7, 9, 0.9)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
+                }}>
+                  <div className="font-mono text-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px' }}>INTENSITY</div>
+                  <div className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'BASELINE' ? '#00FF41' : (predictiveMetrics.trajectory === 'ELEVATED 🚀' ? '#D4AF37' : '#FF0033') }}>
+                     {predictiveMetrics.trajectoryProgress}%
+                  </div>
+                  <div className="font-mono" style={{ fontSize: '0.45rem', color: '#FFF', marginTop: '4px', textAlign: 'center', lineHeight: '1.2' }}>
+                     {predictiveMetrics.trajectory.replace(' 🚀', '')}
+                  </div>
+                </div>
+            </div>
+        </div>
+
         {/* Center Iron Man Reactor (Clean Base) */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setIsRevealed(!isRevealed)}>
             <div style={{ position: 'relative', width: '185px', height: '185px' }}>
@@ -250,7 +312,7 @@ const Indicators = ({ alerts }) => {
                       </div>
                       <div style={{ 
                         fontFamily: '"Courier New", Courier, monospace', 
-                        fontSize: '2.1rem', 
+                        fontSize: '1.9rem', 
                         fontWeight: '900', 
                         color: '#FFF', 
                         textShadow: '0 0 10px rgba(255,255,255,0.5)', 
@@ -268,6 +330,35 @@ const Indicators = ({ alerts }) => {
                       </div>
                     </div>
                   )}
+                </div>
+            </div>
+        </div>
+
+        {/* Right Arch (Performance Track) */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ position: 'relative', width: '130px', height: '130px' }}>
+                <div style={{
+                  position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                  borderRadius: '50%',
+                  border: '2px solid rgba(0, 229, 255, 0.1)',
+                  boxShadow: '0 0 15px rgba(0, 229, 255, 0.1), inset 0 0 15px rgba(0, 229, 255, 0.1)',
+                }}></div>
+                <div style={{
+                  position: 'absolute', top: '20px', left: '20px', right: '20px', bottom: '20px',
+                  backgroundColor: 'rgba(5, 7, 9, 0.9)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
+                }}>
+                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.45rem', letterSpacing: '1px' }}>DAILY AVG</div>
+                  <div className="font-mono text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold', margin: '2px 0' }}>{avgDailyMissiles.toFixed(1)}</div>
+                  <div style={{ width: '80%', height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }}></div>
+                  <div className="font-mono" style={{ fontSize: '0.55rem', color: pctChange > 0 ? '#FF0033' : '#00FF41', textAlign: 'center', lineHeight: '1.2' }}>
+                     {pctChange > 0 ? '▲' : '▼'} {Math.abs(pctChange).toFixed(1)}%<br/>{pctChange > 0 ? 'ABOVE' : 'BELOW'} AVG
+                  </div>
                 </div>
             </div>
         </div>

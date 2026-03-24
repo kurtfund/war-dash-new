@@ -15,9 +15,9 @@ const Tickers = [
   // Line 4: Saudi Aramco, Tadawul
   { symbol: '2222.SR', name: 'Aramco', type: 'ENERGY', format: 'number' },
   { symbol: '^TASI.SR', name: 'Tadawul', type: 'MIDDLE EAST', format: 'number' },
-  // Line 5: UAE DFM, AED
+  // Line 5: UAE DFM, Dow Jones
   { symbol: 'DFMGI.AE', name: 'DFM Index', type: 'UAE MARKETS', format: 'number' },
-  { symbol: 'AED=X', name: '$AED', type: 'CURRENCY', format: 'number', prefix: '$' }
+  { symbol: '^DJI', name: 'Dow Jones', type: 'US MARKETS', format: 'number', prefix: '' }
 ];
 
 const MarketPulse = () => {
@@ -53,7 +53,7 @@ const MarketPulse = () => {
           let isPositive = true;
 
           // Default fallback data if live fetch fails
-          if (ticker.name === '$AED') { fallbackPrice = '3.67'; fallbackChange = '0.00%'; isPositive = true; }
+          if (ticker.name === 'Dow Jones') { fallbackPrice = '39,000.00'; fallbackChange = '0.00%'; isPositive = true; }
           else { fallbackPrice = '---'; fallbackChange = '---'; isPositive = true; }
 
           const liveData = liveResults[ticker.symbol];

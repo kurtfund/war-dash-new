@@ -166,18 +166,19 @@ body {
 
 .ai-intel-overlay {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  bottom: 30px;
+  right: 15px;
   z-index: 1000;
   pointer-events: none;
-  width: calc(100% - 30px);
-  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 @media (min-width: 1025px) {
   .ai-intel-overlay {
-    top: 120px;
-    left: 20px;
+    bottom: 30px;
+    right: 20px;
   }
 }
 
@@ -188,12 +189,14 @@ body {
 .reactor-overlay {
   position: absolute;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
+  left: 0;
+  width: 100%;
+  z-index: 900;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 30px;
   pointer-events: none;
 }
 .reactor-overlay > * {
@@ -209,6 +212,35 @@ body {
 .leaflet-container {
   background: var(--color-obsidian) !important;
   font-family: var(--font-sans);
+}
+
+.leaflet-control-attribution {
+  font-size: 0.55rem !important;
+  font-family: var(--font-mono) !important;
+  background: rgba(5, 7, 9, 0.4) !important;
+  color: rgba(140, 150, 140, 0.6) !important;
+  border: 1px solid rgba(140, 150, 140, 0.1);
+  border-radius: 4px;
+  padding: 2px 6px !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  text-shadow: none !important;
+  box-shadow: none !important;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.leaflet-control-attribution:hover {
+  opacity: 1;
+}
+
+.leaflet-control-attribution a {
+  color: rgba(140, 150, 140, 0.8) !important;
+  text-decoration: none !important;
+}
+
+.leaflet-control-attribution a:hover {
+  color: var(--color-text-main) !important;
 }
 
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
@@ -378,16 +410,17 @@ body {
   }
 
   .ai-intel-overlay {
-    top: 5px;
-    left: 5px;
-    width: calc(100% - 10px);
+    bottom: 55px; /* above the mobile attribution/arches if needed */
+    right: 5px;
+    width: auto;
     max-width: unset;
   }
 
   .reactor-overlay {
     bottom: 5px;
-    transform: translateX(-50%) scale(0.85);
+    transform: scale(0.7);
     transform-origin: bottom center;
+    gap: 10px;
   }
   
   /* Ensure the MOFA summary is at the bottom as requested */

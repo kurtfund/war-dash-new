@@ -263,8 +263,8 @@ const Indicators = ({ alerts }) => {
                       }}>
                         {displayScore}
                       </div>
-                      <div className="font-mono text-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                        TOTAL TO DATE INTERCEPTS
+                      <div className="font-mono text-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', fontWeight: 'bold', textAlign: 'center', lineHeight: '1.4' }}>
+                        TOTAL TO DATE<br/>INTERCEPTS
                       </div>
                       <div className="font-mono text-muted" style={{ fontSize: '0.4rem', letterSpacing: '1px', marginTop: '4px', whiteSpace: 'nowrap' }}>
                         AS OF FEB 28TH

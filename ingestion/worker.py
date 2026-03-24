@@ -821,7 +821,7 @@ def run_poll_cycle(supabase: Client):
                     daily_context = ""
                     
                     for s in sentences:
-                        if 'engage' in s.lower() and ('ballistic' in s.lower() or 'uav' in s.lower()):
+                        if ('engage' in s.lower() or 'intercepted' in s.lower()) and ('ballistic' in s.lower() or 'uav' in s.lower() or 'drone' in s.lower()):
                             daily_context = s.strip()
                             break
                             

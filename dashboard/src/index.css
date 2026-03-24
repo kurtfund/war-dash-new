@@ -37,7 +37,6 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  touch-action: pan-x pan-y pinch-zoom; /* allow zoom explicitly */
 }
 
 #root {
@@ -219,13 +218,18 @@ body {
   flex: 0 1 380px !important;
 }
 
+.alert-feed-scroll {
+  overscroll-behavior-y: contain; /* Prevents scroll chaining lock on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
-  body {
+  html, body {
     overflow-x: hidden !important;
     overflow-y: auto !important; /* Allow scroll on mobile */
     height: auto !important;
-    touch-action: pan-x pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch !important;
   }
   
   #root {

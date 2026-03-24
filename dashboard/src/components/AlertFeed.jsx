@@ -46,6 +46,7 @@ const AlertFeed = ({ alerts }) => {
         {/* Scrolling Event List */}
         <div 
           ref={scrollRef}
+          className="alert-feed-scroll"
           style={{ 
             flex: 1, 
             overflowY: 'auto', 

@@ -141,33 +141,34 @@ const Indicators = ({ alerts }) => {
            </div>
            
            <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '0.5px', marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }} title="Real-time predictive analysis of the live alert feed stream over the last 24h.">
-              [ANALYZING LIVE 24H ALERT FEED STREAM]
+              [LIVE 24-HOUR THREAT ANALYSIS]
            </div>
 
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', padding: '6px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Historical average of daily intercepted missiles.">AVG DAILY INTERCEPTS</div>
-                <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)}</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Historical average of daily intercepted missiles.">HISTORICAL DAILY AVERAGE</div>
+                <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)} <span style={{fontSize: '0.45rem', color: '#FFF'}}>MISSILES</span></div>
               </div>
               <div style={{ flex: 1, textAlign: 'right' }}>
-                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Deviation of today's intercepts versus the historical daily average.">OFFSET VS AVG</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Deviation of today's intercepts versus the historical daily average.">TODAY'S THREAT LEVEL</div>
                 <div className="font-mono" style={{ 
-                  fontSize: '0.8rem', 
+                  fontSize: '0.65rem', 
                   fontWeight: 'bold',
+                  marginTop: '2px',
                   color: pctChange > 0 ? '#FF0033' : '#00FF41'
                 }}>
-                  {pctChange > 0 ? '▲' : '▼'} {Math.abs(pctChange).toFixed(1)}%
+                  {pctChange > 0 ? '▲' : '▼'} {Math.abs(pctChange).toFixed(1)}% {pctChange > 0 ? 'ABOVE' : 'BELOW'} AVG
                 </div>
               </div>
            </div>
            
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total number of alerts currently loaded and analyzed.">ALERTS PROCESSED</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total number of alerts currently loaded and analyzed.">THREATS SCANNED (24H)</div>
                 <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{alerts.length}</div>
               </div>
               <div style={{ flex: 1, textAlign: 'center' }}>
-                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total missiles detected in the live alert stream.">MISSILES ENTERED</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '2px' }} title="Total missiles detected in the live alert stream.">MISSILES DETECTED (24H)</div>
                 <div className="font-mono" style={{ 
                   fontSize: '1.2rem', 
                   fontWeight: '900', 

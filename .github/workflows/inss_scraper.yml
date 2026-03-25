@@ -1,6 +1,9 @@
 name: Run INSS Scraper 24/7
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '15 * * * *' # Runs at the 15th minute of every hour (24 times a day)
   workflow_dispatch: # Allows you to click a button to run it manually anytime
@@ -34,3 +37,4 @@ jobs:
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       run: |
         python scrapers/inss/scrape_powerbi.py
+        python scrapers/dld/scrape_trends.py

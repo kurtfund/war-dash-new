@@ -245,9 +245,9 @@ const INSSData = () => {
             }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.6rem', fontWeight: 'bold' }}>{country.name}</span>
               <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem' }} className="font-mono">
-                <span style={{ color: '#ff3333' }}>F:{country.f}</span>
+                <span style={{ color: '#ff3333' }}>Fatalities: {country.f}</span>
                 <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-                <span style={{ color: '#ffb333' }}>I:{country.i}</span>
+                <span style={{ color: '#ffb333' }}>Casualties: {country.i}</span>
               </div>
             </div>
           ))}

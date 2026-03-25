@@ -87,12 +87,11 @@ const MarketPulse = () => {
   }, []);
 
   return (
-    <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}>
-      
+    <div style={{ padding: '2px 6px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 'none', overflowY: 'hidden', overflowX: 'hidden' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', borderBottom: '1px solid #1A1A1A', paddingBottom: '12px' }}>
-        <div className="font-mono" style={{ color: '#D4AF37', fontSize: '0.85rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px', borderBottom: '1px solid #1A1A1A', paddingBottom: '2px' }}>
+        <div className="font-mono" style={{ color: '#D4AF37', fontSize: '0.65rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold' }}>
           <span style={{ color: '#00FF41' }}>📈</span> STOCK WATCHLIST
         </div>
         <div className="font-mono text-muted" style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.05)', padding: '2px 6px', borderRadius: '4px', letterSpacing: '1px', border: '1px solid #333' }}>
@@ -115,35 +114,35 @@ const MarketPulse = () => {
               style={{ textDecoration: 'none' }}
             >
               <div style={{ 
-                padding: '6px 10px', 
+                padding: '2px 6px', 
                 background: 'rgba(5, 7, 9, 0.8)', 
                 border: '1px solid #1A1A1A',
-                borderRadius: '4px',
+                borderRadius: '2px',
                 display: 'flex', 
-                flexDirection: 'column',
+                flexDirection: 'row',
                 justifyContent: 'space-between', 
-                alignItems: 'flex-start',
+                alignItems: 'center',
                 transition: 'border 0.2s',
                 cursor: 'pointer',
-                gap: '4px',
-                height: '100%'
+                gap: '2px',
+                height: '24px'
               }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-cyan-dim)'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1A1A1A'}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
-                  <span className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#E0E0E0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {asset.name} <span style={{ color: '#666', fontSize: '0.55rem' }}>↗</span>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'baseline' }}>
+                  <span className="font-mono" style={{ fontSize: '0.65rem', fontWeight: 'bold', color: '#E0E0E0' }}>
+                    {asset.name}
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.45rem', letterSpacing: '0.5px', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span className="font-mono" style={{ fontSize: '0.5rem', color: '#666', marginRight: '4px' }}>
                     {asset.type}
                   </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-                  <span className="font-mono" style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#FFF' }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
+                  <span className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#FFF' }}>
                     {asset.price}
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
+                  <span className="font-mono" style={{ fontSize: '0.6rem', fontWeight: 'bold', color: asset.isPositive ? '#00FF41' : '#FF0033' }}>
                     {asset.change}
                   </span>
                 </div>

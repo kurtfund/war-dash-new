@@ -68,7 +68,7 @@ export default function PropertyChart() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
         <div>
           <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold' }}>
-            <a href="https://dxbinteract.com/dubai-housing-market-data" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
+            <a href="https://dubailand.gov.ae/en/open-data/real-estate-data" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
               DUBAI REAL ESTATE TREND &nbsp;↗
             </a>
           </div>

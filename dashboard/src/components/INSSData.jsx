@@ -98,22 +98,22 @@ const INSSData = () => {
       flexDirection: 'column',
       flex: 1, // Take up remaining bottom half space sharing with MarketPulse
       minHeight: 0,
-      marginTop: '20px'
+      marginTop: '10px'
       }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '10px 0',
+        padding: '5px 0',
         borderBottom: '1px solid rgba(0, 255, 255, 0.2)',
-        marginBottom: '10px',
-        gap: '10px'
+        marginBottom: '6px',
+        gap: '6px'
       }}>
         <div style={{
-          padding: '2px 6px',
+          padding: '2px 4px',
           background: 'rgba(0, 255, 255, 0.1)',
           border: '1px solid #00ffff',
           color: '#00ffff',
-          fontSize: '0.65rem',
+          fontSize: '0.5rem',
           fontWeight: 'bold',
           letterSpacing: '1px',
         }}>
@@ -121,16 +121,16 @@ const INSSData = () => {
         </div>
         <div className="font-mono" style={{
           color: '#00ffff',
-          fontSize: '0.9rem',
+          fontSize: '0.65rem',
           fontWeight: 'bold',
-          letterSpacing: '2px',
+          letterSpacing: '1px',
           textShadow: '0 0 10px rgba(0, 255, 255, 0.5)'
         }}>
           <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
             INSS MIDDLE EAST CASUALTIES ↗
           </a>
         </div>
-        <div className="font-mono" style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>
+        <div className="font-mono" style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.4)', fontSize: '0.55rem' }}>
           LAST SYNC: {lastUpdated}
         </div>
       </div>
@@ -141,70 +141,70 @@ const INSSData = () => {
         overflowY: 'auto',
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '15px'
+        gap: '6px'
       }} className="hide-scrollbar">
         
         {/* ROW 1: Regional & Iranian Casualties */}
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '8px 10px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>MIDDLE EAST CASUALTIES</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Fatalities:</span>
-            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.regional_fatalities}</span>
+        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '4px 6px' }}>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>MIDDLE EAST CASUALTIES</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
+            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_fatalities}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Injured:</span>
-            <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.regional_injured}</span>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Injured:</span>
+            <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_injured}</span>
           </div>
         </div>
 
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '8px 10px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>IRANIAN CASUALTIES</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Fatalities:</span>
-            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.iranian_fatalities}</span>
+        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '4px 6px' }}>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>IRANIAN CASUALTIES</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
+            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_fatalities}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Targeted Killings:</span>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.95rem', fontWeight: 'bold' }}>~{data.targeted_killings}</span>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Targeted Killings:</span>
+            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>~{data.targeted_killings}</span>
           </div>
         </div>
         
         {/* ROW 2: Military Activity & Iranian Inventory */}
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '8px 10px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>LAUNCHES TOWARD MIDDLE EAST</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Missiles:</span>
-            <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.launches_missiles}</span>
+        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '4px 6px' }}>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>LAUNCHES TOWARD MIDDLE EAST</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Missiles:</span>
+            <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.launches_missiles}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>UAVs:</span>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.launches_uavs}</span>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>UAVs:</span>
+            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.launches_uavs}</span>
           </div>
         </div>
 
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '8px 10px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.6rem', letterSpacing: '1px', marginBottom: '6px'}}>IRANIAN THREAT VECTOR</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Missile Inventory:</span>
-            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.iranian_missile_inventory}</span>
+        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '4px 6px' }}>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>IRANIAN THREAT VECTOR</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Missile Inventory:</span>
+            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_missile_inventory}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.75rem' }}>Countries Targeted:</span>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.95rem', fontWeight: 'bold' }}>{data.iran_countries_targeted}</span>
+            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Countries Targeted:</span>
+            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iran_countries_targeted}</span>
           </div>
         </div>
 
         {/* Card: Operations */}
-         <div style={{ gridColumn: 'span 2', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '4px 6px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>STRIKES IN IRAN</div>
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', textAlign: 'center' }}>
+         <div style={{ gridColumn: 'span 2', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
+          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.4rem', letterSpacing: '1px', marginBottom: '1px'}}>STRIKES IN IRAN</div>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px', textAlign: 'center' }}>
              <div>
-                <div className="font-mono" style={{ color: '#fff', fontSize: '0.45rem', margin: '0' }}>American Strikes</div>
-                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', fontWeight: 'bold' }}>{data.iran_strikes_us}</div>
+                <div className="font-mono" style={{ color: '#fff', fontSize: '0.4rem', margin: '0' }}>American Strikes</div>
+                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>{data.iran_strikes_us}</div>
              </div>
              <div>
-                <div className="font-mono" style={{ color: '#fff', fontSize: '0.45rem', margin: '0' }}>Israeli Strikes</div>
-                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', fontWeight: 'bold' }}>{data.iran_strikes_israel}</div>
+                <div className="font-mono" style={{ color: '#fff', fontSize: '0.4rem', margin: '0' }}>Israeli Strikes</div>
+                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>{data.iran_strikes_israel}</div>
              </div>
            </div>
         </div>
@@ -213,15 +213,15 @@ const INSSData = () => {
 
       {/* Country Casualties Badges Row */}
       <div style={{
-        marginTop: '15px',
-        paddingTop: '10px',
+        marginTop: '8px',
+        paddingTop: '6px',
         borderTop: '1px solid rgba(0, 255, 255, 0.2)',
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '8px',
+        gap: '4px',
       }}>
-        <div style={{ width: '100%', marginBottom: '4px' }} className="font-mono">
-          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.65rem', letterSpacing: '1px' }}>CASUALTIES BY COUNTRY</span>
+        <div style={{ width: '100%', marginBottom: '2px' }} className="font-mono">
+          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.45rem', letterSpacing: '1px' }}>CASUALTIES BY COUNTRY</span>
         </div>
         
         {/* Badges */}
@@ -238,14 +238,14 @@ const INSSData = () => {
           <div key={country.name} style={{
             background: 'rgba(0, 20, 20, 0.6)',
             border: '1px solid rgba(0, 255, 255, 0.15)',
-            padding: '4px 8px',
+            padding: '2px 4px',
             borderRadius: '2px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '4px'
           }}>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', fontWeight: 'bold' }}>{country.name}</span>
-            <div style={{ display: 'flex', gap: '4px', fontSize: '0.65rem' }} className="font-mono">
+            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.5rem', fontWeight: 'bold' }}>{country.name}</span>
+            <div style={{ display: 'flex', gap: '2px', fontSize: '0.5rem' }} className="font-mono">
               <span style={{ color: '#ff3333' }}>F:{country.f}</span>
               <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
               <span style={{ color: '#ffb333' }}>I:{country.i}</span>

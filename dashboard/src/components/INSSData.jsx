@@ -12,7 +12,22 @@ const INSSData = () => {
     iranian_missile_inventory: '...',
     iran_countries_targeted: '...',
     iran_strikes_us: '...',
-    iran_strikes_israel: '...'
+    iran_strikes_israel: '...',
+    iranian_injured: '...',
+    israel_fatalities: '...',
+    israel_injured: '...',
+    lebanon_fatalities: '...',
+    lebanon_injured: '...',
+    us_fatalities: '...',
+    us_injured: '...',
+    bahrain_fatalities: '...',
+    bahrain_injured: '...',
+    kuwait_fatalities: '...',
+    kuwait_injured: '...',
+    saudi_fatalities: '...',
+    saudi_injured: '...',
+    qatar_fatalities: '...',
+    qatar_injured: '...'
   });
   const [lastUpdated, setLastUpdated] = useState('...');
   const [sourceUrl, setSourceUrl] = useState('https://app.powerbi.com/view?r=eyJrIjoiYmI3MzIzMTAtMTdjNC00NTY1LWFiM2YtNjI0NTk5MWEyYTI5IiwidCI6IjgwOGNmNGIzLTFhOTYtNDEzZi1iMDZiLTlkZTZjOThmNTQ2OSJ9');
@@ -42,7 +57,22 @@ const INSSData = () => {
              iranian_missile_inventory: stats.iranian_missile_inventory || 'N/A',
              iran_countries_targeted: stats.iran_countries_targeted || 'N/A',
              iran_strikes_us: stats.iran_strikes_us || 'N/A',
-             iran_strikes_israel: stats.iran_strikes_israel || 'N/A'
+             iran_strikes_israel: stats.iran_strikes_israel || 'N/A',
+             iranian_injured: stats.iranian_injured || 'N/A',
+             israel_fatalities: stats.israel_fatalities || 'N/A',
+             israel_injured: stats.israel_injured || 'N/A',
+             lebanon_fatalities: stats.lebanon_fatalities || 'N/A',
+             lebanon_injured: stats.lebanon_injured || 'N/A',
+             us_fatalities: stats.us_fatalities || 'N/A',
+             us_injured: stats.us_injured || 'N/A',
+             bahrain_fatalities: stats.bahrain_fatalities || 'N/A',
+             bahrain_injured: stats.bahrain_injured || 'N/A',
+             kuwait_fatalities: stats.kuwait_fatalities || 'N/A',
+             kuwait_injured: stats.kuwait_injured || 'N/A',
+             saudi_fatalities: stats.saudi_fatalities || 'N/A',
+             saudi_injured: stats.saudi_injured || 'N/A',
+             qatar_fatalities: stats.qatar_fatalities || 'N/A',
+             qatar_injured: stats.qatar_injured || 'N/A'
           });
           
           if (records[0].source_url) setSourceUrl(records[0].source_url);
@@ -179,6 +209,49 @@ const INSSData = () => {
            </div>
         </div>
 
+      </div>
+
+      {/* Country Casualties Badges Row */}
+      <div style={{
+        marginTop: '15px',
+        paddingTop: '10px',
+        borderTop: '1px solid rgba(0, 255, 255, 0.2)',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '8px',
+      }}>
+        <div style={{ width: '100%', marginBottom: '4px' }} className="font-mono">
+          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.65rem', letterSpacing: '1px' }}>CASUALTIES BY COUNTRY</span>
+        </div>
+        
+        {/* Badges */}
+        {[
+          { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
+          { name: 'US', f: data.us_fatalities, i: data.us_injured },
+          { name: 'ISRAEL', f: data.israel_fatalities, i: data.israel_injured },
+          { name: 'LEBANON', f: data.lebanon_fatalities, i: data.lebanon_injured },
+          { name: 'SAUDI AR', f: data.saudi_fatalities, i: data.saudi_injured },
+          { name: 'KUWAIT', f: data.kuwait_fatalities, i: data.kuwait_injured },
+          { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
+          { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
+        ].map(country => (
+          <div key={country.name} style={{
+            background: 'rgba(0, 20, 20, 0.6)',
+            border: '1px solid rgba(0, 255, 255, 0.15)',
+            padding: '4px 8px',
+            borderRadius: '2px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', fontWeight: 'bold' }}>{country.name}</span>
+            <div style={{ display: 'flex', gap: '4px', fontSize: '0.65rem' }} className="font-mono">
+              <span style={{ color: '#ff3333' }}>F:{country.f}</span>
+              <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+              <span style={{ color: '#ffb333' }}>I:{country.i}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

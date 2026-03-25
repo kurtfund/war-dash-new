@@ -6,6 +6,7 @@ import MarketPulse from './components/MarketPulse'
 import MapView from './components/MapView'
 import LiveMediaBox from './components/LiveMediaBox'
 import INSSData from './components/INSSData'
+import PropertyChart from './components/PropertyChart'
 import { supabase } from './lib/supabase'
 
 function App() {
@@ -106,6 +107,7 @@ function App() {
         <div className="dashboard-panel right-column">
           <div className="right-panel-section market-pulse-section">
             <MarketPulse />
+            <PropertyChart />
           </div>
           <div className="right-panel-section inss-section" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <INSSData />

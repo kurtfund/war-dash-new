@@ -9,4 +9,5 @@ geocoder
 deep-translator
 tenacity
 beautifulsoup4
+playwright
 # Model is downloaded in build command

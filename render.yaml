@@ -1,9 +1,8 @@
 services:
   - type: worker
     name: war-dash-ingestion
-    runtime: python
-    buildCommand: pip install -r ingestion/requirements.txt
-    startCommand: python ingestion/worker.py
+    env: docker
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: SUPABASE_URL
         sync: false

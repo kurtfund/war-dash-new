@@ -220,11 +220,7 @@ const INSSData = () => {
           gap: '4px',
           justifyContent: 'center'
         }}>
-          <div style={{ width: '100%', marginBottom: '2px', textAlign: 'center' }} className="font-mono">
-          <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold', textDecoration: 'none', cursor: 'pointer' }}>
-            CASUALTIES BY COUNTRY ↗
-          </a>
-        </div>
+
           
           {/* Badges */}
           {[
@@ -237,14 +233,16 @@ const INSSData = () => {
             { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
             { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
           ].map(country => (
-            <div key={country.name} style={{
+            <a href={sourceUrl} key={country.name} target="_blank" rel="noreferrer" style={{
               background: 'rgba(0, 20, 20, 0.6)',
               border: '1px solid rgba(0, 255, 255, 0.3)',
               padding: '2px 6px',
               borderRadius: '2px',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              textDecoration: 'none',
+              cursor: 'pointer'
             }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.6rem', fontWeight: 'bold' }}>{country.name}</span>
               <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem' }} className="font-mono">
@@ -252,7 +250,7 @@ const INSSData = () => {
                 <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
                 <span style={{ color: '#ffb333' }}>Casualties: {country.i}</span>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

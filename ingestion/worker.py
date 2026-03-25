@@ -584,6 +584,13 @@ def main():
                 subprocess.run(["python", "scrapers/inss/scrape_powerbi.py"], check=True)
             except Exception as e:
                 print(f"    [INSS SCRAPER ERROR]: {e}")
+                
+            print("[*] Running Hourly DLD Property Scraper...")
+            try:
+                subprocess.run(["python", "scrapers/dld/scrape_trends.py"], check=True)
+            except Exception as e:
+                print(f"    [DLD SCRAPER ERROR]: {e}")
+                
             last_inss_scrape = time.time()
 
         try:

@@ -569,12 +569,22 @@ def main():
 
     # Heartbeat configuration
     last_heartbeat = time.time()
+    last_inss_scrape = 0  # Forces an immediate INSS scrape loop on boot
     
     while True:
         # Heartbeat logic: Log every 10 mins (600s) to keep Render happy
         if time.time() - last_heartbeat >= 600:
             print(f"[*] [HEARTBEAT] Worker is alive and healthy. Timestamp: {datetime.now().isoformat()}")
             last_heartbeat = time.time()
+
+        # Hourly script execution for Playwright INSS graphic scraping
+        if time.time() - last_inss_scrape >= 3600:
+            print("[*] Running Hourly INSS PowerBI Scraper...")
+            try:
+                subprocess.run(["python", "scrapers/inss/scrape_powerbi.py"], check=True)
+            except Exception as e:
+                print(f"    [INSS SCRAPER ERROR]: {e}")
+            last_inss_scrape = time.time()
 
         try:
             run_poll_cycle(supabase)

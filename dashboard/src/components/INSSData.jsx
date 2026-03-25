@@ -135,124 +135,123 @@ const INSSData = () => {
         </div>
       </div>
 
-      {/* Main Grid for Native UI */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '4px',
-        alignContent: 'start'
-      }} className="hide-scrollbar">
-        
-        {/* ROW 1: Regional & Iranian Casualties */}
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>MIDDLE EAST CASUALTIES</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
-            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_fatalities}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Injured:</span>
-            <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_injured}</span>
-          </div>
-        </div>
-
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>IRANIAN CASUALTIES</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
-            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_fatalities}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Targeted Killings:</span>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>~{data.targeted_killings}</span>
-          </div>
-        </div>
-        
-        {/* ROW 2: Military Activity & Iranian Inventory */}
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>LAUNCHES TOWARD MIDDLE EAST</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Missiles:</span>
-            <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.launches_missiles}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>UAVs:</span>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.launches_uavs}</span>
-          </div>
-        </div>
-
-        <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>IRANIAN THREAT VECTOR</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Missile Inventory:</span>
-            <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_missile_inventory}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Countries Targeted:</span>
-            <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iran_countries_targeted}</span>
-          </div>
-        </div>
-
-        {/* Card: Operations */}
-         <div style={{ gridColumn: 'span 2', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-          <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.4rem', letterSpacing: '1px', marginBottom: '1px'}}>STRIKES IN IRAN</div>
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px', textAlign: 'center' }}>
-             <div>
-                <div className="font-mono" style={{ color: '#fff', fontSize: '0.4rem', margin: '0' }}>American Strikes</div>
-                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>{data.iran_strikes_us}</div>
-             </div>
-             <div>
-                <div className="font-mono" style={{ color: '#fff', fontSize: '0.4rem', margin: '0' }}>Israeli Strikes</div>
-                <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>{data.iran_strikes_israel}</div>
-             </div>
-           </div>
-        </div>
-
-      </div>
-
-      {/* Country Casualties Badges Row */}
-      <div style={{
-        marginTop: '6px',
-        paddingTop: '6px',
-        borderTop: '1px solid rgba(0, 255, 255, 0.2)',
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '4px',
-      }}>
-        <div style={{ width: '100%', marginBottom: '2px' }} className="font-mono">
-          <span style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold' }}>CASUALTIES BY COUNTRY</span>
-        </div>
-        
-        {/* Badges */}
-        {[
-          { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
-          { name: 'US', f: data.us_fatalities, i: data.us_injured },
-          { name: 'ISRAEL', f: data.israel_fatalities, i: data.israel_injured },
-          { name: 'LEBANON', f: data.lebanon_fatalities, i: data.lebanon_injured },
-          { name: 'SAUDI AR', f: data.saudi_fatalities, i: data.saudi_injured },
-          { name: 'KUWAIT', f: data.kuwait_fatalities, i: data.kuwait_injured },
-          { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
-          { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
-        ].map(country => (
-          <div key={country.name} style={{
-            background: 'rgba(0, 20, 20, 0.6)',
-            border: '1px solid rgba(0, 255, 255, 0.3)',
-            padding: '2px 6px',
-            borderRadius: '2px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <span className="font-mono" style={{ color: '#fff', fontSize: '0.6rem', fontWeight: 'bold' }}>{country.name}</span>
-            <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem' }} className="font-mono">
-              <span style={{ color: '#ff3333' }}>F:{country.f}</span>
-              <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-              <span style={{ color: '#ffb333' }}>I:{country.i}</span>
+      <div style={{ flex: 1, overflowY: 'auto' }} className="hide-scrollbar">
+        {/* Main Grid for Native UI */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '4px',
+          alignContent: 'start'
+        }}>
+          
+          {/* ROW 1: Regional & Iranian Casualties */}
+          <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>MIDDLE EAST CASUALTIES</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
+              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_fatalities}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Injured:</span>
+              <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_injured}</span>
             </div>
           </div>
-        ))}
+
+          <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>IRANIAN CASUALTIES</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
+              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_fatalities}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Targeted Killings:</span>
+              <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>~{data.targeted_killings}</span>
+            </div>
+          </div>
+          
+          {/* ROW 2: Military Activity & Iranian Inventory */}
+          <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>LAUNCHES TOWARD MIDDLE EAST</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Missiles:</span>
+              <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.launches_missiles}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>UAVs:</span>
+              <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.launches_uavs}</span>
+            </div>
+          </div>
+
+          <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>IRANIAN THREAT VECTOR</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Missile Inventory:</span>
+              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_missile_inventory}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Countries Targeted:</span>
+              <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iran_countries_targeted}</span>
+            </div>
+          </div>
+
+          {/* Card: Operations */}
+          <div style={{ gridColumn: 'span 2', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.4rem', letterSpacing: '1px', marginBottom: '1px'}}>STRIKES IN IRAN</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px', textAlign: 'center' }}>
+              <div>
+                  <div className="font-mono" style={{ color: '#fff', fontSize: '0.4rem', margin: '0' }}>American Strikes</div>
+                  <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>{data.iran_strikes_us}</div>
+              </div>
+              <div>
+                  <div className="font-mono" style={{ color: '#fff', fontSize: '0.4rem', margin: '0' }}>Israeli Strikes</div>
+                  <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>{data.iran_strikes_israel}</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Country Casualties Badges Row */}
+        <div style={{
+          marginTop: '6px',
+          paddingTop: '6px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '4px',
+        }}>
+          <div style={{ width: '100%', marginBottom: '2px' }} className="font-mono">
+            <span style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold' }}>CASUALTIES BY COUNTRY</span>
+          </div>
+          
+          {/* Badges */}
+          {[
+            { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
+            { name: 'US', f: data.us_fatalities, i: data.us_injured },
+            { name: 'ISRAEL', f: data.israel_fatalities, i: data.israel_injured },
+            { name: 'LEBANON', f: data.lebanon_fatalities, i: data.lebanon_injured },
+            { name: 'SAUDI AR', f: data.saudi_fatalities, i: data.saudi_injured },
+            { name: 'KUWAIT', f: data.kuwait_fatalities, i: data.kuwait_injured },
+            { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
+            { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
+          ].map(country => (
+            <div key={country.name} style={{
+              background: 'rgba(0, 20, 20, 0.6)',
+              border: '1px solid rgba(0, 255, 255, 0.3)',
+              padding: '2px 6px',
+              borderRadius: '2px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.6rem', fontWeight: 'bold' }}>{country.name}</span>
+              <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem' }} className="font-mono">
+                <span style={{ color: '#ff3333' }}>F:{country.f}</span>
+                <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+                <span style={{ color: '#ffb333' }}>I:{country.i}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

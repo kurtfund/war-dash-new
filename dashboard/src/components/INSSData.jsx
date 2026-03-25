@@ -218,8 +218,9 @@ const INSSData = () => {
           display: 'flex',
           flexWrap: 'wrap',
           gap: '4px',
+          justifyContent: 'center'
         }}>
-          <div style={{ width: '100%', marginBottom: '2px' }} className="font-mono">
+          <div style={{ width: '100%', marginBottom: '2px', textAlign: 'center' }} className="font-mono">
             <span style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold' }}>CASUALTIES BY COUNTRY</span>
           </div>
           

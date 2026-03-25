@@ -221,8 +221,10 @@ const INSSData = () => {
           justifyContent: 'center'
         }}>
           <div style={{ width: '100%', marginBottom: '2px', textAlign: 'center' }} className="font-mono">
-            <span style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold' }}>CASUALTIES BY COUNTRY</span>
-          </div>
+          <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold', textDecoration: 'none', cursor: 'pointer' }}>
+            CASUALTIES BY COUNTRY ↗
+          </a>
+        </div>
           
           {/* Badges */}
           {[

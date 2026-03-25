@@ -60,15 +60,17 @@ export default function PropertyChart() {
   return (
     <div style={{
       borderBottom: '1px solid rgba(0, 255, 255, 0.2)',
-      paddingBottom: '10px',
-      marginBottom: '10px',
+      paddingBottom: '4px',
+      marginBottom: '4px',
       display: 'flex',
       flexDirection: 'column'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
         <div>
           <div className="font-mono" style={{ color: '#00ffff', fontSize: '0.65rem', letterSpacing: '1px', fontWeight: 'bold' }}>
-            DUBAI REAL ESTATE TREND &nbsp;↗
+            <a href="https://dxbinteract.com/dubai-housing-market-data" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
+              DUBAI REAL ESTATE TREND &nbsp;↗
+            </a>
           </div>
           <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px' }}>
             AVERAGE PRICE PER SQFT (AED)
@@ -92,7 +94,7 @@ export default function PropertyChart() {
         </div>
       </div>
 
-      <div style={{ height: '80px', width: '100%', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)' }}>
+      <div style={{ height: '40px', width: '100%', border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)' }}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
             <defs>

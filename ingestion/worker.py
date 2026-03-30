@@ -15,7 +15,8 @@ from geopy.exc import GeocoderTimedOut
 from tenacity import retry, wait_fixed, stop_after_attempt, retry_if_exception_type, before_sleep_log
 import logging
 import subprocess
-
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 # Configure basic logging for tenacity
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -557,6 +558,29 @@ def main():
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
     print("--- OSINT WORKER STARTED (POLLING EVERY 1 MINS) ---")
+    
+    # --- RENDER HEALTHCHECK SERVER ---
+    class DummyHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"OK")
+            
+        def log_message(self, format, *args):
+            pass  # Suppress noisy HTTP logs
+
+    def run_dummy_server():
+        port = int(os.environ.get("PORT", 10000))
+        try:
+            server = HTTPServer(("0.0.0.0", port), DummyHandler)
+            print(f"[*] Started dummy healthcheck server on port {port}")
+            server.serve_forever()
+        except Exception as e:
+            print(f"[*] Failed to start healthcheck server: {e}")
+
+    threading.Thread(target=run_dummy_server, daemon=True).start()
+    # ---------------------------------
     
     # ONE-TIME CLEANUP FOR BANNED KEYWORDS (Prevents old alerts from showing up)
     try:

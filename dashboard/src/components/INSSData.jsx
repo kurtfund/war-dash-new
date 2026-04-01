@@ -215,44 +215,38 @@ const INSSData = () => {
 
         </div>
 
-        {/* Country Casualties Badges Grid */}
+        {/* Country Casualties Table */}
         <div style={{
           marginTop: '6px',
           paddingTop: '6px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '4px'
         }}>
-          {/* Badges */}
-          {[
-            { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
-            { name: 'US', f: data.us_fatalities, i: data.us_injured },
-            { name: 'ISRAEL', f: data.israel_fatalities, i: data.israel_injured },
-            { name: 'LEBANON', f: data.lebanon_fatalities, i: data.lebanon_injured },
-            { name: 'SAUDI AR', f: data.saudi_fatalities, i: data.saudi_injured },
-            { name: 'KUWAIT', f: data.kuwait_fatalities, i: data.kuwait_injured },
-            { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
-            { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
-          ].map(country => (
-            <a href={sourceUrl} key={country.name} target="_blank" rel="noreferrer" style={{
-              background: 'rgba(0, 20, 20, 0.6)',
-              border: '1px solid rgba(0, 255, 255, 0.2)',
-              padding: '4px 6px',
-              borderRadius: '2px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              textDecoration: 'none',
-              cursor: 'pointer'
-            }}>
-              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem', fontWeight: 'bold', width: '45px' }}>{country.name}</span>
-              <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem', justifyContent: 'flex-end', flex: 1 }} className="font-mono">
-                <span style={{ color: '#ff3333' }}>F: {country.f}</span>
-                <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
-                <span style={{ color: '#ffb333' }}>I: {country.i}</span>
-              </div>
-            </a>
-          ))}
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.55rem', color: '#FFF' }} className="font-mono">
+            <thead>
+              <tr style={{ color: 'rgba(255,255,255,0.5)', borderBottom: '1px solid rgba(0,255,255,0.2)', textAlign: 'left' }}>
+                <th style={{ padding: '4px', fontWeight: 'bold' }}>COUNTRY</th>
+                <th style={{ padding: '4px', fontWeight: 'bold', textAlign: 'right' }}>FATALITIES</th>
+                <th style={{ padding: '4px', fontWeight: 'bold', textAlign: 'right' }}>INJURED</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
+                { name: 'US', f: data.us_fatalities, i: data.us_injured },
+                { name: 'ISRAEL', f: data.israel_fatalities, i: data.israel_injured },
+                { name: 'LEBANON', f: data.lebanon_fatalities, i: data.lebanon_injured },
+                { name: 'SAUDI AR', f: data.saudi_fatalities, i: data.saudi_injured },
+                { name: 'KUWAIT', f: data.kuwait_fatalities, i: data.kuwait_injured },
+                { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
+                { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
+              ].map(country => (
+                <tr key={country.name} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0, 20, 20, 0.4)' }}>
+                  <td style={{ padding: '4px 6px', fontWeight: 'bold', letterSpacing: '1px' }}>{country.name}</td>
+                  <td style={{ padding: '4px 6px', color: '#ff3333', textAlign: 'right', fontWeight: 'bold' }}>{country.f}</td>
+                  <td style={{ padding: '4px 6px', color: '#ffb333', textAlign: 'right', fontWeight: 'bold' }}>{country.i}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 const Indicators = ({ alerts }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [mofaSummary, setMofaSummary] = useState(null);
+  const [startDate, setStartDate] = useState(new Date('2026-02-28'));
   const [isIntelExpanded, setIsIntelExpanded] = useState(false);
 
   // --- Real Foreshadowing Analytics ---
@@ -86,14 +87,24 @@ const Indicators = ({ alerts }) => {
 
   useEffect(() => {
     const fetchMofa = async () => {
-      const { data, error } = await supabase
+      // Fetch newest data for intercepts
+      const { data: latestData } = await supabase
         .from('wam_official_data')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(1);
-      
-      if (data && data.length > 0) {
-        setMofaSummary(data[0]);
+      if (latestData && latestData.length > 0) {
+        setMofaSummary(latestData[0]);
+      }
+
+      // Fetch oldest data for campaign start date math
+      const { data: oldestData } = await supabase
+        .from('wam_official_data')
+        .select('created_at')
+        .order('created_at', { ascending: true })
+        .limit(1);
+      if (oldestData && oldestData.length > 0) {
+        setStartDate(new Date(oldestData[0].created_at));
       }
     };
 
@@ -103,8 +114,7 @@ const Indicators = ({ alerts }) => {
   }, []);
 
   const syncDate = mofaSummary ? new Date(mofaSummary.created_at) : new Date();
-  const startOfWar = new Date('2026-02-28');
-  const currentDays = Math.max(1, Math.floor((syncDate - startOfWar) / (1000 * 60 * 60 * 24)) + 1);
+  const currentDays = Math.max(1, Math.floor((syncDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
   const avgDailyMissiles = currentDays > 0 ? (totalIntercepts / currentDays) : 0;
   const liveMissileAlerts = alerts.filter(a => a.event_type === 'MISSILE').length;
   const todayMissiles = (mofaSummary && mofaSummary.raw_data && (mofaSummary.raw_data.daily_ballistic > 0 || mofaSummary.raw_data.daily_cruise > 0)) 
@@ -354,19 +364,17 @@ const Indicators = ({ alerts }) => {
                   justifyContent: 'center',
                   boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
                 }}>
-                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.45rem', letterSpacing: '1px', display: 'flex', alignItems: 'center' }}>
-                    DAILY AVG
-                    <span 
-                      style={{ fontSize: '0.65rem', marginLeft: '2px', cursor: 'help', color: 'var(--color-cyan)' }} 
-                      title="Average daily intercepted missiles — calculated from UAE WAM official data since campaign start (Feb 28, 2026)"
+                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.5rem', textAlign: 'center', lineHeight: '1.4' }}>
+                    Daily Avg: <br/>
+                    <span className="text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)}</span>
+                    <sup 
+                      style={{ fontSize: '0.6rem', marginLeft: '4px', cursor: 'help', color: 'var(--color-cyan)' }} 
+                      title={`Average daily intercepted missiles — calculated from UAE WAM official data since campaign start (Feb 28, 2026)`}
                     >
                       ⓘ
-                    </span>
-                  </div>
-                  <div className="font-mono text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold', margin: '2px 0' }}>{avgDailyMissiles.toFixed(1)}</div>
-                  <div style={{ width: '80%', height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }}></div>
-                  <div className="font-mono" style={{ fontSize: '0.4rem', color: '#FFF', textAlign: 'center', lineHeight: '1.2' }}>
-                     INT.<br/>MISSILES
+                    </sup>
+                    <br/>
+                    <span style={{ fontSize: '0.45rem', opacity: 0.8 }}>Int. Missiles</span>
                   </div>
                 </div>
             </div>

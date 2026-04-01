@@ -281,8 +281,8 @@ const INSSData = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: '8px', rowGap: '1px' }}>
               {data.iran_key_targets.map((target, idx) => (
                 <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '1px 0' }}>
-                  <span className="font-mono" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.45rem', paddingRight: '4px' }}>
-                    {target.name.replace('Rradar', 'Radar')}
+                  <span className="font-mono" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.45rem', paddingRight: '4px', wordBreak: 'break-word', whiteSpace: 'normal' }}>
+                    {target.name.replace('Rradar', 'Radar').replace(/^Ships in the\s*$/, 'Ships in the Red Sea')}
                   </span>
                   <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>
                     {target.count}

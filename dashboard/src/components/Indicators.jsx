@@ -370,7 +370,7 @@ const Indicators = ({ alerts }) => {
                         onClick={(e) => { e.stopPropagation(); setShowAvgTooltip(false); }}
                         style={{
                         position: 'absolute',
-                        top: '100%',
+                        bottom: '100%',
                         left: '50%',
                         transform: 'translateX(-50%)',
                         width: '180px',
@@ -381,7 +381,7 @@ const Indicators = ({ alerts }) => {
                         fontSize: '0.55rem',
                         color: '#FFF',
                         zIndex: 100,
-                        marginTop: '4px',
+                        marginBottom: '4px',
                         boxShadow: '0 4px 10px rgba(0,0,0,0.5), 0 0 15px rgba(0, 229, 255, 0.2)',
                         textAlign: 'center',
                         lineHeight: '1.4',

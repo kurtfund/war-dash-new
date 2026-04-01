@@ -6,10 +6,6 @@ export default function PropertyChart() {
   const [dxbChange, setDxbChange] = useState('---');
   const [dxbPositive, setDxbPositive] = useState(true);
 
-  const [adPrice, setAdPrice] = useState('N/A');
-  const [adChange, setAdChange] = useState('N/A');
-  const [adPositive, setAdPositive] = useState(true);
-
   useEffect(() => {
     async function fetchData() {
       // Dubai data
@@ -30,24 +26,6 @@ export default function PropertyChart() {
         setDxbPrice(`AED 1,180`);
         setDxbChange(`+2.60%`);
         setDxbPositive(true);
-      }
-      
-      // Abu Dhabi data
-      const { data: adData, error: adError } = await supabase
-        .from('ad_market_data')
-        .select('*')
-        .order('id', { ascending: true });
-        
-      if (!adError && adData && adData.length >= 2) {
-        const latest = parseFloat(adData[adData.length - 1].price_sqft);
-        const prev = parseFloat(adData[adData.length - 2].price_sqft);
-        const trend = ((latest - prev) / prev) * 100;
-        setAdPrice(`AED ${latest.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`);
-        setAdChange(`${trend > 0 ? '+' : ''}${trend.toFixed(2)}%`);
-        setAdPositive(trend >= 0);
-      } else {
-        setAdPrice('N/A');
-        setAdChange('N/A');
       }
     }
     
@@ -98,7 +76,7 @@ export default function PropertyChart() {
   return (
     <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(2, 1fr)', 
+        gridTemplateColumns: 'minmax(0, 1fr)', 
         gap: '6px', 
         padding: '0 10px',
         marginBottom: '10px'
@@ -110,14 +88,6 @@ export default function PropertyChart() {
         change={dxbChange} 
         isPositive={dxbPositive} 
         url="https://dubailand.gov.ae/en/open-data/real-estate-data" 
-      />
-      <Card 
-        name="Abu Dhabi RE" 
-        type="REAL ESTATE" 
-        price={adPrice} 
-        change={adChange} 
-        isPositive={adPositive} 
-        url="https://dmt.gov.ae/en/opendata" 
       />
     </div>
   );

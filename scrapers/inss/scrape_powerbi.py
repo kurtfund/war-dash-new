@@ -76,10 +76,10 @@ def parse_inss_data(body_text):
         stats['iran_countries_targeted'] = countries_targeted_match.group(1)
 
     # Strikes in Iran
-    strikes_match = re.search(r'(?:Number of Strikes in Iran|Israeli Strikes in Iran).*?American Strikes in Iran.*?([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
+    strikes_match = re.search(r'American Strikes in Iran\s*Israeli Strikes in Iran\s*([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if strikes_match:
-        stats['iran_strikes_israel'] = strikes_match.group(1).replace(',', '')
-        stats['iran_strikes_us'] = strikes_match.group(2).replace(',', '')
+        stats['iran_strikes_us'] = strikes_match.group(1).replace(',', '')
+        stats['iran_strikes_israel'] = strikes_match.group(2).replace(',', '')
 
     # ME Countries Specific
     # Extract blocks that include fatalities and injured mapped by country names

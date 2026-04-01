@@ -4,8 +4,9 @@ import { supabase } from '../lib/supabase';
 const Indicators = ({ alerts }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [mofaSummary, setMofaSummary] = useState(null);
-  const [startDate, setStartDate] = useState(new Date('2026-02-28'));
+  const [startDate] = useState(new Date('2026-02-28'));
   const [isIntelExpanded, setIsIntelExpanded] = useState(false);
+  const [showAvgTooltip, setShowAvgTooltip] = useState(false);
 
   // --- Real Foreshadowing Analytics ---
   // Analyze the latest alerts to generate true "Predictive AI" metrics
@@ -96,16 +97,7 @@ const Indicators = ({ alerts }) => {
       if (latestData && latestData.length > 0) {
         setMofaSummary(latestData[0]);
       }
-
-      // Fetch oldest data for campaign start date math
-      const { data: oldestData } = await supabase
-        .from('wam_official_data')
-        .select('created_at')
-        .order('created_at', { ascending: true })
-        .limit(1);
-      if (oldestData && oldestData.length > 0) {
-        setStartDate(new Date(oldestData[0].created_at));
-      }
+      // Start date is hardcoded to campaign start (Feb 28, 2026) to ensure accurate averages.
     };
 
     fetchMofa();
@@ -180,7 +172,7 @@ const Indicators = ({ alerts }) => {
 
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', padding: '6px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Middle East average of daily intercepted missiles.">M.E. DAILY AVERAGE</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Middle East average of daily intercepted missiles.">MIDDLE EAST DAILY AVG</div>
                 <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)} <span style={{fontSize: '0.45rem', color: '#FFF'}}>MISSILES</span></div>
               </div>
               <div style={{ flex: 1, textAlign: 'right' }}>
@@ -364,15 +356,37 @@ const Indicators = ({ alerts }) => {
                   justifyContent: 'center',
                   boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
                 }}>
-                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.5rem', textAlign: 'center', lineHeight: '1.4' }}>
-                    M.E. Daily Avg: <br/>
+                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.45rem', textAlign: 'center', lineHeight: '1.4', position: 'relative' }}>
+                    MIDDLE EAST<br/>DAILY AVG: <br/>
                     <span className="text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)}</span>
                     <sup 
-                      style={{ fontSize: '0.6rem', marginLeft: '4px', cursor: 'help', color: 'var(--color-cyan)' }} 
-                      title={`Average daily intercepted missiles — calculated from UAE WAM official data since campaign start (Feb 28, 2026). Represents Middle East total.`}
+                      style={{ fontSize: '0.6rem', marginLeft: '4px', cursor: 'pointer', color: 'var(--color-cyan)' }} 
+                      onClick={(e) => { e.stopPropagation(); setShowAvgTooltip(!showAvgTooltip); }}
                     >
                       ⓘ
                     </sup>
+                    {showAvgTooltip && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: '120px',
+                        background: 'rgba(5, 7, 9, 0.95)',
+                        border: '1px solid var(--color-cyan)',
+                        padding: '6px',
+                        borderRadius: '4px',
+                        fontSize: '0.35rem',
+                        color: '#FFF',
+                        zIndex: 100,
+                        marginTop: '4px',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+                        textAlign: 'center',
+                        lineHeight: '1.2'
+                      }}>
+                        Average daily intercepted missiles calculated from UAE WAM official data since campaign start (Feb 28, 2026). Represents Middle East total.
+                      </div>
+                    )}
                     <br/>
                     <span style={{ fontSize: '0.45rem', opacity: 0.8 }}>Int. Missiles</span>
                   </div>

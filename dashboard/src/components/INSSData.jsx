@@ -120,7 +120,8 @@ const INSSData = () => {
       flex: 1, // Take up remaining bottom half space sharing with MarketPulse
       minHeight: 0,
       marginTop: '10px',
-      padding: '0 10px' // Margin to prevent clipping
+      padding: '0 20px', // Increased margin to prevent clipping
+      boxSizing: 'border-box'
       }}>
       <div style={{
         display: 'flex',
@@ -245,9 +246,9 @@ const INSSData = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.55rem', color: '#FFF' }} className="font-mono">
             <thead>
               <tr style={{ color: 'rgba(255,255,255,0.5)', borderBottom: '1px solid rgba(0,255,255,0.2)', textAlign: 'left' }}>
-                <th style={{ padding: '4px', fontWeight: 'bold' }}>COUNTRY</th>
-                <th style={{ padding: '4px', fontWeight: 'bold', textAlign: 'right' }}>FATALITIES</th>
-                <th style={{ padding: '4px', fontWeight: 'bold', textAlign: 'right' }}>INJURED</th>
+                <th style={{ padding: '4px 6px', fontWeight: 'bold' }}>COUNTRY</th>
+                <th style={{ padding: '4px 6px', fontWeight: 'bold', textAlign: 'right' }}>FATALITIES</th>
+                <th style={{ padding: '4px 6px', fontWeight: 'bold', textAlign: 'right' }}>INJURED</th>
               </tr>
             </thead>
             <tbody>

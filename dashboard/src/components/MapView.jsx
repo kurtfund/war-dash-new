@@ -36,9 +36,9 @@ const getCustomIcon = (type) => {
   return L.divIcon({
     html: `
       <div style="
-        background: rgba(255, 0, 51, 0.04);
-        border: 1px solid rgba(255, 0, 51, 0.2);
-        box-shadow: 0 0 10px rgba(255, 0, 51, 0.15);
+        background: rgba(255, 0, 51, 0.02);
+        border: 1px solid rgba(255, 0, 51, 0.1);
+        box-shadow: 0 0 10px rgba(255, 0, 51, 0.05);
         border-radius: 50%;
         width: 100%;
         height: 100%;
@@ -46,6 +46,7 @@ const getCustomIcon = (type) => {
         align-items: center;
         justify-content: center;
         font-size: 14px;
+        animation: subtler-pulse 4s infinite;
       ">
         ${emoji}
       </div>

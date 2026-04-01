@@ -3,7 +3,7 @@ Show screen reader tips
 Skip to main content
 Power BI Report
 
-Last Update: 24/03/2026 12:00 | 25 Days into the Operation
+Last Update: 31/03/2026 20:00 | 32 Days into the Operation
 
 
 
@@ -16,17 +16,17 @@ Israeli Casualties
 
 
 
-Fatalities 18| Injured 5,190
+Fatalities 29| Injured 6,624
 
 Total Missile&UAV Alerts by Number of Localities in Israel
 
-~72,000
+~82,000
 
  Iranian Launches Toward Israel
 
-~400 missiles crossed
+~600 missiles crossed
 
-~550 UAVs launched
+~765 UAVs launched
 
 Waves of Attacks on Israel
 2/28/2026
@@ -58,11 +58,11 @@ Waves of Attacks on Israel
 7
 11
 19
-11
 7
+11
+12
 12
 13
-12
 9
 9
 11
@@ -89,104 +89,91 @@ Waves of Attacks on Israel
 36
 49
 43
-23
 43
 32
 34
 41
 55
 37
-Waves of attacksfrom Iran
+Waves of attacks from Iran
 Waves of attacks from Lebanon
+Waves of attacks from …
 Daily Number of Alert Incidents by Area
-3/22/2026
-3/21/2026
-3/20/2026
-3/19/2026
-3/18/2026
-3/17/2026
-3/16/2026
-3/15/2026
-3/14/2026
-9.46%
-11.29%
-10.98%
-9.42%
-13.92%
-10.37%
-11.66%
-14.81%
-9.14%
-10.13%
-9.82%
-8.64%
-8.11%
-10.16%
-12.56%
-15.19%
-8.89%
-11.04%
-10.49%
-51.35%
-51.61%
-41.46%
-34.98%
-26.58%
-42.22%
-39.88%
-40.12%
-50.86%
-10.81%
-10.16%
-11.21%
-13.92%
-10.37%
-9.82%
-11.73%
-9.71%
-11.79%
-11.21%
-10.13%
-8.15%
-9.46%
-13.71%
-9.76%
-13.00%
-10.13%
-13.33%
-11.04%
+3/31/2026
+3/30/2026
+3/29/2026
+3/28/2026
+3/27/2026
+3/26/2026
+3/25/2026
+3/24/2026
+3/23/2026
+9.92%
+12.80%
+14.19%
+9.02%
 11.11%
-11.43%
+11.36%
+15.27%
+10.97%
+10.53%
+8.99%
+7.95%
+10.53%
+9.91%
+7.95%
+54.43%
+43.51%
+50.00%
+50.97%
+37.59%
+51.80%
+59.06%
+42.86%
+50.00%
+10.13%
+8.40%
+8.54%
+12.78%
+9.01%
+9.52%
+9.52%
+7.95%
+11.45%
+10.98%
+9.68%
+12.03%
+11.26%
+13.45%
+11.11%
+7.95%
 Southern …
 Haifa District
 Central Dis…
 Northern …
 Judea&Sa…
 Jerusalem …
-
-The data are based on attack waves rather than on the number of missiles/UAVs launched in each wave
-
 Breakdown of Displaced Israelis
 Tel Aviv
+Arad
 Dimona
 Beit Shemesh
-Arad
 Beer Sheva
+Eshtaol
 Bnei Brak
-Ramla
 Givatayim
-Zarzir
-Ramat Gan
-1515
-975
-650
-600
-505
+Kiryat Shmona
+Petah Tikva
+1690
+1570
+950
+575
+450
+205
 160
-80
-75
-70
 45
+40
+40
 Israeli Casualties
 2/28/2026
 3/1/2026
@@ -217,27 +204,27 @@ Israeli Casualties
 2
 1
 1
-375
-386
-293
-240
-230
-159
-137
-189
-202
-234
-182
-198
-188
+381
+392
+298
+247
+243
+169
+140
+193
+204
+237
+187
+204
 191
-121
+194
+123
+205
+165
+175
+228
+185
 200
-162
-174
-220
-180
-196
 236
 236
 2
@@ -257,19 +244,17 @@ Displaced Israelis
 
 
 
-~4,800
+~6,000
 
 
 
-
-Doesn't include 8 civilians whose deaths were determined indirect and not caused by a direct impact
 
 Countries Targeted by Iran
 
 
 
 
-12
+14
 
 
 
@@ -279,7 +264,7 @@ Casualties in the ME
 
 
 
-Fatalities 61| Injured 694
+Fatalities 73| Injured 878
 
 
 
@@ -289,7 +274,7 @@ Iranian Launches Toward the ME
 
 
 
-Missiles 1,166| UAVs 3,578
+Missiles 1,241| UAVs 3,956
 
 Lebanese Launches Across the ME
 Cyprus
@@ -299,81 +284,85 @@ UnitedArabEmirates
 Kuwait
 SaudiArabia
 Bahrain
-Jordan
 Qatar
 Oman
 Cyprus
 Turkey
 Azerbaijan
-372
-1806
-534
-688
-282
+DiegoGarcia
+Lebanon
+452
+314
+1977
+636
+786
+400
 Missile
 UAV
 
-The official data for the Kurdistan Region of Iraq is 307 missiles&UAV |The data for Oman isn't an official report
+Iraqi Kurdistan-179 launches from Iran and 295 launches from militias in Iraq | Jordan-265 launches | The data for Oman is unofficial
 
 Key Targets Struck by Iran in the ME
-Ships in the S…
+Ships in the …
 US Military Bases
+Airports
+Missions Foreign
 Oil&Fuel facilities
 Rradar
-Airports
 Hotels
-Missions Foreign
 Satcom
 Data Centers
 Ports
+Aluminum Plants
 Gas Facilities
-21
-13
+24
+14
 6
 6
-5
-4
+6
+6
 4
 4
 3
 3
-1
+2
+2
 Casualties in the ME
-US Milit…
-Kurdistan Regio…
-United Arab Em…
-Qatar 
+Kurdistan Re…
+US Military
+United Arab Emirates
 Kuwait
 Oman
+Qatar 
 Syria
-Palestinian Auth…
+Palestinian Authority
 Bahrain
 Saudi Arabia
 French Military
 Azerbaijan
 Jordan
+14
 13
-8
-8
+10
 7
-6
-5
+7
+7
 5
 4
-2
+3
 2
 1
 0
 0
-200
-51
-161
+93
+303
+187
+118
+16
 26
-108
-15
 15
 7
-52
+54
 20
 6
 4
@@ -385,12 +374,12 @@ Estimated Number of Iran’s Long-Range Ballistic Missiles
 
 2,500
 
-Targeted Killings
+Elimination of IRGC Operatives 
 
 
 
 
- ~50 (18 senior officials)
+ ~2,000 (~50 senior officials)
 
 
 
@@ -400,17 +389,19 @@ Iranian Casualties
 
 
 
-Fatalities 1,500| Injured 21,000
+Fatalities 1,937| Injured 24,800
 
 The data are based on official Iranian reports
 
-Number of Strikes in Iran
-Israeli Strikes in Iran
-American Strikes in Iran
-8500
-8000
+The data are based on IDF reports
 
-Last updated: US 20/03 | IL 19/03
+Number of Strikes in Iran
+American Strikes in Iran
+Israeli Strikes in Iran
+11000
+10000
+
+Last updated: US 29/03 | IL 31/03
 
 Strikes on Key Targets in Iran
 Ballistic Missile Force
@@ -425,21 +416,21 @@ Fuel facilities
 Fighter jet
 Nuclear Facilities
 Military airports
-Gas Facilities
 Oil Facilities
+Gas Facilities
 700
 500
 450
 250
 150
-130
+150
 120
 100
 30
 16
 7
 6
-3
+4
 3
 
 Hezbollah Rocket&Missile Arsenal
@@ -451,20 +442,20 @@ Lebanon Casualties
 
 
 
-Fatalities 1,039| Injured 2,876
+Fatalities 1,268| Injured 3,750
 
 Displaced Persons in Lebanon
 
 
 
 
-~1,000,000
+~1,100,000
 
 IDF attacks on Hezbollah
 Total Strikes
 Elimination ofHezbollah Operatives
-2000
-600
+2500
+900
 Types of Targets Struck by the IDF in Lebanon
 MissileLaunchers
 Command Posts
@@ -496,8 +487,9 @@ Hezbollah Statements on Attacks Against Israel
 3/21/2026
 3/22/2026
 3/23/2026
+3/24/2026
 13
-28
+53
 63
 9
 47
@@ -517,17 +509,18 @@ Hezbollah Statements on Attacks Against Israel
 24
 25
 39
+54
 Breakdown of Hezbollah Attacks by Weapon Type
-Rockets 389 (68.0%)
-UAVs 79 (13.8%)
-Artillery 39 (6.8%)
-31 (5.4%)
-Guided Missile
+Rockets 62.3%
+UAVs 18.3%
+Guided Missile 6.8%
+Artillery 5.8%
+Missiles 2.4%
 
 The Data Based on Hezbollah's Statements
 
 -
 +
-100%
+22%
 Microsoft Power BI
-Report Zoomed To 100%
+Report Zoomed To 22%

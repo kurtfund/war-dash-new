@@ -180,7 +180,7 @@ const Indicators = ({ alerts }) => {
 
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', padding: '6px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
               <div style={{ flex: 1 }}>
-                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Historical average of daily intercepted missiles.">HISTORICAL DAILY AVERAGE</div>
+                <div className="font-mono" style={{ color: '#FFF', fontWeight: 'bold', fontSize: '0.35rem', letterSpacing: '1px', marginBottom: '4px' }} title="Middle East average of daily intercepted missiles.">M.E. DAILY AVERAGE</div>
                 <div className="font-mono text-cyan" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)} <span style={{fontSize: '0.45rem', color: '#FFF'}}>MISSILES</span></div>
               </div>
               <div style={{ flex: 1, textAlign: 'right' }}>
@@ -365,11 +365,11 @@ const Indicators = ({ alerts }) => {
                   boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
                 }}>
                   <div className="font-mono" style={{ color: '#FFF', fontSize: '0.5rem', textAlign: 'center', lineHeight: '1.4' }}>
-                    Daily Avg: <br/>
+                    M.E. Daily Avg: <br/>
                     <span className="text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{avgDailyMissiles.toFixed(1)}</span>
                     <sup 
                       style={{ fontSize: '0.6rem', marginLeft: '4px', cursor: 'help', color: 'var(--color-cyan)' }} 
-                      title={`Average daily intercepted missiles — calculated from UAE WAM official data since campaign start (Feb 28, 2026)`}
+                      title={`Average daily intercepted missiles — calculated from UAE WAM official data since campaign start (Feb 28, 2026). Represents Middle East total.`}
                     >
                       ⓘ
                     </sup>

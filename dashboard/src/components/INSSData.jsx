@@ -119,7 +119,8 @@ const INSSData = () => {
       flexDirection: 'column',
       flex: 1, // Take up remaining bottom half space sharing with MarketPulse
       minHeight: 0,
-      marginTop: '10px'
+      marginTop: '10px',
+      padding: '0 10px' // Margin to prevent clipping
       }}>
       <div style={{
         display: 'flex',
@@ -145,9 +146,10 @@ const INSSData = () => {
           fontSize: '0.65rem',
           fontWeight: 'bold',
           letterSpacing: '1px',
-          textShadow: '0 0 10px rgba(0, 255, 255, 0.5)'
+          textShadow: '0 0 10px rgba(0, 255, 255, 0.5)',
+          zIndex: 10
         }}>
-          <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
+          <a href={sourceUrl || '#'} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer', pointerEvents: 'auto', position: 'relative' }}>
             INSS MIDDLE EAST CASUALTIES ↗
           </a>
         </div>

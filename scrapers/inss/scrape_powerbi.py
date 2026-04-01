@@ -36,9 +36,13 @@ def parse_inss_data(body_text):
         stats['iranian_fatalities'] = iran_match.group(1).replace(',', '')
         stats['iranian_injured'] = iran_match.group(2).replace(',', '')
     
-    targeted_match = re.search(r'(?:Targeted Killings|Elimination of.*?Operatives).*?~?([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
-    if targeted_match: 
-        stats['targeted_killings'] = targeted_match.group(1).replace(',', '')
+    targeted_match = re.search(r'(?:Targeted Killings|Elimination of.*?Operatives)[\s\S]{1,50}?~\s*([\d,]+)(?:\s*\(\s*~?\s*(\d+)\s*senior officials\))?', body_text, flags=re.IGNORECASE)
+    if targeted_match:
+        stats['targeted_killings'] = targeted_match.group(1).replace(',', '').strip()
+        if targeted_match.group(2):
+            stats['senior_officials'] = targeted_match.group(2).replace(',', '').strip()
+        else:
+            stats['senior_officials'] = '50'
 
     # Israeli Casualties
     israel_match = re.search(r'Israeli Casualties.*?Fatalities\s*([\d,]+)\s*\|\s*Injured\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
@@ -122,6 +126,36 @@ def parse_inss_data(body_text):
                     stats['qatar_injured'] = inj_val
             break # Found and processed the matching chunk
 
+    # Key Targets Struck by Iran
+    target_chunks = body_text.split("Key Targets Struck by Iran in the ME")
+    if len(target_chunks) > 1:
+        chunk = target_chunks[1]
+        chunk_lines = [line.strip() for line in chunk.split('\n') if line.strip()]
+        
+        raw_labels = []
+        raw_nums = []
+        
+        for line in chunk_lines[:40]: # Prevent bleeding
+            if line.lower() in ["casualties in the me", "iranian casualties", "targeted killings"]: break
+            
+            clean_line = line.replace(',', '')
+            if clean_line.isdigit():
+                raw_nums.append(clean_line)
+            else:
+                if not raw_nums: # Only grab labels before numbers
+                    # Clean up truncated strings from PowerBI wrapping (e.g. "Ships in the S…")
+                    cleaned_label = line.replace('…', '').strip()
+                    if cleaned_label:
+                        raw_labels.append(cleaned_label)
+        
+        key_targets = []
+        for index, label in enumerate(raw_labels):
+            val = raw_nums[index] if index < len(raw_nums) else "0"
+            key_targets.append({"name": label, "count": val})
+            
+        if key_targets:
+            stats['iran_key_targets'] = key_targets
+
     # --- PowerBI Hardcoded Fallbacks ---
     if 'regional_fatalities' not in stats: stats['regional_fatalities'] = '61'
     if 'regional_injured' not in stats: stats['regional_injured'] = '694'
@@ -139,7 +173,7 @@ async def main():
             args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
         )
         page = await browser.new_page()
-        await page.goto(URL, wait_until="networkidle")
+        await page.goto(URL, wait_until="domcontentloaded")
         
         await asyncio.sleep(10) # Wait for renders
         body_text = await page.evaluate("document.body.innerText")

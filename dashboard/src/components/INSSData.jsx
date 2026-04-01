@@ -76,7 +76,20 @@ const INSSData = () => {
              saudi_injured: stats.saudi_injured || 'N/A',
              qatar_fatalities: stats.qatar_fatalities || 'N/A',
              qatar_injured: stats.qatar_injured || 'N/A',
-             iran_key_targets: stats.iran_key_targets || []
+             iran_key_targets: stats.iran_key_targets || [
+                {name: "Ships in the Red Sea", count: "24"},
+                {name: "US Military Bases", count: "14"},
+                {name: "Airports", count: "6"},
+                {name: "Missions Foreign", count: "6"},
+                {name: "Oil&Fuel facilities", count: "6"},
+                {name: "Radar", count: "6"},
+                {name: "Hotels", count: "4"},
+                {name: "Satcom", count: "4"},
+                {name: "Data Centers", count: "3"},
+                {name: "Ports", count: "3"},
+                {name: "Aluminum Plants", count: "2"},
+                {name: "Gas Facilities", count: "2"}
+             ]
           });
           
           if (records[0].source_url) setSourceUrl(records[0].source_url);
@@ -171,12 +184,12 @@ const INSSData = () => {
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
               <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_fatalities}</span>
             </div>
-            <div style={{ background: '#7a1010', borderRadius: '4px', padding: '4px', marginTop: 'auto', textAlign: 'center', border: '1px solid #ff3333' }}>
-              <div className="font-mono" style={{ color: '#fff', fontSize: '0.45rem', fontWeight: 'bold', marginBottom: '2px' }}>Elimination of IRGC Operatives</div>
-              <div className="font-mono" style={{ color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', lineHeight: '1' }}>
-                ~{data.irgc_operatives} <span style={{fontSize: '0.45rem', fontWeight: 'normal'}}>(~{data.senior_officials} senior officials)</span>
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '2px', paddingTop: '4px', borderTop: '1px solid rgba(255, 51, 51, 0.2)' }}>
+              <div className="font-mono" style={{ color: '#ff3333', fontSize: '0.45rem', fontWeight: 'bold' }}>Elimination of IRGC Operatives</div>
+              <div className="font-mono" style={{ color: '#ff3333', fontSize: '0.65rem', fontWeight: 'bold', lineHeight: '1' }}>
+                ~{data.irgc_operatives} <span style={{fontSize: '0.45rem', fontWeight: 'normal', color: 'rgba(255,255,255,0.7)'}}>(~{data.senior_officials} senior officials)</span>
               </div>
-              <div className="font-mono" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.35rem', marginTop: '3px' }}>The data are based on IDF reports</div>
+              <div className="font-mono" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.35rem' }}>The data are based on IDF reports</div>
             </div>
           </div>
           

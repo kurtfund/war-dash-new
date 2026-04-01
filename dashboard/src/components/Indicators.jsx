@@ -366,23 +366,26 @@ const Indicators = ({ alerts }) => {
                       ⓘ
                     </sup>
                     {showAvgTooltip && (
-                      <div style={{
+                      <div 
+                        onClick={(e) => { e.stopPropagation(); setShowAvgTooltip(false); }}
+                        style={{
                         position: 'absolute',
                         top: '100%',
                         left: '50%',
                         transform: 'translateX(-50%)',
-                        width: '120px',
+                        width: '180px',
                         background: 'rgba(5, 7, 9, 0.95)',
                         border: '1px solid var(--color-cyan)',
-                        padding: '6px',
+                        padding: '10px',
                         borderRadius: '4px',
-                        fontSize: '0.35rem',
+                        fontSize: '0.55rem',
                         color: '#FFF',
                         zIndex: 100,
                         marginTop: '4px',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.5), 0 0 15px rgba(0, 229, 255, 0.2)',
                         textAlign: 'center',
-                        lineHeight: '1.2'
+                        lineHeight: '1.4',
+                        cursor: 'pointer'
                       }}>
                         Average daily intercepted missiles calculated from UAE WAM official data since campaign start (Feb 28, 2026). Represents Middle East total.
                       </div>

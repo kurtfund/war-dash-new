@@ -156,7 +156,7 @@ const INSSData = () => {
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto' }} className="hide-scrollbar">
+      <div style={{ flex: 1, overflowY: 'hidden' }}>
         {/* Main Grid for Native UI */}
         <div style={{
           display: 'grid',
@@ -269,44 +269,23 @@ const INSSData = () => {
           </table>
         </div>
 
-        {/* Key Targets Bar Chart */}
+        {/* Key Targets Table */}
         {data.iran_key_targets && data.iran_key_targets.length > 0 && (
-          <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px solid rgba(0, 255, 255, 0.2)' }}>
-            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '6px'}}>
-              KEY TARGETS STRUCK BY IRAN IN THE ME
+          <div style={{ marginTop: '6px', paddingTop: '4px', borderTop: '1px solid rgba(0, 255, 255, 0.2)' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>
+              KEY TARGETS STRUCK BY IRAN
             </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '110px', overflowX: 'auto', paddingBottom: '2px', paddingLeft: '4px', paddingRight: '4px' }} className="hide-scrollbar">
-              {data.iran_key_targets.map((target, idx) => {
-                const count = parseInt(target.count) || 0;
-                const maxCount = Math.max(25, ...data.iran_key_targets.map(t => parseInt(t.count) || 0));
-                const heightPct = Math.min(100, Math.max(5, (count / maxCount) * 100));
-                const shortName = target.name.length > 20 ? target.name.substring(0, 18) + '...' : target.name;
-                
-                return (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '18px', flexShrink: 0, height: '100%', justifyContent: 'flex-end' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '60px', justifyContent: 'flex-end', width: '100%' }}>
-                      <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.45rem', marginBottom: '2px', opacity: 0.8 }}>{count}</span>
-                      <div style={{ width: '14px', height: `${heightPct}%`, background: '#0B6E70', minHeight: '2px', transition: 'height 1s ease-in-out' }}></div>
-                    </div>
-                    
-                    <div style={{ height: '45px', position: 'relative', width: '100%', marginTop: '2px' }}>
-                      <div className="font-mono" style={{ 
-                        color: 'rgba(255,255,255,0.6)', 
-                        fontSize: '0.35rem', 
-                        transform: 'rotate(-45deg)',
-                        transformOrigin: 'top right',
-                        whiteSpace: 'nowrap',
-                        position: 'absolute',
-                        right: '50%',
-                        top: '4px',
-                        letterSpacing: '0.5px'
-                      }}>
-                        {shortName}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: '8px', rowGap: '1px' }}>
+              {data.iran_key_targets.map((target, idx) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span className="font-mono" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.45rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {target.name}
+                  </span>
+                  <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.55rem', fontWeight: 'bold' }}>
+                    {target.count}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}

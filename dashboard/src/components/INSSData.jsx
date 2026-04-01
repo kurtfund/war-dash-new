@@ -6,7 +6,8 @@ const INSSData = () => {
     regional_fatalities: '...',
     regional_injured: '...',
     iranian_fatalities: '...',
-    targeted_killings: '...',
+    irgc_operatives: '...',
+    senior_officials: '...',
     launches_missiles: '...',
     launches_uavs: '...',
     iranian_missile_inventory: '...',
@@ -27,7 +28,8 @@ const INSSData = () => {
     saudi_fatalities: '...',
     saudi_injured: '...',
     qatar_fatalities: '...',
-    qatar_injured: '...'
+    qatar_injured: '...',
+    iran_key_targets: []
   });
   const [lastUpdated, setLastUpdated] = useState('...');
   const [sourceUrl, setSourceUrl] = useState('https://app.powerbi.com/view?r=eyJrIjoiYmI3MzIzMTAtMTdjNC00NTY1LWFiM2YtNjI0NTk5MWEyYTI5IiwidCI6IjgwOGNmNGIzLTFhOTYtNDEzZi1iMDZiLTlkZTZjOThmNTQ2OSJ9');
@@ -51,7 +53,8 @@ const INSSData = () => {
              regional_fatalities: stats.regional_fatalities || 'N/A',
              regional_injured: stats.regional_injured || 'N/A',
              iranian_fatalities: stats.iranian_fatalities || 'N/A',
-             targeted_killings: stats.targeted_killings || 'N/A',
+             irgc_operatives: stats.irgc_operatives || stats.targeted_killings || 'N/A',
+             senior_officials: stats.senior_officials || '50',
              launches_missiles: stats.launches_missiles || 'N/A',
              launches_uavs: stats.launches_uavs || 'N/A',
              iranian_missile_inventory: stats.iranian_missile_inventory || 'N/A',
@@ -72,7 +75,8 @@ const INSSData = () => {
              saudi_fatalities: stats.saudi_fatalities || 'N/A',
              saudi_injured: stats.saudi_injured || 'N/A',
              qatar_fatalities: stats.qatar_fatalities || 'N/A',
-             qatar_injured: stats.qatar_injured || 'N/A'
+             qatar_injured: stats.qatar_injured || 'N/A',
+             iran_key_targets: stats.iran_key_targets || []
           });
           
           if (records[0].source_url) setSourceUrl(records[0].source_url);
@@ -161,15 +165,18 @@ const INSSData = () => {
             </div>
           </div>
 
-          <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>IRANIAN CASUALTIES</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
+          <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px', display: 'flex', flexDirection: 'column' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>IRANIAN CASUALTIES</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
               <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.iranian_fatalities}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Targeted Killings:</span>
-              <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.7rem', fontWeight: 'bold' }}>~{data.targeted_killings}</span>
+            <div style={{ background: '#7a1010', borderRadius: '4px', padding: '4px', marginTop: 'auto', textAlign: 'center', border: '1px solid #ff3333' }}>
+              <div className="font-mono" style={{ color: '#fff', fontSize: '0.45rem', fontWeight: 'bold', marginBottom: '2px' }}>Elimination of IRGC Operatives</div>
+              <div className="font-mono" style={{ color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', lineHeight: '1' }}>
+                ~{data.irgc_operatives} <span style={{fontSize: '0.45rem', fontWeight: 'normal'}}>(~{data.senior_officials} senior officials)</span>
+              </div>
+              <div className="font-mono" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.35rem', marginTop: '3px' }}>The data are based on IDF reports</div>
             </div>
           </div>
           
@@ -248,6 +255,48 @@ const INSSData = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Key Targets Bar Chart */}
+        {data.iran_key_targets && data.iran_key_targets.length > 0 && (
+          <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px solid rgba(0, 255, 255, 0.2)' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '6px'}}>
+              KEY TARGETS STRUCK BY IRAN IN THE ME
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '110px', overflowX: 'auto', paddingBottom: '2px', paddingLeft: '4px', paddingRight: '4px' }} className="hide-scrollbar">
+              {data.iran_key_targets.map((target, idx) => {
+                const count = parseInt(target.count) || 0;
+                const maxCount = Math.max(25, ...data.iran_key_targets.map(t => parseInt(t.count) || 0));
+                const heightPct = Math.min(100, Math.max(5, (count / maxCount) * 100));
+                const shortName = target.name.length > 20 ? target.name.substring(0, 18) + '...' : target.name;
+                
+                return (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '18px', flexShrink: 0, height: '100%', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '60px', justifyContent: 'flex-end', width: '100%' }}>
+                      <span className="font-mono" style={{ color: '#00ffff', fontSize: '0.45rem', marginBottom: '2px', opacity: 0.8 }}>{count}</span>
+                      <div style={{ width: '14px', height: `${heightPct}%`, background: '#0B6E70', minHeight: '2px', transition: 'height 1s ease-in-out' }}></div>
+                    </div>
+                    
+                    <div style={{ height: '45px', position: 'relative', width: '100%', marginTop: '2px' }}>
+                      <div className="font-mono" style={{ 
+                        color: 'rgba(255,255,255,0.6)', 
+                        fontSize: '0.35rem', 
+                        transform: 'rotate(-45deg)',
+                        transformOrigin: 'top right',
+                        whiteSpace: 'nowrap',
+                        position: 'absolute',
+                        right: '50%',
+                        top: '4px',
+                        letterSpacing: '0.5px'
+                      }}>
+                        {shortName}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

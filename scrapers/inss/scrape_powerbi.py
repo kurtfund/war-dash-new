@@ -36,7 +36,7 @@ def parse_inss_data(body_text):
         stats['iranian_fatalities'] = iran_match.group(1).replace(',', '')
         stats['iranian_injured'] = iran_match.group(2).replace(',', '')
     
-    targeted_match = re.search(r'Targeted Killings.*?~?([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
+    targeted_match = re.search(r'(?:Targeted Killings|Elimination of.*?Operatives).*?~?([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if targeted_match: 
         stats['targeted_killings'] = targeted_match.group(1).replace(',', '')
 
@@ -53,7 +53,7 @@ def parse_inss_data(body_text):
         stats['lebanon_injured'] = lebanon_match.group(2).replace(',', '')
 
     # Military Activity (Launches)
-    launches_match = re.search(r'Iranian Launches Toward the ME.*?Missiles\s*([\d,]+)\s*\|\s*UAVs\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
+    launches_match = re.search(r'Iranian Launches Toward.*?Missiles\s*([\d,]+)\s*\|\s*UAVs\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if launches_match:
         stats['launches_missiles'] = launches_match.group(1).replace(',', '')
         stats['launches_uavs'] = launches_match.group(2).replace(',', '')
@@ -61,30 +61,31 @@ def parse_inss_data(body_text):
     # Iranian Inventory & Targeting
     iran_inv_match = re.search(r'Estimated Number of Iran[’\']s Long-Range Ballistic Missiles.*?([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if iran_inv_match: 
-        stats['iranian_missile_inventory'] = iran_inv_match.group(1)
+        stats['iranian_missile_inventory'] = iran_inv_match.group(1).replace(',', '')
     else:
         # Fallback
         iran_inv_match = re.search(r'([\d,\-]+)\s*Iranian Ballistic Missile Inventory', body_text, flags=re.IGNORECASE | re.DOTALL)
-        if iran_inv_match: stats['iranian_missile_inventory'] = iran_inv_match.group(1)
+        if iran_inv_match: stats['iranian_missile_inventory'] = iran_inv_match.group(1).replace(',', '')
     
     countries_targeted_match = re.search(r'Countries Targeted by Iran\s*(\d+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if countries_targeted_match: 
         stats['iran_countries_targeted'] = countries_targeted_match.group(1)
 
     # Strikes in Iran
-    strikes_match = re.search(r'Number of Strikes in Iran.*?Israeli Strikes in Iran.*?American Strikes in Iran.*?([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
+    strikes_match = re.search(r'(?:Number of Strikes in Iran|Israeli Strikes in Iran).*?American Strikes in Iran.*?([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if strikes_match:
         stats['iran_strikes_israel'] = strikes_match.group(1).replace(',', '')
         stats['iran_strikes_us'] = strikes_match.group(2).replace(',', '')
 
     # ME Countries Specific
     # Extract blocks that include fatalities and injured mapped by country names
-    me_block_match = re.search(r'Casualties in the ME\s*\n(US Milit.*?)\nFatalities\nInjured', body_text, flags=re.IGNORECASE | re.DOTALL)
+    me_block_match = re.search(r'Casualties in the ME\s*\n(.*?(?:Kurdistan|US Milit|United Arab).*?)\nFatalities\nInjured', body_text, flags=re.IGNORECASE | re.DOTALL)
     if me_block_match:
         lines = [line.strip() for line in me_block_match.group(1).split('\n') if line.strip()]
         first_num_idx = -1
         for i, line in enumerate(lines):
-            if line.isdigit():
+            # Check if line is purely digits (can contain commas)
+            if line.replace(',', '').isdigit():
                 first_num_idx = i
                 break
         
@@ -97,21 +98,24 @@ def parse_inss_data(body_text):
             
             for index, label in enumerate(labels):
                 lbl = label.lower()
+                fat_val = fatalities[index].replace(',', '') if index < len(fatalities) else '0'
+                inj_val = injured[index].replace(',', '') if index < len(injured) else '0'
+                
                 if 'us milit' in lbl:
-                    stats['us_fatalities'] = fatalities[index]
-                    stats['us_injured'] = injured[index]
+                    stats['us_fatalities'] = fat_val
+                    stats['us_injured'] = inj_val
                 elif 'bahrain' in lbl:
-                    stats['bahrain_fatalities'] = fatalities[index]
-                    stats['bahrain_injured'] = injured[index]
+                    stats['bahrain_fatalities'] = fat_val
+                    stats['bahrain_injured'] = inj_val
                 elif 'kuwait' in lbl:
-                    stats['kuwait_fatalities'] = fatalities[index]
-                    stats['kuwait_injured'] = injured[index]
+                    stats['kuwait_fatalities'] = fat_val
+                    stats['kuwait_injured'] = inj_val
                 elif 'saudi arabia' in lbl:
-                    stats['saudi_fatalities'] = fatalities[index]
-                    stats['saudi_injured'] = injured[index]
+                    stats['saudi_fatalities'] = fat_val
+                    stats['saudi_injured'] = inj_val
                 elif 'qatar' in lbl:
-                    stats['qatar_fatalities'] = fatalities[index]
-                    stats['qatar_injured'] = injured[index]
+                    stats['qatar_fatalities'] = fat_val
+                    stats['qatar_injured'] = inj_val
 
     # --- PowerBI Hardcoded Fallbacks ---
     if 'regional_fatalities' not in stats: stats['regional_fatalities'] = '61'

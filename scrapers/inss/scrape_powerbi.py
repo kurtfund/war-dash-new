@@ -79,29 +79,33 @@ def parse_inss_data(body_text):
 
     # ME Countries Specific
     # Extract blocks that include fatalities and injured mapped by country names
-    me_block_match = re.search(r'Casualties in the ME\s*\n(.*?(?:Kurdistan|US Milit|United Arab).*?)\nFatalities\nInjured', body_text, flags=re.IGNORECASE | re.DOTALL)
-    if me_block_match:
-        lines = [line.strip() for line in me_block_match.group(1).split('\n') if line.strip()]
-        first_num_idx = -1
-        for i, line in enumerate(lines):
-            # Check if line is purely digits (can contain commas)
-            if line.replace(',', '').isdigit():
-                first_num_idx = i
-                break
+    # PowerBI's text dump puts the chart title, then all text labels, then all Number values.
+    chart_chunks = body_text.split("Casualties in the ME")
+    for chunk in chart_chunks:
+        chunk_lines = [line.strip() for line in chunk.split('\n') if line.strip()]
         
-        if first_num_idx != -1:
-            labels = lines[:first_num_idx]
-            numbers = lines[first_num_idx:]
-            half = len(numbers) // 2
-            fatalities = numbers[:half]
-            injured = numbers[half:]
+        # Check if this chunk is the country bar chart by looking for key countries
+        if any('us milit' in l.lower() or 'kurdistan' in l.lower() for l in chunk_lines[:20]):
+            raw_labels = []
+            raw_nums = []
             
-            for index, label in enumerate(labels):
+            for line in chunk_lines[:70]: # Limit chunk length to prevent reading next chart
+                clean_line = line.replace(',', '')
+                if clean_line.isdigit():
+                    raw_nums.append(clean_line)
+                else:
+                    # Ignore legend text or trailing text after numbers start
+                    if not raw_nums and line.lower() not in ['fatalities', 'injured']:
+                        raw_labels.append(line)
+            
+            num_labels = len(raw_labels)
+            
+            for index, label in enumerate(raw_labels):
                 lbl = label.lower()
-                fat_val = fatalities[index].replace(',', '') if index < len(fatalities) else '0'
-                inj_val = injured[index].replace(',', '') if index < len(injured) else '0'
+                fat_val = raw_nums[index] if index < len(raw_nums) else '0'
+                inj_val = raw_nums[index + num_labels] if (index + num_labels) < len(raw_nums) else '0'
                 
-                if 'us milit' in lbl:
+                if 'us milit' in lbl or 'us military' in lbl:
                     stats['us_fatalities'] = fat_val
                     stats['us_injured'] = inj_val
                 elif 'bahrain' in lbl:
@@ -116,6 +120,7 @@ def parse_inss_data(body_text):
                 elif 'qatar' in lbl:
                     stats['qatar_fatalities'] = fat_val
                     stats['qatar_injured'] = inj_val
+            break # Found and processed the matching chunk
 
     # --- PowerBI Hardcoded Fallbacks ---
     if 'regional_fatalities' not in stats: stats['regional_fatalities'] = '61'

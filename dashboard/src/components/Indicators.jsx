@@ -102,10 +102,10 @@ const Indicators = ({ alerts }) => {
     return () => clearInterval(interval);
   }, []);
 
+  const syncDate = mofaSummary ? new Date(mofaSummary.created_at) : new Date();
   const startOfWar = new Date('2026-02-28');
-  const currentDays = Math.max(1, Math.floor((new Date() - startOfWar) / (1000 * 60 * 60 * 24)) + 1);
-  const totalMissiles = mofaSummary ? ((mofaSummary.missiles || 0) + (mofaSummary.cruise || 0)) : 0;
-  const avgDailyMissiles = currentDays > 0 ? (totalMissiles / currentDays) : 0;
+  const currentDays = Math.max(1, Math.floor((syncDate - startOfWar) / (1000 * 60 * 60 * 24)) + 1);
+  const avgDailyMissiles = currentDays > 0 ? (totalIntercepts / currentDays) : 0;
   const liveMissileAlerts = alerts.filter(a => a.event_type === 'MISSILE').length;
   const todayMissiles = (mofaSummary && mofaSummary.raw_data && (mofaSummary.raw_data.daily_ballistic > 0 || mofaSummary.raw_data.daily_cruise > 0)) 
     ? ((mofaSummary.raw_data.daily_ballistic || 0) + (mofaSummary.raw_data.daily_cruise || 0)) 
@@ -245,7 +245,7 @@ const Indicators = ({ alerts }) => {
                   justifyContent: 'center',
                   boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
                 }}>
-                  <div className="font-mono text-cyan" style={{ fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px' }}>INTENSITY</div>
+                  <div className="font-mono text-cyan glow-cyan" style={{ fontSize: '0.55rem', fontWeight: 'bold', letterSpacing: '1px', marginBottom: '2px', textAlign: 'center', lineHeight: '1' }}>CONFLICT<br/>SCORE</div>
                   <div className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 'bold', color: predictiveMetrics.trajectory === 'BASELINE' ? '#00FF41' : (predictiveMetrics.trajectory === 'ELEVATED 🚀' ? '#D4AF37' : '#FF0033') }}>
                      {predictiveMetrics.trajectoryProgress}%
                   </div>
@@ -354,11 +354,19 @@ const Indicators = ({ alerts }) => {
                   justifyContent: 'center',
                   boxShadow: 'inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(0,229,255,0.3)',
                 }}>
-                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.45rem', letterSpacing: '1px' }}>DAILY AVG</div>
+                  <div className="font-mono" style={{ color: '#FFF', fontSize: '0.45rem', letterSpacing: '1px', display: 'flex', alignItems: 'center' }}>
+                    DAILY AVG
+                    <span 
+                      style={{ fontSize: '0.65rem', marginLeft: '2px', cursor: 'help', color: 'var(--color-cyan)' }} 
+                      title="Average daily intercepted missiles — calculated from UAE WAM official data since campaign start (Feb 28, 2026)"
+                    >
+                      ⓘ
+                    </span>
+                  </div>
                   <div className="font-mono text-cyan" style={{ fontSize: '1.1rem', fontWeight: 'bold', margin: '2px 0' }}>{avgDailyMissiles.toFixed(1)}</div>
                   <div style={{ width: '80%', height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }}></div>
-                  <div className="font-mono" style={{ fontSize: '0.55rem', color: pctChange > 0 ? '#FF0033' : '#00FF41', textAlign: 'center', lineHeight: '1.2' }}>
-                     {pctChange > 0 ? '▲' : '▼'} {Math.abs(pctChange).toFixed(1)}%<br/>{pctChange > 0 ? 'ABOVE' : 'BELOW'} AVG
+                  <div className="font-mono" style={{ fontSize: '0.4rem', color: '#FFF', textAlign: 'center', lineHeight: '1.2' }}>
+                     INT.<br/>MISSILES
                   </div>
                 </div>
             </div>

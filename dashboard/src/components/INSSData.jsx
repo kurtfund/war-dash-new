@@ -92,6 +92,10 @@ const INSSData = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const safeNum = (val) => Number(String(val).replace(/,/g, '')) || 0;
+  const actRegFat = data.iranian_fatalities !== '...' ? safeNum(data.iranian_fatalities) + safeNum(data.us_fatalities) + safeNum(data.israel_fatalities) + safeNum(data.lebanon_fatalities) + safeNum(data.saudi_fatalities) + safeNum(data.kuwait_fatalities) + safeNum(data.bahrain_fatalities) + safeNum(data.qatar_fatalities) : '...';
+  const actRegInj = data.iranian_injured !== '...' ? safeNum(data.iranian_injured) + safeNum(data.us_injured) + safeNum(data.israel_injured) + safeNum(data.lebanon_injured) + safeNum(data.saudi_injured) + safeNum(data.kuwait_injured) + safeNum(data.bahrain_injured) + safeNum(data.qatar_injured) : '...';
+
   return (
     <div className="inss-container" style={{
       display: 'flex',
@@ -146,14 +150,14 @@ const INSSData = () => {
           
           {/* ROW 1: Regional & Iranian Casualties */}
           <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '1px'}}>MIDDLE EAST CASUALTIES</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0px' }}>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>M.E. CASUALTIES</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1px' }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
-              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_fatalities}</span>
+              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.65rem', fontWeight: 'bold' }}>{actRegFat.toLocaleString()}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Injured:</span>
-              <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.7rem', fontWeight: 'bold' }}>{data.regional_injured}</span>
+              <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.65rem', fontWeight: 'bold' }}>{actRegInj.toLocaleString()}</span>
             </div>
           </div>
 
@@ -211,17 +215,14 @@ const INSSData = () => {
 
         </div>
 
-        {/* Country Casualties Badges Row */}
+        {/* Country Casualties Badges Grid */}
         <div style={{
           marginTop: '6px',
           paddingTop: '6px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '4px',
-          justifyContent: 'center'
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '4px'
         }}>
-
-          
           {/* Badges */}
           {[
             { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
@@ -235,20 +236,20 @@ const INSSData = () => {
           ].map(country => (
             <a href={sourceUrl} key={country.name} target="_blank" rel="noreferrer" style={{
               background: 'rgba(0, 20, 20, 0.6)',
-              border: '1px solid rgba(0, 255, 255, 0.3)',
-              padding: '2px 6px',
+              border: '1px solid rgba(0, 255, 255, 0.2)',
+              padding: '4px 6px',
               borderRadius: '2px',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              justifyContent: 'space-between',
               textDecoration: 'none',
               cursor: 'pointer'
             }}>
-              <span className="font-mono" style={{ color: '#fff', fontSize: '0.6rem', fontWeight: 'bold' }}>{country.name}</span>
-              <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem' }} className="font-mono">
-                <span style={{ color: '#ff3333' }}>Fatalities: {country.f}</span>
-                <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-                <span style={{ color: '#ffb333' }}>Casualties: {country.i}</span>
+              <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem', fontWeight: 'bold', width: '45px' }}>{country.name}</span>
+              <div style={{ display: 'flex', gap: '4px', fontSize: '0.55rem', justifyContent: 'flex-end', flex: 1 }} className="font-mono">
+                <span style={{ color: '#ff3333' }}>💀{country.f}</span>
+                <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+                <span style={{ color: '#ffb333' }}>🤕{country.i}</span>
               </div>
             </a>
           ))}

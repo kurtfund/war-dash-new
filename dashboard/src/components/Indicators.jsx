@@ -109,9 +109,13 @@ const Indicators = ({ alerts }) => {
   const currentDays = Math.max(1, Math.floor((syncDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
   const avgDailyMissiles = currentDays > 0 ? (totalIntercepts / currentDays) : 0;
   const liveMissileAlerts = alerts.filter(a => a.event_type === 'MISSILE').length;
-  const todayMissiles = (mofaSummary && mofaSummary.raw_data && (mofaSummary.raw_data.daily_ballistic > 0 || mofaSummary.raw_data.daily_cruise > 0)) 
-    ? ((mofaSummary.raw_data.daily_ballistic || 0) + (mofaSummary.raw_data.daily_cruise || 0)) 
-    : liveMissileAlerts; // Fallback to analyzing live 24H NSA stream if MOFA hasn't explicitly tallied a 'daily' figure today
+  const todayMissilesRaw = (mofaSummary && mofaSummary.raw_data) 
+    ? ((mofaSummary.raw_data.daily_ballistic || 0) + (mofaSummary.raw_data.daily_cruise || 0)) : 0;
+  
+  // Protect against parsing leaks where the total identically mirrors the daily
+  const todayMissiles = (todayMissilesRaw > 100 && todayMissilesRaw === ((mofaSummary?.missiles || 0) + (mofaSummary?.cruise || 0))) 
+    ? liveMissileAlerts 
+    : (todayMissilesRaw > 0 ? todayMissilesRaw : liveMissileAlerts);
   
   let pctChange = 0;
   if (avgDailyMissiles > 0) {

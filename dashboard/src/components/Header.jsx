@@ -84,9 +84,15 @@ const Header = () => {
                 </div>
             
             {mofaSummary ? (() => {
-              const b = mofaSummary.raw_data?.daily_ballistic || (mofaSummary.missiles === 357 ? 5 : 0);
-              const c = mofaSummary.raw_data?.daily_cruise || 0;
-              const u = mofaSummary.raw_data?.daily_uavs || (mofaSummary.uavs === 1806 ? 17 : 0);
+              // Fallback protection: if a daily figure identically matches the all-time cumulative total, it's a guaranteed parsing leak.
+              const b_raw = mofaSummary.raw_data?.daily_ballistic;
+              const b = (b_raw === mofaSummary.missiles && mofaSummary.missiles > 50) ? 0 : (b_raw || 0);
+              
+              const c_raw = mofaSummary.raw_data?.daily_cruise;
+              const c = (c_raw === mofaSummary.cruise && mofaSummary.cruise > 10) ? 0 : (c_raw || 0);
+              
+              const u_raw = mofaSummary.raw_data?.daily_uavs;
+              const u = (u_raw === mofaSummary.uavs && mofaSummary.uavs > 100) ? 0 : (u_raw || 0);
               
               return (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>

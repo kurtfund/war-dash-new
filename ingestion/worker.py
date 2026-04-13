@@ -858,11 +858,14 @@ def run_poll_cycle(supabase: Client):
                     
                     # 2. Daily extraction
                     daily_ballistic = daily_cruise = daily_uavs = 0
-                    sentences = re.split(r'\.|Since', full_text, flags=re.IGNORECASE)
+                    sentences = re.split(r'\.', full_text)
                     daily_context = ""
                     
                     for s in sentences:
-                        if ('engage' in s.lower() or 'intercepted' in s.lower()) and ('ballistic' in s.lower() or 'uav' in s.lower() or 'drone' in s.lower()):
+                        s_lower = s.lower()
+                        if 'since the onset' in s_lower or 'since the start' in s_lower or 'total' in s_lower:
+                            continue
+                        if ('engage' in s_lower or 'intercept' in s_lower or 'did not detect' in s_lower) and ('ballistic' in s_lower or 'uav' in s_lower or 'drone' in s_lower or 'missil' in s_lower):
                             daily_context = s.strip()
                             break
                             
@@ -938,22 +941,21 @@ def run_poll_cycle(supabase: Client):
                                 print(f"      [SUPABASE_SUMMARY_INSERT_ERROR]: {e}")
                         else:
                             print(f"    [MOFA SUMMARY SKIPPED] Data (B:{ballistic}, D:{uavs}) already recorded. Attempting strict payload resync...")
-                            if daily_ballistic > 0 or daily_uavs > 0:
-                                row_id = query_summary.data[0]['id']
-                                try:
-                                    isolated_payload = {
-                                        "raw_data": {
-                                            "summary": full_text[:500],
-                                            "ballistic": ballistic, "cruise": cruise, "uavs": uavs,
-                                            "daily_ballistic": daily_ballistic, "daily_cruise": daily_cruise, "daily_uavs": daily_uavs,
-                                            "missiles": ballistic, "drones": uavs,
-                                            "lat": 24.4539, "lon": 54.3773
-                                        }
+                            row_id = query_summary.data[0]['id']
+                            try:
+                                isolated_payload = {
+                                    "raw_data": {
+                                        "summary": full_text[:500],
+                                        "ballistic": ballistic, "cruise": cruise, "uavs": uavs,
+                                        "daily_ballistic": daily_ballistic, "daily_cruise": daily_cruise, "daily_uavs": daily_uavs,
+                                        "missiles": ballistic, "drones": uavs,
+                                        "lat": 24.4539, "lon": 54.3773
                                     }
-                                    supabase.table('wam_official_data').update(isolated_payload).eq('id', row_id).execute()
-                                    print("      -> Successfully patched zeroed daily intercepts on the live database row!")
-                                except Exception as u_err:
-                                    print("      [SUPABASE_SUMMARY_UPDATE_ERROR]:", u_err)
+                                }
+                                supabase.table('wam_official_data').update(isolated_payload).eq('id', row_id).execute()
+                                print("      -> Successfully patched zeroed daily intercepts on the live database row!")
+                            except Exception as u_err:
+                                print("      [SUPABASE_SUMMARY_UPDATE_ERROR]:", u_err)
                 else:
                     print("    [MOFA SUMMARY ERROR] Could not find relevant UAE intercept data in WAM list API.")
             else:

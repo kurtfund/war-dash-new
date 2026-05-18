@@ -7,9 +7,23 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 
 # Load Supabase credentials
-# Load Supabase credentials from the main .env file if .env_inss doesn't exist
-env_path = os.path.join(os.path.dirname(__file__), '../../.env')
-load_dotenv(env_path)
+# Try project root .env_inss, then local folder .env_inss, then project root .env
+env_paths = [
+    os.path.join(os.path.dirname(__file__), '../../.env_inss'),
+    os.path.join(os.path.dirname(__file__), '.env_inss'),
+    os.path.join(os.path.dirname(__file__), '../../.env')
+]
+
+loaded_env = False
+for p in env_paths:
+    if os.path.exists(p):
+        load_dotenv(p)
+        loaded_env = True
+        break
+
+if not loaded_env:
+    # Fallback to default load
+    load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
@@ -185,7 +199,9 @@ async def main():
         
     print("Parsed Stats:", stats)
     
-    if stats and ('regional_fatalities' in stats or 'iran_strikes_us' in stats): # Validation based on new fields
+    # Only upload if we parsed actual live data (not just the fallbacks)
+    has_real_data = 'iranian_fatalities' in stats and 'israel_fatalities' in stats
+    if stats and has_real_data:
         payload = {
             "source_url": URL,
             "stats": stats
@@ -195,7 +211,7 @@ async def main():
         res = supabase.table('inss_casualties_data').insert(payload).execute()
         print("Upload successful!")
     else:
-        print("Failed to parse critical stats. Aborting upload.")
+        print("Failed to parse critical stats (only fallback stats available). Aborting upload to prevent overwriting valid data.")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -48,12 +48,17 @@ function App() {
 
     fetchAlerts()
 
-    // 2. Subscribe to realtime inserts
+    // 2. Poll fallback every 30 seconds to ensure auto-updating even if Realtime drops out
+    const pollInterval = setInterval(fetchAlerts, 30000)
+
+    // 3. Subscribe to realtime inserts
     const channel = supabase
       .channel('public:security_alerts')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'security_alerts' }, (payload) => {
         setAlerts((current) => {
           if (payload.new.event_type === 'MARKET_DATA') return current;
+          // Avoid duplicate inserts if polling already fetched it
+          if (current.some(item => item.id === payload.new.id)) return current;
           return [payload.new, ...current].slice(0, 500);
         })
       })
@@ -61,6 +66,7 @@ function App() {
 
     return () => {
       supabase.removeChannel(channel)
+      clearInterval(pollInterval)
     }
   }, [])
 

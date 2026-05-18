@@ -605,13 +605,13 @@ def main():
         if time.time() - last_inss_scrape >= 3600:
             print("[*] Running Hourly INSS PowerBI Scraper...")
             try:
-                subprocess.run(["python", "scrapers/inss/scrape_powerbi.py"], check=True)
+                subprocess.run([sys.executable, "scrapers/inss/scrape_powerbi.py"], check=True)
             except Exception as e:
                 print(f"    [INSS SCRAPER ERROR]: {e}")
                 
             print("[*] Running Hourly DLD Property Scraper...")
             try:
-                subprocess.run(["python", "scrapers/dld/scrape_trends.py"], check=True)
+                subprocess.run([sys.executable, "scrapers/dld/scrape_trends.py"], check=True)
             except Exception as e:
                 print(f"    [DLD SCRAPER ERROR]: {e}")
                 

@@ -587,6 +587,8 @@ def main():
         print("Running database cleanup to purge old bad alerts...")
         supabase.table('security_alerts').delete().ilike('headline', '%Modi%').execute()
         supabase.table('security_alerts').delete().ilike('headline', '%Kolkata%').execute()
+        # Delete degraded fallback-only rows from INSS casualties
+        supabase.table('inss_casualties_data').delete().is_('stats->>iranian_fatalities', 'null').execute()
         print("Database cleanup successful.")
     except Exception as e:
         print(f"Database cleanup failed: {e}")

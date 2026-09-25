@@ -1,11 +1,8 @@
-name: Run INSS Scraper 24/7
+name: Daily INSS Scraper
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: '15 * * * *' # Runs at the 15th minute of every hour (24 times a day)
+    - cron: '15 6 * * *' # Once a day at 06:15 UTC
   workflow_dispatch: # Allows you to click a button to run it manually anytime
 
 jobs:

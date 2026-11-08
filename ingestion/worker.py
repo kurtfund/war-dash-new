@@ -986,7 +986,7 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
                     print(f"    [MOFA SUMMARY INSERTED] (B: {ballistic}, C: {cruise}, D: {uavs})")
                     
                     isolated_payload = {
-                        "url": latest_article_captured,
+                        "url": "https://www.wam.ae/en/list/latest-news",
                         "headline": full_text[:500],
                         "missiles": ballistic,
                         "cruise": cruise,
@@ -1011,6 +1011,7 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
                     row_id = query_summary.data[0]['id']
                     try:
                         isolated_payload = {
+                            "url": "https://www.wam.ae/en/list/latest-news",
                             "raw_data": {
                                 "summary": full_text[:500],
                                 "ballistic": ballistic, "cruise": cruise, "uavs": uavs,

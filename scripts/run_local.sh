@@ -38,3 +38,4 @@ else
     echo "Running with system python3..."
     python3 ingestion/worker.py "$@"
 fi
+

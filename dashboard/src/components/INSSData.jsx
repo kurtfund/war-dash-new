@@ -3,33 +3,58 @@ import { supabase } from '../lib/supabase';
 
 const INSSData = () => {
   const [data, setData] = useState({
-    regional_fatalities: '...',
-    regional_injured: '...',
-    iranian_fatalities: '...',
-    irgc_operatives: '...',
-    senior_officials: '...',
-    launches_missiles: '...',
-    launches_uavs: '...',
-    iranian_missile_inventory: '...',
-    iran_countries_targeted: '...',
-    iran_strikes_us: '...',
-    iran_strikes_israel: '...',
-    iranian_injured: '...',
-    israel_fatalities: '...',
-    israel_injured: '...',
-    lebanon_fatalities: '...',
-    lebanon_injured: '...',
-    us_fatalities: '...',
-    us_injured: '...',
-    bahrain_fatalities: '...',
-    bahrain_injured: '...',
-    kuwait_fatalities: '...',
-    kuwait_injured: '...',
-    saudi_fatalities: '...',
-    saudi_injured: '...',
-    qatar_fatalities: '...',
-    qatar_injured: '...',
-    iran_key_targets: []
+    regional_fatalities: '85',
+    regional_injured: '1,110',
+    iranian_fatalities: '3,536',
+    iranian_injured: '26,578',
+    israel_fatalities: '64',
+    israel_injured: '9,365',
+    uae_fatalities: '13',
+    uae_injured: '233',
+    kurdistan_fatalities: '20',
+    kurdistan_injured: '121',
+    us_fatalities: '13',
+    us_injured: '370',
+    kuwait_fatalities: '8',
+    kuwait_injured: '187',
+    qatar_fatalities: '8',
+    qatar_injured: '35',
+    oman_fatalities: '7',
+    oman_injured: '18',
+    syria_fatalities: '5',
+    syria_injured: '15',
+    pa_fatalities: '4',
+    pa_injured: '7',
+    bahrain_fatalities: '3',
+    bahrain_injured: '60',
+    saudi_fatalities: '3',
+    saudi_injured: '29',
+    french_fatalities: '1',
+    french_injured: '6',
+    jordan_fatalities: '0',
+    jordan_injured: '29',
+    irgc_operatives: '2,000',
+    senior_officials: '50',
+    launches_missiles: '1,527',
+    launches_uavs: '4,816',
+    iranian_missile_inventory: '2,500',
+    iran_countries_targeted: '14',
+    iran_strikes_us: '13,000',
+    iran_strikes_israel: '10,800',
+    iran_key_targets: [
+      {name: "Ships in the Red Sea", count: "24"},
+      {name: "US Military Bases", count: "16"},
+      {name: "Airports", count: "6"},
+      {name: "Missions Foreign", count: "6"},
+      {name: "Oil&Fuel facilities", count: "6"},
+      {name: "Radar", count: "6"},
+      {name: "Hotels", count: "4"},
+      {name: "Satcom", count: "4"},
+      {name: "Data Centers", count: "3"},
+      {name: "Ports", count: "3"},
+      {name: "Aluminum Plants", count: "2"},
+      {name: "Gas Facilities", count: "2"}
+    ]
   });
   const [lastUpdated, setLastUpdated] = useState('...');
   const [sourceUrl, setSourceUrl] = useState('https://app.powerbi.com/view?r=eyJrIjoiYmI3MzIzMTAtMTdjNC00NTY1LWFiM2YtNjI0NTk5MWEyYTI5IiwidCI6IjgwOGNmNGIzLTFhOTYtNDEzZi1iMDZiLTlkZTZjOThmNTQ2OSJ9');
@@ -50,35 +75,47 @@ const INSSData = () => {
             ? JSON.parse(records[0].stats) 
             : records[0].stats;
           setData({
-             regional_fatalities: stats.regional_fatalities || 'N/A',
-             regional_injured: stats.regional_injured || 'N/A',
-             iranian_fatalities: stats.iranian_fatalities || 'N/A',
-             irgc_operatives: stats.irgc_operatives || stats.targeted_killings || 'N/A',
+             regional_fatalities: stats.regional_fatalities || '85',
+             regional_injured: stats.regional_injured || '1,110',
+             iranian_fatalities: stats.iranian_fatalities || '3,536',
+             iranian_injured: stats.iranian_injured || '26,578',
+             israel_fatalities: stats.israel_fatalities || '64',
+             israel_injured: stats.israel_injured || '9,365',
+             uae_fatalities: stats.uae_fatalities || '13',
+             uae_injured: stats.uae_injured || '233',
+             kurdistan_fatalities: stats.kurdistan_fatalities || '20',
+             kurdistan_injured: stats.kurdistan_injured || '121',
+             us_fatalities: stats.us_fatalities || '13',
+             us_injured: stats.us_injured || '370',
+             kuwait_fatalities: stats.kuwait_fatalities || '8',
+             kuwait_injured: stats.kuwait_injured || '187',
+             qatar_fatalities: stats.qatar_fatalities || '8',
+             qatar_injured: stats.qatar_injured || '35',
+             oman_fatalities: stats.oman_fatalities || '7',
+             oman_injured: stats.oman_injured || '18',
+             syria_fatalities: stats.syria_fatalities || '5',
+             syria_injured: stats.syria_injured || '15',
+             pa_fatalities: stats.pa_fatalities || '4',
+             pa_injured: stats.pa_injured || '7',
+             bahrain_fatalities: stats.bahrain_fatalities || '3',
+             bahrain_injured: stats.bahrain_injured || '60',
+             saudi_fatalities: stats.saudi_fatalities || '3',
+             saudi_injured: stats.saudi_injured || '29',
+             french_fatalities: stats.french_fatalities || '1',
+             french_injured: stats.french_injured || '6',
+             jordan_fatalities: stats.jordan_fatalities || '0',
+             jordan_injured: stats.jordan_injured || '29',
+             irgc_operatives: stats.irgc_operatives || stats.targeted_killings || '2,000',
              senior_officials: stats.senior_officials || '50',
-             launches_missiles: stats.launches_missiles || 'N/A',
-             launches_uavs: stats.launches_uavs || 'N/A',
-             iranian_missile_inventory: stats.iranian_missile_inventory || 'N/A',
-             iran_countries_targeted: stats.iran_countries_targeted || 'N/A',
-             iran_strikes_us: stats.iran_strikes_us || 'N/A',
-             iran_strikes_israel: stats.iran_strikes_israel || 'N/A',
-             iranian_injured: stats.iranian_injured || 'N/A',
-             israel_fatalities: stats.israel_fatalities || 'N/A',
-             israel_injured: stats.israel_injured || 'N/A',
-             lebanon_fatalities: stats.lebanon_fatalities || 'N/A',
-             lebanon_injured: stats.lebanon_injured || 'N/A',
-             us_fatalities: stats.us_fatalities || 'N/A',
-             us_injured: stats.us_injured || 'N/A',
-             bahrain_fatalities: stats.bahrain_fatalities || 'N/A',
-             bahrain_injured: stats.bahrain_injured || 'N/A',
-             kuwait_fatalities: stats.kuwait_fatalities || 'N/A',
-             kuwait_injured: stats.kuwait_injured || 'N/A',
-             saudi_fatalities: stats.saudi_fatalities || 'N/A',
-             saudi_injured: stats.saudi_injured || 'N/A',
-             qatar_fatalities: stats.qatar_fatalities || 'N/A',
-             qatar_injured: stats.qatar_injured || 'N/A',
-             iran_key_targets: stats.iran_key_targets || [
+             launches_missiles: stats.launches_missiles || '1,527',
+             launches_uavs: stats.launches_uavs || '4,816',
+             iranian_missile_inventory: stats.iranian_missile_inventory || '2,500',
+             iran_countries_targeted: stats.iran_countries_targeted || '14',
+             iran_strikes_us: stats.iran_strikes_us || '13,000',
+             iran_strikes_israel: stats.iran_strikes_israel || '10,800',
+             iran_key_targets: (stats.iran_key_targets && stats.iran_key_targets.length > 0) ? stats.iran_key_targets : [
                 {name: "Ships in the Red Sea", count: "24"},
-                {name: "US Military Bases", count: "14"},
+                {name: "US Military Bases", count: "16"},
                 {name: "Airports", count: "6"},
                 {name: "Missions Foreign", count: "6"},
                 {name: "Oil&Fuel facilities", count: "6"},
@@ -110,8 +147,8 @@ const INSSData = () => {
   }, []);
 
   const safeNum = (val) => Number(String(val).replace(/,/g, '')) || 0;
-  const actRegFat = data.iranian_fatalities !== '...' ? safeNum(data.iranian_fatalities) + safeNum(data.us_fatalities) + safeNum(data.israel_fatalities) + safeNum(data.lebanon_fatalities) + safeNum(data.saudi_fatalities) + safeNum(data.kuwait_fatalities) + safeNum(data.bahrain_fatalities) + safeNum(data.qatar_fatalities) : '...';
-  const actRegInj = data.iranian_injured !== '...' ? safeNum(data.iranian_injured) + safeNum(data.us_injured) + safeNum(data.israel_injured) + safeNum(data.lebanon_injured) + safeNum(data.saudi_injured) + safeNum(data.kuwait_injured) + safeNum(data.bahrain_injured) + safeNum(data.qatar_injured) : '...';
+  const actRegFat = data.regional_fatalities && data.regional_fatalities !== '...' ? safeNum(data.regional_fatalities).toLocaleString() : '85';
+  const actRegInj = data.regional_injured && data.regional_injured !== '...' ? safeNum(data.regional_injured).toLocaleString() : '1,110';
 
   return (
     <div className="inss-container" style={{
@@ -170,14 +207,14 @@ const INSSData = () => {
           
           {/* ROW 1: Regional & Iranian Casualties */}
           <div style={{ border: '1px solid rgba(0, 255, 255, 0.1)', background: 'rgba(0,0,0,0.5)', padding: '2px 4px' }}>
-            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.45rem', letterSpacing: '1px', marginBottom: '2px'}}>M.E. CASUALTIES</div>
+            <div className="font-mono" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.42rem', letterSpacing: '0.5px', marginBottom: '2px'}}>M.E. CASUALTIES (EXCL. IRAN/ISR)</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1px' }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Fatalities:</span>
-              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.65rem', fontWeight: 'bold' }}>{actRegFat.toLocaleString()}</span>
+              <span className="font-mono" style={{ color: '#ff3333', fontSize: '0.65rem', fontWeight: 'bold' }}>{actRegFat}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span className="font-mono" style={{ color: '#fff', fontSize: '0.55rem' }}>Injured:</span>
-              <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.65rem', fontWeight: 'bold' }}>{actRegInj.toLocaleString()}</span>
+              <span className="font-mono" style={{ color: '#ffb333', fontSize: '0.65rem', fontWeight: 'bold' }}>{actRegInj}</span>
             </div>
           </div>
 
@@ -241,31 +278,39 @@ const INSSData = () => {
         {/* Country Casualties Table */}
         <div style={{
           marginTop: '6px',
-          paddingTop: '6px',
+          paddingTop: '4px',
+          maxHeight: '140px',
+          overflowY: 'auto'
         }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.55rem', color: '#FFF' }} className="font-mono">
-            <thead>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.52rem', color: '#FFF' }} className="font-mono">
+            <thead style={{ position: 'sticky', top: 0, background: 'rgba(5, 7, 9, 0.95)', zIndex: 1 }}>
               <tr style={{ color: 'rgba(255,255,255,0.5)', borderBottom: '1px solid rgba(0,255,255,0.2)', textAlign: 'left' }}>
-                <th style={{ padding: '4px 6px', fontWeight: 'bold' }}>COUNTRY</th>
-                <th style={{ padding: '4px 6px', fontWeight: 'bold', textAlign: 'right' }}>FATALITIES</th>
-                <th style={{ padding: '4px 6px', fontWeight: 'bold', textAlign: 'right' }}>INJURED</th>
+                <th style={{ padding: '3px 4px', fontWeight: 'bold' }}>COUNTRY / THEATER</th>
+                <th style={{ padding: '3px 4px', fontWeight: 'bold', textAlign: 'right' }}>FATALITIES</th>
+                <th style={{ padding: '3px 4px', fontWeight: 'bold', textAlign: 'right' }}>INJURED</th>
               </tr>
             </thead>
             <tbody>
               {[
                 { name: 'IRAN', f: data.iranian_fatalities, i: data.iranian_injured },
-                { name: 'US', f: data.us_fatalities, i: data.us_injured },
                 { name: 'ISRAEL', f: data.israel_fatalities, i: data.israel_injured },
-                { name: 'LEBANON', f: data.lebanon_fatalities, i: data.lebanon_injured },
-                { name: 'SAUDI AR', f: data.saudi_fatalities, i: data.saudi_injured },
+                { name: 'KURDISTAN', f: data.kurdistan_fatalities, i: data.kurdistan_injured },
+                { name: 'UAE', f: data.uae_fatalities, i: data.uae_injured },
+                { name: 'US MILITARY', f: data.us_fatalities, i: data.us_injured },
                 { name: 'KUWAIT', f: data.kuwait_fatalities, i: data.kuwait_injured },
+                { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured },
+                { name: 'OMAN', f: data.oman_fatalities, i: data.oman_injured },
+                { name: 'SYRIA', f: data.syria_fatalities, i: data.syria_injured },
+                { name: 'PALESTINIAN AUT.', f: data.pa_fatalities, i: data.pa_injured },
                 { name: 'BAHRAIN', f: data.bahrain_fatalities, i: data.bahrain_injured },
-                { name: 'QATAR', f: data.qatar_fatalities, i: data.qatar_injured }
+                { name: 'SAUDI ARABIA', f: data.saudi_fatalities, i: data.saudi_injured },
+                { name: 'FRENCH FORCES', f: data.french_fatalities, i: data.french_injured },
+                { name: 'JORDAN', f: data.jordan_fatalities, i: data.jordan_injured }
               ].map(country => (
                 <tr key={country.name} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0, 20, 20, 0.4)' }}>
-                  <td style={{ padding: '4px 6px', fontWeight: 'bold', letterSpacing: '1px' }}>{country.name}</td>
-                  <td style={{ padding: '4px 6px', color: '#ff3333', textAlign: 'right', fontWeight: 'bold' }}>{country.f}</td>
-                  <td style={{ padding: '4px 6px', color: '#ffb333', textAlign: 'right', fontWeight: 'bold' }}>{country.i}</td>
+                  <td style={{ padding: '3px 4px', fontWeight: 'bold', letterSpacing: '0.5px' }}>{country.name}</td>
+                  <td style={{ padding: '3px 4px', color: '#ff3333', textAlign: 'right', fontWeight: 'bold' }}>{country.f}</td>
+                  <td style={{ padding: '3px 4px', color: '#ffb333', textAlign: 'right', fontWeight: 'bold' }}>{country.i}</td>
                 </tr>
               ))}
             </tbody>

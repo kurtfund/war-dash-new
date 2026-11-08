@@ -4,6 +4,12 @@ import '../index.css';
 
 const Header = () => {
   const [mofaSummary, setMofaSummary] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const clockTimer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(clockTimer);
+  }, []);
 
   useEffect(() => {
     // 1. Fetch initial latest summary
@@ -168,10 +174,10 @@ const Header = () => {
          {/* Right: Chronology */}
          <div className="header-chronology font-mono text-yellow glow-yellow" style={{ flex: 1, fontSize: '0.85rem', textAlign: 'right', fontWeight: 'bold' }}>
             <div style={{ letterSpacing: '1px' }}>
-              Day {Math.floor((new Date() - new Date('2026-02-28')) / (1000 * 60 * 60 * 24)) + 1} 🚀 | Since Saturday, Feb 28, 2026
+              Day {Math.floor((currentTime - new Date('2026-02-28')) / (1000 * 60 * 60 * 24)) + 1} 🚀 | Since Saturday, Feb 28, 2026
             </div>
             <div className="text-muted" style={{ fontSize: '0.65rem', marginTop: '4px', letterSpacing: '1px' }}>
-              <span className="text-red glow-red">●</span> {new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' })} GMT <span style={{ color: '#00F2FF', margin: '0 6px' }}>|</span> {new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'Asia/Dubai' })} UAE 🚀
+              <span className="text-red glow-red">●</span> {currentTime.toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' })} GMT <span style={{ color: '#00F2FF', margin: '0 6px' }}>|</span> {currentTime.toLocaleTimeString('en-US', { hour12: false, timeZone: 'Asia/Dubai' })} UAE 🚀
             </div>
          </div>
       </div>

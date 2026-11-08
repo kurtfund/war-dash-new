@@ -17,6 +17,9 @@ import logging
 import subprocess
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 # Configure basic logging for tenacity
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -25,7 +28,7 @@ load_dotenv()
 
 # --- CONFIGURATION ---
 SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
 # --- LOAD RESOURCES SAFELY ---
 # Handles Python 3.14 breaking changes inside pydantic v1 (dependency of spacy)
@@ -546,16 +549,49 @@ def process_alert_data(supabase: Client, headline: str, source: str, url: str, r
         print(f"    [SKIPPED] Duplicate detected.")
 
 def main():
+    once_mode = "--once" in sys.argv or os.getenv("RUN_ONCE", "").lower() in ["true", "1", "yes"]
+    with_scrapers = "--with-scrapers" in sys.argv or "--inss" in sys.argv or os.getenv("RUN_INSS", "").lower() in ["true", "1", "yes"]
+
     # Re-check environment inside main to ensure shimmed/bridged variables are captured
     global SUPABASE_URL, SUPABASE_KEY
     if not SUPABASE_URL: SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
-    if not SUPABASE_KEY: SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    if not SUPABASE_KEY: SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY") or os.getenv("VITE_SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
     if not SUPABASE_URL or not SUPABASE_KEY:
         print(f"CRITICAL: Missing Supabase credentials. URL Found: {bool(SUPABASE_URL)}, KEY Found: {bool(SUPABASE_KEY)}")
         print(f"[*] Available Environment Keys: {', '.join(os.environ.keys())}")
         return
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    # ONE-TIME CLEANUP FOR BANNED KEYWORDS (Prevents old alerts from showing up)
+    try:
+        print("Running database cleanup to purge old bad alerts...")
+        supabase.table('security_alerts').delete().ilike('headline', '%Modi%').execute()
+        supabase.table('security_alerts').delete().ilike('headline', '%Kolkata%').execute()
+        # Delete degraded fallback-only rows from INSS casualties
+        supabase.table('inss_casualties_data').delete().is_('stats->>iranian_fatalities', 'null').execute()
+        print("Database cleanup successful.")
+    except Exception as e:
+        print(f"Database cleanup failed: {e}")
+
+    # If single-pass execution requested (e.g. from GitHub Actions scheduled job)
+    if once_mode:
+        print("--- RUNNING SINGLE-PASS INGESTION ---")
+        run_poll_cycle(supabase, sleep_delay=0.05)
+        if with_scrapers:
+            print("[*] Running INSS PowerBI Scraper...")
+            try:
+                subprocess.run([sys.executable, "scrapers/inss/scrape_powerbi.py"], check=True)
+            except Exception as e:
+                print(f"    [INSS SCRAPER ERROR]: {e}")
+                
+            print("[*] Running DLD Property Scraper...")
+            try:
+                subprocess.run([sys.executable, "scrapers/dld/scrape_trends.py"], check=True)
+            except Exception as e:
+                print(f"    [DLD SCRAPER ERROR]: {e}")
+        print("--- SINGLE-PASS INGESTION COMPLETE ---")
+        return
 
     print("--- OSINT WORKER STARTED (POLLING EVERY 1 MINS) ---")
     
@@ -581,17 +617,6 @@ def main():
 
     threading.Thread(target=run_dummy_server, daemon=True).start()
     # ---------------------------------
-    
-    # ONE-TIME CLEANUP FOR BANNED KEYWORDS (Prevents old alerts from showing up)
-    try:
-        print("Running database cleanup to purge old bad alerts...")
-        supabase.table('security_alerts').delete().ilike('headline', '%Modi%').execute()
-        supabase.table('security_alerts').delete().ilike('headline', '%Kolkata%').execute()
-        # Delete degraded fallback-only rows from INSS casualties
-        supabase.table('inss_casualties_data').delete().is_('stats->>iranian_fatalities', 'null').execute()
-        print("Database cleanup successful.")
-    except Exception as e:
-        print(f"Database cleanup failed: {e}")
 
     # Heartbeat configuration
     last_heartbeat = time.time()
@@ -620,7 +645,7 @@ def main():
             last_inss_scrape = time.time()
 
         try:
-            run_poll_cycle(supabase)
+            run_poll_cycle(supabase, sleep_delay=0.5)
         except Exception as e:
             print(f"CRITICAL ERROR in poll cycle: {e}")
             print("[*] Retrying in 30 seconds due to network/db blip...")
@@ -632,11 +657,12 @@ def main():
 
 
 @retry(
-    wait=wait_fixed(30), 
+    wait=wait_fixed(10), 
+    stop=stop_after_attempt(3),
     retry=retry_if_exception_type((requests.exceptions.RequestException, Exception)),
     before_sleep=before_sleep_log(logger, logging.INFO)
 )
-def run_poll_cycle(supabase: Client):
+def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
         raw_feed_data = {}
         
         # 1. Gather all data first
@@ -733,7 +759,7 @@ def run_poll_cycle(supabase: Client):
                 except: pass
 
             process_alert_data(supabase, entry.title, source_key[0], entry.link, {"summary": getattr(entry, 'summary', '')}, published_at=pub_date)
-            time.sleep(0.5) 
+            time.sleep(sleep_delay) 
 
         # GeoJSON APIs (Keep these at the end)
         for cat, sources in API_SOURCES.items():
@@ -747,7 +773,7 @@ def run_poll_cycle(supabase: Client):
                             lng, lat = geom['coordinates']
                             if is_within_bounds(lat, lng):
                                 process_alert_data(supabase, props.get('title') or "Geo Event", source_info['name'], source_info['url'], props)
-                                time.sleep(0.2)
+                                time.sleep(min(0.2, sleep_delay))
                 except Exception as e:
                     print(f"Error polling {source_info['name']}: {e}")
 

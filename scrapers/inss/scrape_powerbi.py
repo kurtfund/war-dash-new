@@ -28,23 +28,24 @@ if not loaded_env:
 SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    print("Missing Supabase credentials. Exiting.")
-    exit(1)
+def get_supabase_client():
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        print("Missing Supabase credentials.")
+        return None
+    return create_client(SUPABASE_URL, SUPABASE_KEY)
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 URL = "https://app.powerbi.com/view?r=eyJrIjoiYmI3MzIzMTAtMTdjNC00NTY1LWFiM2YtNjI0NTk5MWEyYTI5IiwidCI6IjgwOGNmNGIzLTFhOTYtNDEzZi1iMDZiLTlkZTZjOThmNTQ2OSJ9"
 
 def parse_inss_data(body_text):
     stats = {}
     
-    # Regional (ME) Total
+    # 1. Regional ME Total (Arab/Gulf/Coalition casualties from Iranian launches)
     reg_match = re.search(r'Casualties in the ME.*?Fatalities\s*([\d,]+)\s*\|\s*Injured\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if reg_match:
         stats['regional_fatalities'] = reg_match.group(1).replace(',', '')
         stats['regional_injured'] = reg_match.group(2).replace(',', '')
 
-    # Iranian Casualties & Targeted Killings
+    # 2. Iranian Casualties & Targeted Killings
     iran_match = re.search(r'Iranian Casualties.*?Fatalities\s*([\d,]+)\s*\|\s*Injured\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if iran_match: 
         stats['iranian_fatalities'] = iran_match.group(1).replace(',', '')
@@ -58,25 +59,25 @@ def parse_inss_data(body_text):
         else:
             stats['senior_officials'] = '50'
 
-    # Israeli Casualties
+    # 3. Israeli Casualties
     israel_match = re.search(r'Israeli Casualties.*?Fatalities\s*([\d,]+)\s*\|\s*Injured\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if israel_match:
         stats['israel_fatalities'] = israel_match.group(1).replace(',', '')
         stats['israel_injured'] = israel_match.group(2).replace(',', '')
 
-    # Lebanon Casualties
+    # 4. Lebanon Casualties (if present in older reports)
     lebanon_match = re.search(r'Lebanon Casualties.*?Fatalities\s*([\d,]+)\s*\|\s*Injured\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if lebanon_match:
         stats['lebanon_fatalities'] = lebanon_match.group(1).replace(',', '')
         stats['lebanon_injured'] = lebanon_match.group(2).replace(',', '')
 
-    # Military Activity (Launches)
+    # 5. Military Activity (Launches)
     launches_match = re.search(r'Iranian Launches Toward.*?Missiles\s*([\d,]+)\s*\|\s*UAVs\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if launches_match:
         stats['launches_missiles'] = launches_match.group(1).replace(',', '')
         stats['launches_uavs'] = launches_match.group(2).replace(',', '')
     
-    # Iranian Inventory & Targeting
+    # 6. Iranian Inventory & Targeting
     iran_inv_match = re.search(r'Estimated Number of Iran[’\']s Long-Range Ballistic Missiles.*?([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if iran_inv_match: 
         stats['iranian_missile_inventory'] = iran_inv_match.group(1).replace(',', '')
@@ -89,92 +90,96 @@ def parse_inss_data(body_text):
     if countries_targeted_match: 
         stats['iran_countries_targeted'] = countries_targeted_match.group(1)
 
-    # Strikes in Iran
+    # 7. Strikes in Iran
     strikes_match = re.search(r'American Strikes in Iran\s*Israeli Strikes in Iran\s*([\d,]+)\s*([\d,]+)', body_text, flags=re.IGNORECASE | re.DOTALL)
     if strikes_match:
         stats['iran_strikes_us'] = strikes_match.group(1).replace(',', '')
         stats['iran_strikes_israel'] = strikes_match.group(2).replace(',', '')
 
-    # ME Countries Specific
-    # Extract blocks that include fatalities and injured mapped by country names
-    # PowerBI's text dump puts the chart title, then all text labels, then all Number values.
-    chart_chunks = body_text.split("Casualties in the ME")
-    for chunk in chart_chunks:
-        chunk_lines = [line.strip() for line in chunk.split('\n') if line.strip()]
-        
-        # Check if this chunk is the country bar chart by looking for key countries
-        if any('us milit' in l.lower() or 'kurdistan' in l.lower() for l in chunk_lines[:20]):
-            raw_labels = []
-            raw_nums = []
-            
-            for line in chunk_lines[:70]: # Limit chunk length to prevent reading next chart
-                clean_line = line.replace(',', '')
-                if clean_line.isdigit():
-                    raw_nums.append(clean_line)
-                else:
-                    # Ignore legend text or trailing text after numbers start
-                    if not raw_nums and line.lower() not in ['fatalities', 'injured']:
-                        raw_labels.append(line)
-            
-            num_labels = len(raw_labels)
-            
-            for index, label in enumerate(raw_labels):
-                lbl = label.lower()
-                fat_val = raw_nums[index] if index < len(raw_nums) else '0'
-                inj_val = raw_nums[index + num_labels] if (index + num_labels) < len(raw_nums) else '0'
-                
-                if 'us milit' in lbl or 'us military' in lbl:
-                    stats['us_fatalities'] = fat_val
-                    stats['us_injured'] = inj_val
-                elif 'bahrain' in lbl:
-                    stats['bahrain_fatalities'] = fat_val
-                    stats['bahrain_injured'] = inj_val
-                elif 'kuwait' in lbl:
-                    stats['kuwait_fatalities'] = fat_val
-                    stats['kuwait_injured'] = inj_val
-                elif 'saudi arabia' in lbl:
-                    stats['saudi_fatalities'] = fat_val
-                    stats['saudi_injured'] = inj_val
-                elif 'qatar' in lbl:
-                    stats['qatar_fatalities'] = fat_val
-                    stats['qatar_injured'] = inj_val
-            break # Found and processed the matching chunk
-
-    # Key Targets Struck by Iran
-    target_chunks = body_text.split("Key Targets Struck by Iran in the ME")
-    if len(target_chunks) > 1:
-        chunk = target_chunks[1]
-        chunk_lines = [line.strip() for line in chunk.split('\n') if line.strip()]
-        
+    # 8. Country-Specific ME Casualties Breakdown
+    me_chunk_pattern = re.search(r'Casualties in the ME\s*\n(Kurdistan.*?)(?:Fatalities\s*\nInjured|\Z)', body_text, flags=re.IGNORECASE | re.DOTALL)
+    if me_chunk_pattern:
+        lines = [l.strip() for l in me_chunk_pattern.group(1).split('\n') if l.strip()]
         raw_labels = []
         raw_nums = []
+        for line in lines:
+            c = line.replace(',', '')
+            if c.isdigit():
+                raw_nums.append(c)
+            elif not raw_nums:
+                raw_labels.append(line)
         
-        for line in chunk_lines[:40]: # Prevent bleeding
-            if line.lower() in ["casualties in the me", "iranian casualties", "targeted killings"]: break
+        num_labels = len(raw_labels)
+        for index, label in enumerate(raw_labels):
+            lbl = label.lower()
+            fat_val = raw_nums[index] if index < len(raw_nums) else '0'
+            inj_val = raw_nums[index + num_labels] if (index + num_labels) < len(raw_nums) else '0'
             
-            clean_line = line.replace(',', '')
-            if clean_line.isdigit():
-                raw_nums.append(clean_line)
-            else:
-                if not raw_nums: # Only grab labels before numbers
-                    # Clean up truncated strings from PowerBI wrapping (e.g. "Ships in the S…")
-                    cleaned_label = line.replace('…', '').strip()
-                    if cleaned_label:
-                        raw_labels.append(cleaned_label)
+            if 'united arab emirates' in lbl or 'uae' in lbl:
+                stats['uae_fatalities'] = fat_val
+                stats['uae_injured'] = inj_val
+            elif 'kurdistan' in lbl:
+                stats['kurdistan_fatalities'] = fat_val
+                stats['kurdistan_injured'] = inj_val
+            elif 'us milit' in lbl or 'us military' in lbl:
+                stats['us_fatalities'] = fat_val
+                stats['us_injured'] = inj_val
+            elif 'kuwait' in lbl:
+                stats['kuwait_fatalities'] = fat_val
+                stats['kuwait_injured'] = inj_val
+            elif 'qatar' in lbl:
+                stats['qatar_fatalities'] = fat_val
+                stats['qatar_injured'] = inj_val
+            elif 'oman' in lbl:
+                stats['oman_fatalities'] = fat_val
+                stats['oman_injured'] = inj_val
+            elif 'syria' in lbl:
+                stats['syria_fatalities'] = fat_val
+                stats['syria_injured'] = inj_val
+            elif 'palestinian' in lbl:
+                stats['pa_fatalities'] = fat_val
+                stats['pa_injured'] = inj_val
+            elif 'bahrain' in lbl:
+                stats['bahrain_fatalities'] = fat_val
+                stats['bahrain_injured'] = inj_val
+            elif 'saudi arabia' in lbl or 'saudi' in lbl:
+                stats['saudi_fatalities'] = fat_val
+                stats['saudi_injured'] = inj_val
+            elif 'french' in lbl:
+                stats['french_fatalities'] = fat_val
+                stats['french_injured'] = inj_val
+            elif 'jordan' in lbl:
+                stats['jordan_fatalities'] = fat_val
+                stats['jordan_injured'] = inj_val
+
+    # 9. Key Targets Struck by Iran in the ME (Case-insensitive)
+    target_match = re.search(r'Key targets struck by Iran in the ME\s*\n(.*?)(?:Casualties in the ME|\Z)', body_text, flags=re.IGNORECASE | re.DOTALL)
+    if target_match:
+        lines = [l.strip() for l in target_match.group(1).split('\n') if l.strip()]
+        raw_labels = []
+        raw_nums = []
+        for line in lines:
+            c = line.replace(',', '')
+            if c.isdigit():
+                raw_nums.append(c)
+            elif not raw_nums:
+                raw_labels.append(line.replace('…', '').strip())
         
         key_targets = []
         for index, label in enumerate(raw_labels):
-            val = raw_nums[index] if index < len(raw_nums) else "0"
-            key_targets.append({"name": label, "count": val})
+            val = raw_nums[index] if index < len(raw_nums) else '0'
+            cleaned_name = 'Ships in the Red Sea' if 'ships in the' in label.lower() else label
+            cleaned_name = 'Radar' if cleaned_name.lower() == 'rradar' else cleaned_name
+            key_targets.append({'name': cleaned_name, 'count': val})
             
         if key_targets:
             stats['iran_key_targets'] = key_targets
 
     # --- PowerBI Hardcoded Fallbacks ---
-    if 'regional_fatalities' not in stats: stats['regional_fatalities'] = '61'
-    if 'regional_injured' not in stats: stats['regional_injured'] = '694'
-    if 'launches_missiles' not in stats: stats['launches_missiles'] = '1166'
-    if 'launches_uavs' not in stats: stats['launches_uavs'] = '3578'
+    if 'regional_fatalities' not in stats: stats['regional_fatalities'] = '85'
+    if 'regional_injured' not in stats: stats['regional_injured'] = '1110'
+    if 'launches_missiles' not in stats: stats['launches_missiles'] = '1527'
+    if 'launches_uavs' not in stats: stats['launches_uavs'] = '4816'
 
     return stats
 
@@ -202,6 +207,11 @@ async def main():
     # Only upload if we parsed actual live data (not just the fallbacks)
     has_real_data = 'iranian_fatalities' in stats and 'israel_fatalities' in stats
     if stats and has_real_data:
+        supabase = get_supabase_client()
+        if not supabase:
+            print("Cannot upload: Missing Supabase credentials.")
+            return
+
         payload = {
             "source_url": URL,
             "stats": stats

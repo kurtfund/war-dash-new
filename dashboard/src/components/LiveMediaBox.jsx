@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Media Sources (Mixed Platforms to bypass blocks)
+// Media Sources (Mixed Platforms to bypass blocks & verified 24/7 active streams)
 const CHANNELS = [
   { name: 'AL JAZEERA', id: 'gCNeDWCI0vo', type: 'youtube' },
-  { name: 'IRAN INTERNATIONAL', id: 'wk0uvX60fxg', type: 'youtube' },
-  { name: 'AL JAZEERA ARABIC', id: 'bNyUyrR0PHo', type: 'youtube' },
-  { name: 'ABC NEWS', id: '_03-Efdda7s', type: 'youtube' },
-  { name: 'BLOOMBERG', id: 'iEpJwprxDdk', type: 'youtube' },
-  { name: 'FOX (LNOW)', id: 'sMPp8XGFbkQ', type: 'youtube' },
-  { name: 'FRANCE 24', id: 'Ap-UM1O9RBU', type: 'youtube' },
-  { name: 'DW NEWS', id: 'LuKwFajn37U', type: 'youtube' }
+  { name: 'SKY NEWS', id: 'umLWFz4izTM', type: 'youtube' },
+  { name: 'FRANCE 24', id: 'HvZt-nh9sGg', type: 'youtube' },
+  { name: 'DW NEWS', id: 'LuKwFajn37U', type: 'youtube' },
+  { name: 'ABC NEWS', id: 'l2CF4rOllmU', type: 'youtube' },
+  { name: 'NBC NEWS NOW', id: '4a4IWlRVth0', type: 'youtube' },
+  { name: 'BLOOMBERG', id: 'QB5BNdBFujE', type: 'youtube' },
+  { name: 'IRAN INTERNATIONAL', id: '5JDxjsAVaGk', type: 'youtube' },
+  { name: 'AL JAZEERA ARABIC', id: 'FelGGahCbS8', type: 'youtube' }
 ];
 
 const LiveMediaBox = () => {
@@ -145,8 +146,15 @@ const LiveMediaBox = () => {
             <div className="font-mono text-green glow-green" style={{ fontSize: '0.85rem', letterSpacing: '1px', fontWeight: 'bold', color: '#00FF41' }}>
               ● LIVE GEOPOLITICAL FEED
             </div>
-            <div className="font-mono" style={{ fontSize: '0.65rem', border: '1px solid #333', padding: '2px 8px', color: '#666', cursor: 'pointer' }}>
-              SYNC OFF
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div 
+                className="font-mono" 
+                style={{ fontSize: '0.65rem', border: '1px solid #ff3333', padding: '2px 8px', color: '#ff3333', cursor: 'pointer', background: 'rgba(255, 51, 51, 0.1)' }}
+                onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+                title="Close Feed"
+              >
+                ✕ CLOSE
+              </div>
             </div>
           </div>
 
@@ -198,7 +206,14 @@ const LiveMediaBox = () => {
             background: 'rgba(5, 7, 9, 1)'
           }}>
             <div className="font-mono" style={{ fontSize: '0.65rem', color: '#00A86B', letterSpacing: '1px' }}>
-              〽 SIGNAL LINK ACTIVE
+              <a 
+                href={`https://www.youtube.com/watch?v=${currentChannel.id}`} 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{ color: '#00A86B', textDecoration: 'none' }}
+              >
+                〽 SIGNAL LINK ACTIVE ↗
+              </a>
             </div>
             <div className="font-mono" style={{ fontSize: '0.65rem', color: '#666', letterSpacing: '2px' }}>
               [{currentIndex + 1}/{CHANNELS.length}]

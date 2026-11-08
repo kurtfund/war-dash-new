@@ -814,7 +814,7 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
 
         # --- OFFICIAL MOFA SUMMARY AUTO-UPDATE ---
         try:
-            print("[*] Fetching WAM Official MOFA Summary via Direct API...")
+            print("[*] Fetching WAM Official MOFA Summary (Direct API + Google News WAM RSS)...")
             import re
             from datetime import datetime
             
@@ -824,57 +824,105 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
                 'Referer': 'https://www.wam.ae/en'
             }
             
-            view_url = "https://www.wam.ae/api/app/views/GetViewByUrl?url=en/list/latest-news"
-            resp = requests.get(view_url, headers=API_HEADERS, timeout=10)
+            candidate_articles = []
             
-            if resp.status_code == 200:
-                data = resp.json()
+            # 1. Direct WAM latest news API
+            try:
+                view_url = "https://www.wam.ae/api/app/views/GetViewByUrl?url=en/list/latest-news"
+                resp = requests.get(view_url, headers=API_HEADERS, timeout=10)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    def extract_wam_items(d):
+                        if isinstance(d, dict):
+                            if 'urlSlug' in d and ('title' in d or 'subTitle' in d):
+                                title = str(d.get('title', '')).strip()
+                                subtitle = str(d.get('subTitle', '')).strip()
+                                candidate_articles.append({
+                                    'title': title,
+                                    'text': f"{title} {subtitle}",
+                                    'url': "https://www.wam.ae/en/article/" + d.get('urlSlug', '')
+                                })
+                            for k, v in d.items():
+                                extract_wam_items(v)
+                        elif isinstance(d, list):
+                            for item in d:
+                                extract_wam_items(item)
+                    extract_wam_items(data)
+                else:
+                    print(f"    [WAM API STATUS] {resp.status_code}")
+            except Exception as w_err:
+                print(f"    [WAM API ERROR] {w_err}")
                 
-                # Recursive search for title/subTitle dicts
-                def find_military_articles(d):
-                    articles = []
-                    if isinstance(d, dict):
-                        if 'subTitle' in d and 'urlSlug' in d:
-                            t = (str(d.get('title', '')) + " " + str(d.get('subTitle', ''))).lower()
-                            # Ensure it's UAE specific, not Bahrain or Qatari
-                            if 'uae' in t and ('engage' in t or 'intercept' in t) and ('ballistic' in t or 'uav' in t):
-                                articles.append(d)
-                        for k, v in d.items():
-                            articles.extend(find_military_articles(v))
-                    elif isinstance(d, list):
-                        for item in d:
-                            articles.extend(find_military_articles(item))
-                    return articles
+            # 2. Google News WAM search (catches bulletins even if moved off page 1)
+            try:
+                rss_search_url = 'https://news.google.com/rss/search?q=site:wam.ae+(intercept+OR+"air+defence"+OR+"air+defense"+OR+missile+OR+drone+OR+uav)&hl=en-US&gl=US&ceid=US:en'
+                g_feed = feedparser.parse(rss_search_url)
+                for entry in g_feed.entries[:12]:
+                    title = entry.title
+                    summary = entry.get('summary', '')
+                    candidate_articles.append({
+                        'title': title,
+                        'text': f"{title} {summary}",
+                        'url': entry.get('link', '')
+                    })
+            except Exception as r_err:
+                print(f"    [WAM RSS ERROR] {r_err}")
                 
-                articles = find_military_articles(data)
-                
-                if articles:
-                    art = articles[0]
-                    full_text = str(art.get('title', '')) + " " + str(art.get('subTitle', ''))
-                    latest_article_captured = "https://www.wam.ae/en/article/" + art.get('urlSlug', '')
-                    
-                    word_to_num = {
-                        'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                        'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                        'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
-                        'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 
-                        'nineteen': 19, 'twenty': 20
-                    }
-                    def parse_num_match(m):
-                        m = m.lower().replace(',', '').strip()
-                        if m in word_to_num: return word_to_num[m]
-                        try: return int(m)
-                        except: return 0
+            # Match UAE military interception articles
+            word_to_num = {
+                'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+                'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+                'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
+                'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 
+                'nineteen': 19, 'twenty': 20
+            }
+            def parse_num_match(m):
+                m = m.lower().replace(',', '').strip()
+                if m in word_to_num: return word_to_num[m]
+                try: return int(m)
+                except: return 0
 
-                    ballistic = 0
-                    cruise = 0
-                    uavs = 0
-                    num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
-                    
-                    # 1. Total extraction
-                    total_context_match = re.search(r'since\s+[^.]*?(?:ballistic|cruise|uav|drone)[^.]*', full_text, re.IGNORECASE)
-                    total_context = total_context_match.group(0) if total_context_match else ""
-                    
+            num_pattern = r'(\d+(?:,\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)'
+            
+            matched_bulletin = None
+            for art in candidate_articles:
+                t = art['text'].lower()
+                is_action = any(k in t for k in ['intercept', 'interception', 'engage', 'engaged', 'downed', 'neutralis', 'neutraliz', 'destroy', 'repel'])
+                is_threat = any(k in t for k in ['ballistic', 'cruise', 'missile', 'drone', 'uav', 'projectile'])
+                is_uae = any(k in t for k in ['uae', 'emirates', 'abu dhabi', 'ministry of defence', 'ministry of defense', 'mod', 'armed forces'])
+                is_other_only = any(k in t for k in ['bahrain', 'saudi', 'jordan', 'kuwait']) and not any(k in t for k in ['uae', 'emirates', 'abu dhabi'])
+                
+                if is_action and is_threat and is_uae and not is_other_only:
+                    matched_bulletin = art
+                    break
+            
+            if matched_bulletin:
+                full_text = matched_bulletin['text']
+                latest_article_captured = matched_bulletin['url']
+                title_text = matched_bulletin['title']
+                
+                # Fetch current database totals as baseline
+                db_ballistic = 551
+                db_cruise = 29
+                db_uavs = 2274
+                try:
+                    latest_q = supabase.table("wam_official_data").select("*").order("created_at", desc=True).limit(1).execute()
+                    if latest_q.data and len(latest_q.data) > 0:
+                        db_ballistic = latest_q.data[0].get('missiles', 551)
+                        db_cruise = latest_q.data[0].get('cruise', 29)
+                        db_uavs = latest_q.data[0].get('uavs', 2274)
+                except Exception as e:
+                    pass
+
+                ballistic = 0
+                cruise = 0
+                uavs = 0
+                
+                # 1. Total extraction (from 'since' or 'total' context)
+                total_context_match = re.search(r'(?:since|total|cumulative|all-time)[\s\S]*?(?:missile|drone|uav)', full_text, re.IGNORECASE)
+                total_context = total_context_match.group(0) if total_context_match else ""
+                
+                if total_context:
                     b_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', total_context, re.IGNORECASE)
                     if b_matches: ballistic = max([parse_num_match(m) for m in b_matches])
                     
@@ -883,111 +931,100 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
                     
                     u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', total_context, re.IGNORECASE)
                     if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
+
+                # 2. Daily extraction
+                daily_ballistic = daily_cruise = daily_uavs = 0
+                # Parse daily from title or first sentence
+                db_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', title_text, re.IGNORECASE)
+                if db_matches: daily_ballistic = max([parse_num_match(m) for m in db_matches])
+                
+                dc_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', title_text, re.IGNORECASE)
+                if dc_matches: daily_cruise = max([parse_num_match(m) for m in dc_matches])
+                
+                du_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', title_text, re.IGNORECASE)
+                if du_matches: daily_uavs = max([parse_num_match(m) for m in du_matches])
+                
+                # If totals were not explicitly written in the bulletin, carry forward database totals
+                if ballistic == 0: ballistic = db_ballistic
+                if cruise == 0: cruise = db_cruise
+                if uavs == 0: uavs = db_uavs
+                
+                now = datetime.utcnow()
+                pub_date_iso = now.isoformat()
+                cleaned_title = f"UAE MOFA Update: {ballistic} Ballistic Missiles, {uavs} UAVs Intercepted (+{daily_uavs} Drones today)"
+                
+                # Check for existing alert with same numbers to avoid spam
+                query_summary = supabase.table("wam_official_data").select("id").eq("missiles", ballistic).eq("uavs", uavs).execute()
                     
-                    # 2. Daily extraction
-                    daily_ballistic = daily_cruise = daily_uavs = 0
-                    sentences = re.split(r'\.', full_text)
-                    daily_context = ""
+                if len(query_summary.data) == 0:
+                    payload = {
+                        "headline": cleaned_title,
+                        "source": "UAE MOFA (WAM)",
+                        "url": latest_article_captured,
+                        "event_type": "OFFICIAL_SUMMARY",
+                        "country": "UAE",
+                        "location_name": "Abu Dhabi (Federal)",
+                        "coordinates": "POINT(54.3773 24.4539)",
+                        "deaths": 0,
+                        "confidence": 1.0,
+                        "raw_data": {
+                            "summary": full_text[:500],
+                            "ballistic": ballistic,
+                            "cruise": cruise,
+                            "uavs": uavs,
+                            "daily_ballistic": daily_ballistic,
+                            "daily_cruise": daily_cruise,
+                            "daily_uavs": daily_uavs,
+                            "missiles": ballistic + cruise, 
+                            "drones": uavs,
+                            "lat": 24.4539,
+                            "lon": 54.3773
+                        },
+                        "created_at": pub_date_iso
+                    }
+                    supabase.table("security_alerts").insert(payload).execute()
+                    print(f"    [MOFA SUMMARY INSERTED] (B: {ballistic}, C: {cruise}, D: {uavs})")
                     
-                    for s in sentences:
-                        s_lower = s.lower()
-                        if 'since the onset' in s_lower or 'since the start' in s_lower or 'total' in s_lower:
-                            continue
-                        if ('engage' in s_lower or 'intercept' in s_lower or 'did not detect' in s_lower) and ('ballistic' in s_lower or 'uav' in s_lower or 'drone' in s_lower or 'missil' in s_lower):
-                            daily_context = s.strip()
-                            break
-                            
-                    if daily_context:
-                        db_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', daily_context, re.IGNORECASE)
-                        if db_matches: daily_ballistic = max([parse_num_match(m) for m in db_matches])
-                        
-                        dc_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', daily_context, re.IGNORECASE)
-                        if dc_matches: daily_cruise = max([parse_num_match(m) for m in dc_matches])
-                        
-                        du_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', daily_context, re.IGNORECASE)
-                        if du_matches: daily_uavs = max([parse_num_match(m) for m in du_matches])
+                    isolated_payload = {
+                        "url": latest_article_captured,
+                        "headline": full_text[:500],
+                        "missiles": ballistic,
+                        "cruise": cruise,
+                        "uavs": uavs,
+                        "raw_data": {
+                            "ballistic": ballistic,
+                            "cruise": cruise,
+                            "uavs": uavs,
+                            "daily_ballistic": daily_ballistic,
+                            "daily_cruise": daily_cruise,
+                            "daily_uavs": daily_uavs
+                        }
+                    }
                     
-                    if ballistic == 0 and cruise == 0 and uavs == 0:
-                        print("    [MOFA SUMMARY SKIPPED] No quantitative totals found.")
-                    else:
-                        now = datetime.utcnow()
-                        pub_date_iso = now.isoformat()
-                        cleaned_title = f"UAE MOFA Update: {ballistic} Ballistic Missiles, {uavs} UAVs Intercepted"
-                        
-                        # Check for existing alert with same numbers to avoid spam
-                        query_summary = supabase.table("wam_official_data").select("id").eq("missiles", ballistic).eq("uavs", uavs).execute()
-                            
-                        if len(query_summary.data) == 0:
-                            payload = {
-                                "headline": cleaned_title,
-                                "source": "UAE MOFA (WAM)",
-                                "url": latest_article_captured,
-                                "event_type": "OFFICIAL_SUMMARY",
-                                "country": "UAE",
-                                "location_name": "Abu Dhabi (Federal)",
-                                "coordinates": "POINT(54.3773 24.4539)",
-                                "deaths": 0,
-                                "confidence": 1.0,
-                                "raw_data": {
-                                    "summary": full_text[:500],
-                                    "ballistic": ballistic,
-                                    "cruise": cruise,
-                                    "uavs": uavs,
-                                    "daily_ballistic": daily_ballistic,
-                                    "daily_cruise": daily_cruise,
-                                    "daily_uavs": daily_uavs,
-                                    "missiles": ballistic + cruise, 
-                                    "drones": uavs,
-                                    "lat": 24.4539,
-                                    "lon": 54.3773
-                                },
-                                "created_at": pub_date_iso
-                            }
-                            supabase.table("security_alerts").insert(payload).execute()
-                            print(f"    [MOFA SUMMARY INSERTED] (B: {ballistic}, C: {cruise}, D: {uavs})")
-                            
-                            isolated_payload = {
-                                "url": latest_article_captured,
-                                "headline": full_text[:500],
-                                "missiles": ballistic,
-                                "cruise": cruise,
-                                "uavs": uavs,
-                                "raw_data": {
-                                    "ballistic": ballistic,
-                                    "cruise": cruise,
-                                    "uavs": uavs,
-                                    "daily_ballistic": daily_ballistic,
-                                    "daily_cruise": daily_cruise,
-                                    "daily_uavs": daily_uavs
-                                }
-                            }
-                            
-                            try:
-                                supabase.table('wam_official_data').insert(isolated_payload).execute()
-                                print(f"      -> Upserting Official Summary (Isolating): {ballistic} Ballistic, {cruise} Cruise, {uavs} UAVs")
-                            except Exception as e:
-                                print(f"      [SUPABASE_SUMMARY_INSERT_ERROR]: {e}")
-                        else:
-                            print(f"    [MOFA SUMMARY SKIPPED] Data (B:{ballistic}, D:{uavs}) already recorded. Attempting strict payload resync...")
-                            row_id = query_summary.data[0]['id']
-                            try:
-                                isolated_payload = {
-                                    "raw_data": {
-                                        "summary": full_text[:500],
-                                        "ballistic": ballistic, "cruise": cruise, "uavs": uavs,
-                                        "daily_ballistic": daily_ballistic, "daily_cruise": daily_cruise, "daily_uavs": daily_uavs,
-                                        "missiles": ballistic, "drones": uavs,
-                                        "lat": 24.4539, "lon": 54.3773
-                                    }
-                                }
-                                supabase.table('wam_official_data').update(isolated_payload).eq('id', row_id).execute()
-                                print("      -> Successfully patched zeroed daily intercepts on the live database row!")
-                            except Exception as u_err:
-                                print("      [SUPABASE_SUMMARY_UPDATE_ERROR]:", u_err)
+                    try:
+                        supabase.table('wam_official_data').insert(isolated_payload).execute()
+                        print(f"      -> Upserting Official Summary (Isolating): {ballistic} Ballistic, {cruise} Cruise, {uavs} UAVs")
+                    except Exception as e:
+                        print(f"      [SUPABASE_SUMMARY_INSERT_ERROR]: {e}")
                 else:
-                    print("    [MOFA SUMMARY ERROR] Could not find relevant UAE intercept data in WAM list API.")
+                    print(f"    [MOFA SUMMARY SYNC] Data (B:{ballistic}, C:{cruise}, D:{uavs}, Today D:{daily_uavs}) matched. Refreshing live row...")
+                    row_id = query_summary.data[0]['id']
+                    try:
+                        isolated_payload = {
+                            "raw_data": {
+                                "summary": full_text[:500],
+                                "ballistic": ballistic, "cruise": cruise, "uavs": uavs,
+                                "daily_ballistic": daily_ballistic, "daily_cruise": daily_cruise, "daily_uavs": daily_uavs,
+                                "missiles": ballistic, "drones": uavs,
+                                "lat": 24.4539, "lon": 54.3773
+                            }
+                        }
+                        supabase.table('wam_official_data').update(isolated_payload).eq('id', row_id).execute()
+                        print("      -> Successfully refreshed daily intercepts on the live database row!")
+                    except Exception as u_err:
+                        print("      [SUPABASE_SUMMARY_UPDATE_ERROR]:", u_err)
             else:
-                print(f"    [MOFA SUMMARY ERROR] WAM API returned status {resp.status_code}")
+                print("    [MOFA SUMMARY] No new UAE intercept bulletins detected in latest WAM feed.")
         except Exception as e:
             print(f"Error fetching WAM MOFA Summary: {e}")
         # Live Flight Data (OpenSky)

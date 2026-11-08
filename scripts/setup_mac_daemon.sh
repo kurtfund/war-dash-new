@@ -51,3 +51,4 @@ echo "✅ War Dash background daemon installed and loaded successfully!"
 echo "   - Interval: Every 30 minutes"
 echo "   - Logs: $DIR/logs/worker.log"
 echo "   - To stop anytime, run: ./scripts/stop_mac_daemon.sh"
+

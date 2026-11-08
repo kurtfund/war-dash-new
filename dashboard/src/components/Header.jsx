@@ -69,86 +69,7 @@ const Header = () => {
         
         {/* Middle: OFFICIAL MOFA SUMMARY (Top Center - Hidden on Mobile, handled via CSS) */}
         <div className="mofa-header-container">
-          {mofaSummary?.url ? (
-            <a href={mofaSummary.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-              <div className="glass-panel hover-glow mofa-statement-panel" style={{
-                background: 'rgba(5, 7, 9, 0.85)',
-                border: '1px solid rgba(0, 168, 107, 0.5)',
-                borderRadius: '6px',
-                padding: '8px 24px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease-in-out'
-              }}>
-                <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
-                  UAE TOTAL INTERCEPTIONS
-                  <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
-                </div>
-            
-            {mofaSummary ? (() => {
-              // Fallback protection: if a daily figure identically matches the all-time cumulative total, it's a guaranteed parsing leak.
-              const b_raw = mofaSummary.raw_data?.daily_ballistic;
-              const b = (b_raw === mofaSummary.missiles && mofaSummary.missiles > 50) ? 0 : (b_raw || 0);
-              
-              const c_raw = mofaSummary.raw_data?.daily_cruise;
-              const c = (c_raw === mofaSummary.cruise && mofaSummary.cruise > 10) ? 0 : (c_raw || 0);
-              
-              const u_raw = mofaSummary.raw_data?.daily_uavs;
-              const u = (u_raw === mofaSummary.uavs && mofaSummary.uavs > 100) ? 0 : (u_raw || 0);
-              
-              return (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                <div className="mofa-stats-row">
-                  <div className="stat-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div className="font-mono text-main glow-main stat-val" style={{ fontWeight: 'bold', lineHeight: '1.1' }}>
-                      {mofaSummary.missiles || 0}
-                    </div>
-                    <div className="font-mono stat-label" style={{ letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px', color: '#FF0033' }}>BALLISTIC MISSILES</div>
-                    {b > 0 && (
-                      <div className="font-mono glow-main stat-daily" style={{ marginTop: '4px', letterSpacing: '1px', color: '#FF0033' }}>(+{b} TODAY)</div>
-                    )}
-                  </div>
-                  
-                  <div className="stat-divider" style={{ width: '1px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
-                  
-                  <div className="stat-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div className="font-mono text-cyan glow-cyan stat-val" style={{ fontWeight: 'bold', lineHeight: '1.1' }}>
-                      {mofaSummary.cruise || 0}
-                    </div>
-                    <div className="font-mono text-cyan stat-label" style={{ letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>CRUISE MISSILES</div>
-                    {c > 0 && (
-                      <div className="font-mono text-cyan glow-cyan stat-daily" style={{ marginTop: '4px', letterSpacing: '1px' }}>(+{c} TODAY)</div>
-                    )}
-                  </div>
-
-                  <div className="stat-divider" style={{ width: '1px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
-                  
-                  <div className="stat-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div className="font-mono text-yellow glow-yellow stat-val" style={{ fontWeight: 'bold', lineHeight: '1.1' }}>
-                      {mofaSummary.uavs || 0}
-                    </div>
-                    <div className="font-mono text-yellow stat-label" style={{ letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>DRONES DOWNED</div>
-                    {u > 0 && (
-                      <div className="font-mono text-yellow glow-yellow stat-daily" style={{ marginTop: '4px', letterSpacing: '1px' }}>(+{u} TODAY)</div>
-                    )}
-                  </div>
-                </div>
-                
-                
-              </div>
-              );
-            })() : (
-                <div className="font-mono text-muted" style={{ fontSize: '0.8rem', padding: '6px 0', fontStyle: 'italic' }}>
-                  [ 🚀 Awaiting secure data transmission... ]
-                </div>
-            )}
-            </div>
-          </a>
-          ) : (
+          <a href="https://www.wam.ae/en/list/latest-news" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
             <div className="glass-panel hover-glow mofa-statement-panel" style={{
               background: 'rgba(5, 7, 9, 0.85)',
               border: '1px solid rgba(0, 168, 107, 0.5)',
@@ -158,18 +79,77 @@ const Header = () => {
               flexDirection: 'column',
               alignItems: 'center',
               boxShadow: '0 0 15px rgba(0, 168, 107, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease-in-out'
             }}>
               <div className="font-mono text-green-teal" style={{ fontSize: '0.7rem', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
                 UAE TOTAL INTERCEPTIONS
                 <span className="glow-green-teal" style={{ fontSize: '1rem' }}>✦</span>
               </div>
+          
+          {mofaSummary ? (() => {
+            // Fallback protection: if a daily figure identically matches the all-time cumulative total, it's a guaranteed parsing leak.
+            const b_raw = mofaSummary.raw_data?.daily_ballistic;
+            const b = (b_raw === mofaSummary.missiles && mofaSummary.missiles > 50) ? 0 : (b_raw || 0);
+            
+            const c_raw = mofaSummary.raw_data?.daily_cruise;
+            const c = (c_raw === mofaSummary.cruise && mofaSummary.cruise > 10) ? 0 : (c_raw || 0);
+            
+            const u_raw = mofaSummary.raw_data?.daily_uavs;
+            const u = (u_raw === mofaSummary.uavs && mofaSummary.uavs > 100) ? 0 : (u_raw || 0);
+            
+            return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+              <div className="mofa-stats-row">
+                <div className="stat-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div className="font-mono text-main glow-main stat-val" style={{ fontWeight: 'bold', lineHeight: '1.1' }}>
+                    {mofaSummary.missiles || 0}
+                  </div>
+                  <div className="font-mono stat-label" style={{ letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px', color: '#FF0033' }}>BALLISTIC MISSILES</div>
+                  {b > 0 && (
+                    <div className="font-mono glow-main stat-daily" style={{ marginTop: '4px', letterSpacing: '1px', color: '#FF0033' }}>(+{b} TODAY)</div>
+                  )}
+                </div>
+                
+                <div className="stat-divider" style={{ width: '1px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
+                
+                <div className="stat-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div className="font-mono text-cyan glow-cyan stat-val" style={{ fontWeight: 'bold', lineHeight: '1.1' }}>
+                    {mofaSummary.cruise || 0}
+                  </div>
+                  <div className="font-mono text-cyan stat-label" style={{ letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>CRUISE MISSILES</div>
+                  {c > 0 && (
+                    <div className="font-mono text-cyan glow-cyan stat-daily" style={{ marginTop: '4px', letterSpacing: '1px' }}>(+{c} TODAY)</div>
+                  )}
+                </div>
+
+                <div className="stat-divider" style={{ width: '1px', background: 'rgba(255,255,255,0.15)', flexShrink: 0 }}></div>
+                
+                <div className="stat-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div className="font-mono text-yellow glow-yellow stat-val" style={{ fontWeight: 'bold', lineHeight: '1.1' }}>
+                    {mofaSummary.uavs || 0}
+                  </div>
+                  <div className="font-mono text-yellow stat-label" style={{ letterSpacing: '1px', lineHeight: '1.4', textAlign: 'center', maxWidth: '80px' }}>DRONES DOWNED</div>
+                  {u > 0 && (
+                    <div className="font-mono text-yellow glow-yellow stat-daily" style={{ marginTop: '4px', letterSpacing: '1px' }}>(+{u} TODAY)</div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="font-mono" style={{ fontSize: '0.45rem', color: '#00F2FF', opacity: 0.8, letterSpacing: '1px', marginTop: '6px' }}>
+                WAM LATEST NEWS ↗
+              </div>
+            </div>
+            );
+          })() : (
               <div className="font-mono text-muted" style={{ fontSize: '0.8rem', padding: '6px 0', fontStyle: 'italic' }}>
                 [ 🚀 Awaiting secure data transmission... ]
               </div>
-            </div>
           )}
-        </div>
+          </div>
+        </a>
+      </div>
          
          {/* Right: Chronology */}
          <div className="header-chronology font-mono text-yellow glow-yellow" style={{ flex: 1, fontSize: '0.85rem', textAlign: 'right', fontWeight: 'bold' }}>

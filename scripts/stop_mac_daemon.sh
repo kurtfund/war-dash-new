@@ -8,3 +8,4 @@ if [ -f "$PLIST_PATH" ]; then
 else
     echo "Daemon plist not found at $PLIST_PATH (already stopped)."
 fi
+

@@ -123,6 +123,24 @@ function App() {
         </div>
 
       </div>
+
+      <footer style={{
+        background: 'rgba(5, 7, 9, 0.95)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        padding: '6px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexShrink: 0,
+        zIndex: 100
+      }}>
+        <div className="font-mono" style={{ fontSize: '0.65rem', color: '#888', letterSpacing: '0.5px' }}>
+          Site made by - <a href="https://orchestrateai.pro/" target="_blank" rel="noreferrer" style={{ color: '#00F2FF', textDecoration: 'none' }}>https://orchestrateai.pro/</a>
+        </div>
+        <div className="font-mono text-muted" style={{ fontSize: '0.6rem', letterSpacing: '1px' }}>
+          WAR DASH • REAL-TIME GEOPOLITICAL INTELLIGENCE
+        </div>
+      </footer>
     </>
   )
 }

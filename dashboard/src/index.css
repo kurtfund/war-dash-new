@@ -114,7 +114,8 @@ body {
   display: grid;
   grid-template-columns: 22% 56% 22%;
   flex: 1;
-  height: calc(100vh - 60px); /* Leave room for header */
+  min-height: 0;
+  height: calc(100vh - 60px - 28px); /* Leave room for header & footer */
   position: relative;
   background-color: var(--color-obsidian);
   overflow: hidden; /* Lock grid */

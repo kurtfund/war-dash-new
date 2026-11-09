@@ -64,6 +64,9 @@ const Header = () => {
           <div>
             <h1 className="font-mono" style={{ fontSize: '1.4rem', letterSpacing: '3px', margin: 0, fontWeight: 'bold', color: '#FFF' }}>WAR DASH</h1>
             <div className="text-cyan font-mono glow-cyan" style={{ fontSize: '0.65rem', letterSpacing: '2px', fontWeight: 'bold' }}>GEOPOLITICAL HEAT INDEX</div>
+            <div className="font-mono text-muted" style={{ fontSize: '0.58rem', letterSpacing: '0.5px', marginTop: '2px' }}>
+              Site made by - <a href="https://orchestrateai.pro/" target="_blank" rel="noreferrer" style={{ color: '#00F2FF', textDecoration: 'none' }}>https://orchestrateai.pro/</a>
+            </div>
           </div>
         </div>
         

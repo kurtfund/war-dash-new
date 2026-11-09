@@ -89,14 +89,19 @@ const Header = () => {
               </div>
           
           {mofaSummary ? (() => {
-            // Fallback protection: if a daily figure identically matches the all-time cumulative total, it's a guaranteed parsing leak.
-            const b_raw = mofaSummary.raw_data?.daily_ballistic;
+            // Check if bulletin was published within the current 24-hour UTC window
+            const reportDate = mofaSummary.created_at ? new Date(mofaSummary.created_at) : null;
+            const isFresh = reportDate && (Math.abs(currentTime.getTime() - reportDate.getTime()) <= 24 * 60 * 60 * 1000);
+
+            // Fallback protection: daily figures only apply if bulletin is fresh (within 24 hours)
+            // and if a daily figure identically matches the all-time cumulative total, it's a guaranteed parsing leak.
+            const b_raw = isFresh ? mofaSummary.raw_data?.daily_ballistic : 0;
             const b = (b_raw === mofaSummary.missiles && mofaSummary.missiles > 50) ? 0 : (b_raw || 0);
             
-            const c_raw = mofaSummary.raw_data?.daily_cruise;
+            const c_raw = isFresh ? mofaSummary.raw_data?.daily_cruise : 0;
             const c = (c_raw === mofaSummary.cruise && mofaSummary.cruise > 10) ? 0 : (c_raw || 0);
             
-            const u_raw = mofaSummary.raw_data?.daily_uavs;
+            const u_raw = isFresh ? mofaSummary.raw_data?.daily_uavs : 0;
             const u = (u_raw === mofaSummary.uavs && mofaSummary.uavs > 100) ? 0 : (u_raw || 0);
             
             return (

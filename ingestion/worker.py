@@ -6,7 +6,7 @@ import hashlib
 import feedparser
 import requests
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional, Tuple
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -840,7 +840,8 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
                                 candidate_articles.append({
                                     'title': title,
                                     'text': f"{title} {subtitle}",
-                                    'url': "https://www.wam.ae/en/article/" + d.get('urlSlug', '')
+                                    'url': "https://www.wam.ae/en/article/" + d.get('urlSlug', ''),
+                                    'published': datetime.now(timezone.utc)
                                 })
                             for k, v in d.items():
                                 extract_wam_items(v)
@@ -857,16 +858,22 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
             try:
                 rss_search_url = 'https://news.google.com/rss/search?q=site:wam.ae+(intercept+OR+"air+defence"+OR+"air+defense"+OR+missile+OR+drone+OR+uav)&hl=en-US&gl=US&ceid=US:en'
                 g_feed = feedparser.parse(rss_search_url)
-                for entry in g_feed.entries[:12]:
+                for entry in g_feed.entries[:20]:
                     title = entry.title
                     summary = entry.get('summary', '')
+                    pub_tuple = entry.get('published_parsed')
+                    pub_dt = datetime.fromtimestamp(time.mktime(pub_tuple), tz=timezone.utc) if pub_tuple else None
                     candidate_articles.append({
                         'title': title,
                         'text': f"{title} {summary}",
-                        'url': entry.get('link', '')
+                        'url': entry.get('link', ''),
+                        'published': pub_dt
                     })
             except Exception as r_err:
                 print(f"    [WAM RSS ERROR] {r_err}")
+                
+            # Sort candidate articles newest first so current bulletins take priority over historical ones
+            candidate_articles.sort(key=lambda x: x.get('published') or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
                 
             # Match UAE military interception articles
             word_to_num = {
@@ -932,17 +939,22 @@ def run_poll_cycle(supabase: Client, sleep_delay: float = 0.5):
                     u_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', total_context, re.IGNORECASE)
                     if u_matches: uavs = max([parse_num_match(m) for m in u_matches])
 
-                # 2. Daily extraction
+                # 2. Daily extraction - ONLY if the bulletin was published within the past 24 hours
                 daily_ballistic = daily_cruise = daily_uavs = 0
-                # Parse daily from title or first sentence
-                db_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', title_text, re.IGNORECASE)
-                if db_matches: daily_ballistic = max([parse_num_match(m) for m in db_matches])
+                now_utc = datetime.now(timezone.utc)
+                art_pub = matched_bulletin.get('published')
+                is_recent = art_pub and ((now_utc - art_pub).total_seconds() <= 86400)
                 
-                dc_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', title_text, re.IGNORECASE)
-                if dc_matches: daily_cruise = max([parse_num_match(m) for m in dc_matches])
-                
-                du_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', title_text, re.IGNORECASE)
-                if du_matches: daily_uavs = max([parse_num_match(m) for m in du_matches])
+                if is_recent:
+                    # Parse daily from title or first sentence
+                    db_matches = re.findall(num_pattern + r'\s+(?:ballistic\s*)?missiles?', title_text, re.IGNORECASE)
+                    if db_matches: daily_ballistic = max([parse_num_match(m) for m in db_matches])
+                    
+                    dc_matches = re.findall(num_pattern + r'\s+cruise\s*missiles?', title_text, re.IGNORECASE)
+                    if dc_matches: daily_cruise = max([parse_num_match(m) for m in dc_matches])
+                    
+                    du_matches = re.findall(num_pattern + r'\s+(?:uavs?|drones?)', title_text, re.IGNORECASE)
+                    if du_matches: daily_uavs = max([parse_num_match(m) for m in du_matches])
                 
                 # If totals were not explicitly written in the bulletin, carry forward database totals
                 if ballistic == 0: ballistic = db_ballistic
